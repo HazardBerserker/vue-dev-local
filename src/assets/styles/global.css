@@ -8,6 +8,12 @@ body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote {
   padding: 0;
 }
 
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: sans-serif;
   line-height: 1.5;
@@ -25,4 +31,8 @@ a {
 img, video {
   max-width: 100%;
   display: block;
+}
+
+.v-app-bar-nav-icon {
+  color: white !important;
 }

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import ApiService from '@/services/ApiService'
 import router from '@/router'  
+import { sleep } from '@/utils/sleep'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -14,9 +15,6 @@ export const useAuthStore = defineStore('auth', {
   actions: {
 
     setTokens({ access_token, refreshToken }) {
-
-      console.log(access_token);
-      
       this.accessToken = access_token
       this.refreshToken = refreshToken
       localStorage.setItem('accessToken', access_token)
@@ -25,15 +23,14 @@ export const useAuthStore = defineStore('auth', {
 
     async login(credentials) {
       try {
+
         const res = await ApiService.post('/login', credentials)
-        console.log(res?.data);
-        
         this.setTokens(res?.data)
         const redirectTo = this.returnUrl || '/'
         router.push(redirectTo)
         this.returnUrl = null
+
       } catch (error) {
-        console.error('Erro no login:', error)
         throw error  // ou trate o erro para exibir na UI
       }
     },
@@ -45,11 +42,13 @@ export const useAuthStore = defineStore('auth', {
       return res.data.accessToken
     },
 
-    logout() {
+    async logout() {
       this.accessToken = null
       this.refreshToken = null
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
+      await sleep(100)
+      location.reload() // ou location.reload() se ainda der erro
     }
   },
   persist: true  // habilita persistência automática do store :contentReference[oaicite:4]{index=4}

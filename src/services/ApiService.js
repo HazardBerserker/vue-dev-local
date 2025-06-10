@@ -13,9 +13,6 @@ const ApiService = axios.create({
 ApiService.interceptors.request.use(config => {
    const auth = useAuthStore()
 
-   console.log();
-   
-
    // Adiciona token se existir
    if (auth.accessToken) {
       config.headers.Authorization = `Bearer ${auth.accessToken}`

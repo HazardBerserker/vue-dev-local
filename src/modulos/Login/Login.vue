@@ -1,12 +1,16 @@
 <template>
    <div class="d-flex h-screen w-100">
       <div class="d-flex w-100 fill-height justify-center align-center dynamic-background">
+         <div class="wave"></div>
+         <div class="wave"></div>
+         <div class="wave"></div>
+
          <!-- <img src="@/assets/logo.png" alt="Logo da empresa" class="logo" /> -->
-         <div class="d-flex flex-column ga-3 w-100 justify-center align-start" style="max-width: 500px;">
+         <div class="d-flex flex-column ga-3 w-100 justify-center align-start content" style="max-width: 500px;">
             <span class="text-h6 text-start text-white"><strong>NEVESYS</strong></span>
             <v-text-field
                v-model="email"
-               :prepend-inner-icon="mdiAccountCircle"
+               prepend-inner-icon="mdi-account-circle"
                icon-color="orange-darken-4"
                base-color="orange-darken-4"
                color="orange-darken-4"
@@ -18,18 +22,26 @@
             ></v-text-field>
             <v-text-field
                v-model="senha"
-               :prepend-inner-icon="mdiShieldKey"
+               prepend-inner-icon="mdi-shield-key"
                icon-color="orange-darken-4"
                base-color="orange-darken-4"
-               color="orange-darken-4"  
+               color="orange-darken-4"
                class="w-100"
                hide-details="auto"
                label="Senha"
                variant="solo"
                density="comfortable"
-               type="password"
-               :append-inner-icon="mdiEyeOffOutline"
-            ></v-text-field>
+               :type="senhaEstaEscondida ? 'password' : null "
+            >
+               <template #append-inner>
+                  <v-icon v-if="senhaEstaEscondida" color="orange-darken-4" @click="senhaEstaEscondida = !senhaEstaEscondida">
+                     mdi-eye-off-outline
+                  </v-icon>
+                  <v-icon v-else color="orange-darken-4" @click="senhaEstaEscondida = !senhaEstaEscondida">
+                     mdi-eye-outline
+                  </v-icon>
+               </template>
+            </v-text-field>
             <v-btn
                class="w-100"
                color="orange-darken-4"
@@ -38,7 +50,7 @@
                Entrar
             </v-btn>
          </div>
-         
+
 
       </div>
 
@@ -50,75 +62,73 @@
    </div>
 </template>
 
-<script setup>
-   import { mdiAccountCircle } from '@mdi/js'
-   import { mdiShieldKey } from '@mdi/js'
-   import { mdiEyeOutline } from '@mdi/js'
-   import { mdiEyeOffOutline } from '@mdi/js'
-</script>
-
 <script>
 
 import { useAuthStore } from '@/stores/auth'
+import { useLoadingStore } from '@/stores/loading'
 
 export default {
-   name: 'Login',
+   name: 'LoginScreen',
    data() {
       return {
          email: '',
-         senha: ''
+         senha: '',
+         senhaEstaEscondida: true,
       }
    },
    methods: {
 
       async login() {
-         const auth = useAuthStore()
+        const auth = useAuthStore()
+        const loading = useLoadingStore()
+        loading.show('Logando no sistema...')
 
-         try {
-
-            const resposta = await auth.login({ email: this.email, password: this.senha });
-
-            console.log(resposta);
-            
-            
-         } catch (error) {
+        try {
+          await auth.login({ email: this.email, password: this.senha });
+        } catch (error) {
             console.log('Falha no login: ' + (error.response?.data?.message || error.message));
-         }
+        } finally {
+          loading.hide();
+        }
       }
-      
+
    }
 }
 </script>
 
 <style scoped>
-
 .dynamic-background {
+  position: relative;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(-45deg, rgb(209, 50, 35), rgb(160, 13, 0), rgb(211, 36, 20), rgb(253, 71, 71));
-  background-size: 400% 400%;
-  animation: gradientMove 15s ease infinite;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #920101 0%, #4b0606 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 1;
 }
 
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  25% {
-    background-position: 50% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  75% {
-    background-position: 50% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+/* Suave "wave" com pseudo-elemento */
+.dynamic-background::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at 30% 40%, rgba(240, 0, 0, 0.452) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(255, 7, 7, 0.575) 0%, transparent 70%);
+  filter: blur(60px);
+  opacity: 0.6;
+  z-index: 0;
 }
 
+/* Conteúdo por cima das ondas */
+.content {
+  position: relative;
+  z-index: 2;
+}
 </style>

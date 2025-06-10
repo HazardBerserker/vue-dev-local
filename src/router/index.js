@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import Login from '@/modulos/Login/Login.vue'
 import AuthLayout from '@/modulos/Layout/AuthLayout.vue'
 import Teste from '@/modulos/Teste/Teste.vue'
+import Teste2 from '@/modulos/Teste/Teste2.vue'
 AuthLayout
 
 const routes = [
@@ -17,10 +18,14 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { 
-        path: '', 
-        name: 'dashboard', 
-        component: 
-        Teste 
+        path: 'teste', 
+        name: 'Teste', 
+        component: Teste 
+      },
+      { 
+        path: 'teste2', 
+        name: 'Teste2', 
+        component: Teste2
       },
       // // { 
       //   path: 
