@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import ApiService from '@/services/ApiService'
-import router from '@/router'  
+import router from '@/router'
 import { sleep } from '@/utils/sleep'
 
 export const useAuthStore = defineStore('auth', {
@@ -22,24 +22,17 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(credentials) {
-      try {
 
         const res = await ApiService.post('/login', credentials)
-        this.setTokens(res?.data)
-        const redirectTo = this.returnUrl || '/'
-        router.push(redirectTo)
-        this.returnUrl = null
 
-      } catch (error) {
-        throw error  // ou trate o erro para exibir na UI
-      }
-    },
+        if (res && res.status === 200 && res.data) {
+          this.setTokens(res.data)
+          const redirectTo = this.returnUrl || '/'
+          router.push(redirectTo)
+          this.returnUrl = null
+          return
+        }
 
-
-    async refreshToken() {
-      const res = await ApiService.post('/refresh', { refreshToken: this.refreshToken })
-      this.setTokens(res.data)
-      return res.data.accessToken
     },
 
     async logout() {

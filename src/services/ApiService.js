@@ -27,23 +27,19 @@ ApiService.interceptors.request.use(config => {
 })
 
 ApiService.interceptors.response.use(
-   res => res,
-   async error => {
+    res => res,
+    async error => {
       const original = error.config
       const auth = useAuthStore()
 
-      if (error.response?.status === 401 && !original._retry) {
-         original._retry = true
-         try {
-         const newToken = await auth.refreshToken()
-         original.headers.Authorization = `Bearer ${newToken}`
-         return ApiService(original)
-         } catch {
-         auth.logout()
-         router.push({ name: 'login' })
-         }
-      }
+    if (original.url.includes('/login')) {
       return Promise.reject(error)
-   }
+    }
+
+    if (error.response?.status === 401) {
+      auth.logout()
+      router.push({ name: 'login' })
+    }
+  }
 )
 export default ApiService

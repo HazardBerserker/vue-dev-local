@@ -5,10 +5,12 @@
       <AppBarHeader @onEscondeRouteList="drawer = !drawer" @onLogout="logout"/>
 
       <v-main class="height-screen d-flex align-center justify-center">
-         <v-container class="main">
-            <transition name="fade" mode="out-in">
-              <router-view></router-view>
-            </transition>
+         <v-container class="main" fluid>
+            <router-view v-slot="{ Component }">
+              <Transition name="fade" mode="out-in">
+                <component :is="Component" />
+              </Transition>
+            </router-view>
          </v-container>
       </v-main>
   </v-app>
