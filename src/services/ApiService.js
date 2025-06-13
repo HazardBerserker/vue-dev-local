@@ -2,6 +2,9 @@ import router from '@/router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const ApiService = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true, // importante para cookies cross-origin
@@ -9,14 +12,6 @@ const ApiService = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-})
-
-ApiService.interceptors.request.use(config => {
-  const token = Cookies.get('access_token')
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`
-  }
-  return config
 })
 
 ApiService.interceptors.response.use(

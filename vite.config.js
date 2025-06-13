@@ -15,9 +15,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  // server: {
+  //   host: 'test-dev.local',
+  //   port: 5173,
+  //   https: false, // ou true se você gerar certificado local
+  // }
   server: {
-    host: 'test-dev.local',
+    host: 'frontend.api-dev.local',
     port: 5173,
-    https: false, // ou true se você gerar certificado local
+    https: false,
+    cors: true
   }
 })
