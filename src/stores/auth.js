@@ -28,6 +28,8 @@ export const useAuthStore = defineStore('auth', {
           const { access_token, user_data } = res.data.data
 
           this.user = user_data
+          console.log(this.user);
+
           // Definindo a expiração do cookie em dias (expires_in está em segundos)
 
           Cookies.set('access_token', access_token, {
