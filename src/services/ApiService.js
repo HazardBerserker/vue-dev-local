@@ -1,45 +1,50 @@
 import axios from 'axios'
-import router from '@/router'
-import { useAuthStore } from '@/stores/auth'
+import Cookies from 'js-cookie'
 
 const ApiService = axios.create({
-   baseURL: import.meta.env.VITE_API_BASE_URL,
-   headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-   },
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true, // importante para cookies cross-origin
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
 })
 
 ApiService.interceptors.request.use(config => {
-   const auth = useAuthStore()
-
-   // Adiciona token se existir
-   if (auth.accessToken) {
-      config.headers.Authorization = `Bearer ${auth.accessToken}`
-   }
-
-   // Garante que Content-Type padrão seja JSON, se não for sobrescrito
-   if (!config.headers['Content-Type']) {
-      config.headers['Content-Type'] = 'application/json'
-   }
-
-   return config
+  const token = Cookies.get('access_token')
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`
+  }
+  return config
 })
 
-ApiService.interceptors.response.use(
-    res => res,
-    async error => {
-      const original = error.config
-      const auth = useAuthStore()
+const PingService = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true,
+})
 
-    if (original.url.includes('/login')) {
-      return Promise.reject(error)
-    }
-
-    if (error.response?.status === 401) {
-      auth.logout()
-      router.push({ name: 'login' })
-    }
+PingService.interceptors.request.use(config => {
+  const token = Cookies.get('access_token')
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`
   }
-)
+  return config
+})
+
+ApiService.interceptors.request.use(async (config) => {
+  try {
+    const token = Cookies.get('access_token')
+    if(token) {
+      // só fará essa requisição se houver um cookie, o que indica que o usuario esta logado
+      // rota simples para renovar sessão
+      await PingService.get('/usuario/usuario-logado')
+    }
+  } catch (error) {
+    console.warn('Ping falhou, sessão pode estar expirada:', error)
+    // aqui pode fazer logout automático se quiser
+  }
+  return config
+})
+
+
 export default ApiService
