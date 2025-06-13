@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import ApiService from '@/services/ApiService'
 import router from '@/router'
 import Cookies from 'js-cookie'
+import { useLoadingStore } from './loading'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -14,18 +15,6 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async checkAuth() {
-      try {
-        const response = await ApiService.get('/usuario-logado')
-        this.user = response.data
-        return true
-      } catch (error) {
-        this.user = null
-        Cookies.remove('access_token')
-        return false
-      }
-    },
-
     async login(credentials) {
       try {
         await ApiService.get('/sanctum/csrf-cookie', {
@@ -36,15 +25,12 @@ export const useAuthStore = defineStore('auth', {
         const res = await ApiService.post('/login', credentials)
 
         if (res.status === 200 && res.data.success && res.data.data) {
-          const { access_token, user_data, expires_in } = res.data.data
+          const { access_token, user_data } = res.data.data
 
           this.user = user_data
-
           // Definindo a expiração do cookie em dias (expires_in está em segundos)
-          const expiresDays = expires_in / 86400
 
           Cookies.set('access_token', access_token, {
-            expires: expiresDays,
             secure: false,  // mude para true se usar HTTPS
             sameSite: 'Lax'
           })
@@ -60,15 +46,18 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
+      const loading = useLoadingStore();
       try {
+        loading.show('Deslogando Usuário...')
         await ApiService.post('/logout')
       } catch (e) {
         console.warn('Erro ao fazer logout no servidor (ignorado):', e)
+      } finally {
+        this.user = null
+        Cookies.remove('access_token')
+        router.push({ name: 'login' })
+        loading.hide()
       }
-
-      this.user = null
-      Cookies.remove('access_token')
-      router.push({ name: 'login' })
     }
   }
 })
