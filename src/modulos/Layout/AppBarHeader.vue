@@ -1,5 +1,5 @@
 <template>
-   <v-app-bar app class="diagonal-app-bar" color="redNeveah">
+   <v-app-bar app class="diagonal-app-bar" color="redNeveah" density="compact">
       <v-app-bar-nav-icon @click="emitEscondeOuExpandeRouteList"/>
 
       <template v-slot:append>

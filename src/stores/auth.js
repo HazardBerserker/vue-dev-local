@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', {
     user: null,
     returnUrl: null
   }),
+  persist: true,
 
   getters: {
     isLoggedIn: () => !!Cookies.get('access_token')

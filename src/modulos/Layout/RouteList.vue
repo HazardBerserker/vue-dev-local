@@ -1,16 +1,18 @@
 <template>
    <v-navigation-drawer app v-model="drawerIsOpen">
-      <v-list-item :title="usuario?.nome" :subtitle="usuario?.email" class="py-3 d-flex">
-         <template #prepend>
-            <v-icon class="justify-center">
-               mdi-account
-            </v-icon>
-         </template>
-      </v-list-item>
+      <v-list class="py-0">
+        <v-list-item :title="usuario?.nome" :subtitle="usuario?.email" class="py-3 d-flex">
+          <template #prepend>
+              <v-icon class="justify-center">
+                mdi-account
+              </v-icon>
+          </template>
+        </v-list-item>
+      </v-list>
 
       <v-divider></v-divider>
 
-      <v-list nav v-model:opened="open" variant="flat"  base-color="grey-lighten-3" color="redNeveah">
+      <v-list nav v-model:opened="open" variant="flat"  base-color="grey-lighten-3" color="redNeveah" density="compact">
          <!-- <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item> -->
          <v-list-group v-for="(rota, i) in rotas" :key="`${rota.nome}-${i}`" :value="`${rota.nome}-${i}`">
             <template v-slot:activator="{ props, isOpen }">
@@ -57,11 +59,13 @@ export default {
          set(value){
             this.$emit('update:modelValue', value)
          }
+      },
+      usuario() {
+        return useAuthStore().user
       }
    },
    data() {
       return {
-        usuario: useAuthStore().user,
         open: [],
         rotas: [
           {
