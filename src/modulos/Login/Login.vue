@@ -3,7 +3,7 @@
       <div class="d-flex w-100 fill-height justify-center align-center dynamic-background">
          <!-- <img src="@/assets/logo.png" alt="Logo da empresa" class="logo" /> -->
          <v-card class="d-flex flex-column ga-3 w-100 justify-center align-start content py-16 px-8 elevation-0" rounded="lg">
-            <span class="text-subtitle-2 text-redNeveah text-start font-weight-medium">Logistica inteligente, frete eficiente!</span>
+            <span class="text-subtitle-2 text-start font-weight-medium slogan-text">Logistica inteligente, frete eficiente!</span>
             <v-text-field
                v-model="email"
                prepend-inner-icon="mdi-account-circle"
@@ -147,9 +147,9 @@ export default {
 }
 
 .animated-gradient {
-  background: linear-gradient(90deg, #B50300, #df490e, #B50300, #df490e);
+  background: linear-gradient(90deg, #B50300, rgb(104, 4, 4), #B50300, #ff0800);
   background-size: 800% 800%;
-  transition: background-position 5s ease-in-out;
+  transition: background-position 5s ease-in;
   animation: none;
 }
 
@@ -167,6 +167,11 @@ export default {
   100% {
     background-position: 0% 50%;
   }
+}
+
+.slogan-text {
+  color: #800402;
+
 }
 
 </style>
