@@ -1,10 +1,10 @@
 <template>
-   <v-app-bar app class="diagonal-app-bar" color="redNeveah" density="compact">
+   <v-app-bar app class="diagonal-app-bar" color="redNeveah">
       <v-app-bar-nav-icon @click="emitEscondeOuExpandeRouteList"/>
 
       <template v-slot:append>
           <v-img
-            width="120"
+            width="150"
             src="/logo/cropped-LOGOSEMFUNDO-150x50.png"
             alt="Logo Neveah"
             style="filter: brightness(0) saturate(100%) invert(100%); z-index: 2;"

@@ -2,6 +2,23 @@
   box-sizing: border-box;
 }
 
+/* Inter Regular (todos os pesos de 100 a 900) */
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter Italic (também todos os pesos) */
+@font-face {
+  font-family: 'Inter';
+  src: url('../styles/fonts/Inter-VariableFont_opsz_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
 /* Reset básico */
 body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote {
   margin: 0;
@@ -15,8 +32,8 @@ html, body, #app {
 }
 
 body {
-  font-family: sans-serif;
-  line-height: 1.5;
+  font-family: 'Inter', sans-serif !important;
+  line-height: 1.4;
   background-color: #f9f9f9;
   color: #333;
 }

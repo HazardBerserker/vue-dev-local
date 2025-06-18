@@ -13,27 +13,33 @@
       <v-divider></v-divider>
 
       <v-list nav v-model:opened="open" variant="flat"  base-color="grey-lighten-3" color="redNeveah" density="compact">
-         <!-- <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item> -->
          <v-list-group v-for="(rota, i) in rotas" :key="`${rota.nome}-${i}`" :value="`${rota.nome}-${i}`">
             <template v-slot:activator="{ props, isOpen }">
                <v-list-item
+                  rounded="pill"
                   :prepend-icon="isOpen ? 'mdi-folder-open' : 'mdi-folder'"
                   v-bind="props"
                   :title="rota.nome"
                >
                </v-list-item>
             </template>
-
             <v-list-item
-               v-for="(filho, i) in rota?.rotasFilhas"
-               :key="`${filho.nome}-${i}`"
-               base-color="grey-darken-4"
-               variant="text"
-               :prepend-icon="filho.icone"
-               :title="filho.nome"
-               :to="filho.caminho"
-               :value="`${filho.nome}-${i}`"
-            ></v-list-item>
+              v-for="(filho, i) in rota?.rotasFilhas"
+              :key="`${filho.nome}-${i}`"
+              base-color="grey-darken-4"
+              variant="text"
+              :title="filho.nome"
+              :to="filho.caminho"
+              :value="`${filho.nome}-${i}`"
+              rounded="pill"
+              class="mb-1"
+            >
+              <template #prepend>
+                  <v-icon size="small">
+                    {{ filho.icone }}
+                  </v-icon>
+                </template>
+            </v-list-item>
          </v-list-group>
       </v-list>
    </v-navigation-drawer>
@@ -73,12 +79,12 @@ export default {
             rotasFilhas: [
               {
                   nome: 'Clientes',
-                  caminho: '/teste',
+                  caminho: '/cadastros/clientes',
                   icone: 'mdi-domain'
               },
               {
                   nome: 'Motoristas',
-                  caminho: '/teste2',
+                  caminho: '',
                   icone: 'mdi-card-account-details-outline'
               }
             ],

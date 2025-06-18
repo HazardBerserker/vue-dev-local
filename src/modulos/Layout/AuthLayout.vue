@@ -42,7 +42,7 @@ export default {
 
 <style>
 .main {
-  height: 93.746vh;
+  height: 93.25vh;
 }
 
 .diagonal-app-bar::before {
@@ -73,4 +73,18 @@ export default {
 .fade-enter-to, .fade-leave-from {
   opacity: 1;
 }
+
+.linhaPar {
+    background-color: #FAFAFA;
+}
+
+.linhaImpar {
+    background-color: #EEEEEE;
+}
+
+.hoverable-row tbody tr:hover td{
+  background-color: #b305021a !important; /* Cor de fundo ao passar o mouse */
+  transition: background-color 30ms linear !important
+}
+
 </style>

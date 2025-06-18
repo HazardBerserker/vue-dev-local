@@ -1,6 +1,5 @@
 import router from '@/router'
 import axios from 'axios'
-import Cookies from 'js-cookie'
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
@@ -23,7 +22,6 @@ ApiService.interceptors.response.use(
       switch (status) {
         case 401:
           console.error('Erro 401: Não autorizado. Faça login novamente.')
-          Cookies.remove('access_token')
           router.push({ name: 'login' })
           break
 

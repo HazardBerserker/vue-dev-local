@@ -1,19 +1,16 @@
 <template>
    <div class="d-flex h-screen w-100">
       <div class="d-flex w-100 fill-height justify-center align-center dynamic-background">
-         <div class="wave"></div>
-         <div class="wave"></div>
-         <div class="wave"></div>
-
          <!-- <img src="@/assets/logo.png" alt="Logo da empresa" class="logo" /> -->
-         <div class="d-flex flex-column ga-3 w-100 justify-center align-start content" style="max-width: 500px;">
-            <span class="text-h6 text-start text-white"><strong>NEVESYS</strong></span>
+         <v-card class="d-flex flex-column ga-3 w-100 justify-center align-start content py-16 px-8 elevation-0" rounded="lg">
+            <span class="text-subtitle-2 gradient-text text-start font-weight-medium">Logistica inteligente, frete eficiente!</span>
             <v-text-field
                v-model="email"
                prepend-inner-icon="mdi-account-circle"
-               icon-color="orange-darken-4"
-               base-color="orange-darken-4"
-               color="orange-darken-4"
+               icon-color="redNeveah"
+               base-color="redNeveah"
+              bg-color="grey-lighten-3"
+               color="redNeveah"
                class="w-100"
                hide-details="auto"
                label="Usuário"
@@ -23,9 +20,10 @@
             <v-text-field
                v-model="senha"
                prepend-inner-icon="mdi-shield-key"
-               icon-color="orange-darken-4"
-               base-color="orange-darken-4"
-               color="orange-darken-4"
+               icon-color="redNeveah"
+               base-color="redNeveah"
+               bg-color="grey-lighten-3"
+               color="redNeveah"
                class="w-100"
                hide-details="auto"
                label="Senha"
@@ -34,29 +32,40 @@
                :type="senhaEstaEscondida ? 'password' : null "
             >
                <template #append-inner>
-                  <v-icon v-if="senhaEstaEscondida" color="orange-darken-4" @click="senhaEstaEscondida = !senhaEstaEscondida">
-                     mdi-eye-off-outline
+                  <v-icon v-if="senhaEstaEscondida" color="redNeveah" @click="senhaEstaEscondida = !senhaEstaEscondida">
+                    mdi-eye-off-outline
                   </v-icon>
-                  <v-icon v-else color="orange-darken-4" @click="senhaEstaEscondida = !senhaEstaEscondida">
-                     mdi-eye-outline
+                  <v-icon v-else color="redNeveah" @click="senhaEstaEscondida = !senhaEstaEscondida">
+                    mdi-eye-outline
                   </v-icon>
                </template>
             </v-text-field>
-            <v-btn
-               class="w-100"
-               color="orange-darken-4"
-               @click="login"
-            >
-               Entrar
-            </v-btn>
-         </div>
+            <v-hover>
+              <template v-slot:default="{ isHovering, props }">
+                <v-btn
+                    v-bind="props"
+                    class="w-100 animated-gradient"
+                    :color=" !isHovering ? 'redNeveah' : 'orange-accent-4'"
+                    @click="login"
+                >
+                    <strong>Entrar</strong>
+                </v-btn>
+              </template>
+            </v-hover>
+          </v-card>
 
 
       </div>
 
       <!-- Lado direito: Formulário -->
       <div class="d-flex fill-height bg-white w-100">
-         d
+        <div class="w-50 ma-auto">
+          <v-img
+            src="/logo/neveah_logo_transp.png"
+            alt="Logo Neveah"
+            class="me-3">
+          </v-img>
+        </div>
       </div>
 
    </div>
@@ -66,6 +75,7 @@
 
 import { useAuthStore } from '@/stores/auth'
 import { useLoadingStore } from '@/stores/loading'
+import { useAlertStore } from '@/stores/alertStore'
 
 export default {
    name: 'LoginScreen',
@@ -81,12 +91,13 @@ export default {
       async login() {
         const auth = useAuthStore()
         const loading = useLoadingStore()
+        const alertStore = useAlertStore()
         loading.show('Logando no sistema...')
 
         try {
           await auth.login({ email: this.email, password: this.senha });
         } catch (error) {
-            console.log('Falha no login: ' + (error.response?.data?.message || error.message));
+          alertStore.addAlert(error.response?.data?.message || error.message, 'error', 3000)
         } finally {
           loading.hide();
         }
@@ -105,13 +116,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #920101 0%, #4b0606 100%);
+  background: linear-gradient(135deg, #740200 0%, #ff0400 100%);
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 1;
 }
 
-/* Suave "wave" com pseudo-elemento */
 .dynamic-background::before {
   content: "";
   position: absolute;
@@ -119,8 +129,8 @@ export default {
   left: -20%;
   width: 150%;
   height: 150%;
-  background: radial-gradient(circle at 30% 40%, rgba(240, 0, 0, 0.452) 0%, transparent 60%),
-              radial-gradient(circle at 70% 60%, rgba(255, 7, 7, 0.575) 0%, transparent 70%);
+  background: radial-gradient(circle at 20% 20%, #000000 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, #4d0300 0%, transparent 70%);
   filter: blur(60px);
   opacity: 0.6;
   z-index: 0;
@@ -130,5 +140,41 @@ export default {
 .content {
   position: relative;
   z-index: 2;
+  max-width: 550px;
+  background: linear-gradient(to bottom, #1a1211e5, rgba(216, 0, 0, 0.26)); /* ou branco com opacidade */
+  overflow: hidden; /* Garante que o pseudo-elemento não vaze */
+  box-shadow: -10px -10px 20px 0px #4d0100be !important;
 }
+
+.gradient-text {
+  background: linear-gradient(180deg, #c20000b7, rgba(255, 102, 0, 0.733));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.animated-gradient {
+  background: linear-gradient(90deg, #B50300, #df490e, #B50300, #df490e);
+  background-size: 800% 800%;
+  transition: background-position 5s ease-in-out;
+  animation: none;
+}
+
+.animated-gradient:hover {
+  animation: gradientShift 6s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 </style>

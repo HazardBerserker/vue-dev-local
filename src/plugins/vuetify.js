@@ -21,7 +21,7 @@ const vuetify = createVuetify({
       customTheme: {
         dark: false,
         colors: {
-          redNeveah: 'rgb(246, 43, 25)',      // azul
+          redNeveah: '#B50300',      // vermelho
           // secondary: '#2ecc71',    // verde
           // background: '#f5f5f5',
           // surface: '#ffffff',
@@ -35,7 +35,7 @@ const vuetify = createVuetify({
       }
     }
   }
-  
+
 })
 
 export default vuetify
