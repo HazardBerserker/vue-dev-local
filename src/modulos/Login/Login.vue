@@ -116,7 +116,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #740200 0%, #ff0400 100%);
+  background: linear-gradient(135deg, #690604 0%, #ff0400 100%);
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 1;
@@ -130,7 +130,7 @@ export default {
   width: 150%;
   height: 150%;
   background: radial-gradient(circle at 20% 20%, #000000 0%, transparent 60%),
-              radial-gradient(circle at 70% 60%, #4d0300 0%, transparent 70%);
+              radial-gradient(circle at 70% 60%, #770804e5 0%, transparent 70%);
   filter: blur(60px);
   opacity: 0.6;
   z-index: 0;
@@ -141,9 +141,9 @@ export default {
   position: relative;
   z-index: 2;
   max-width: 550px;
-  background: linear-gradient(to bottom, #1a1211e5, rgba(216, 0, 0, 0.26)); /* ou branco com opacidade */
+  background: linear-gradient(to bottom, #1a1211e5, rgba(92, 0, 0, 0.473)); /* ou branco com opacidade */
   overflow: hidden; /* Garante que o pseudo-elemento não vaze */
-  box-shadow: -10px -10px 20px 0px #4d0100be !important;
+  box-shadow: -10px -10px 20px 0px #1600006e !important;
 }
 
 .animated-gradient {
