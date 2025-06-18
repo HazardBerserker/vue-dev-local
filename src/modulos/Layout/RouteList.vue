@@ -1,48 +1,48 @@
 <template>
-   <v-navigation-drawer app v-model="drawerIsOpen">
-      <v-list class="py-0">
-        <v-list-item :title="usuario?.nome" :subtitle="usuario?.email" class="py-3 d-flex">
-          <template #prepend>
-              <v-icon class="justify-center">
-                mdi-account
-              </v-icon>
-          </template>
-        </v-list-item>
-      </v-list>
-
-      <v-divider></v-divider>
-
-      <v-list nav v-model:opened="open" variant="flat"  base-color="grey-lighten-3" color="redNeveah" density="compact">
-         <v-list-group v-for="(rota, i) in rotas" :key="`${rota.nome}-${i}`" :value="`${rota.nome}-${i}`">
-            <template v-slot:activator="{ props, isOpen }">
-               <v-list-item
-                  rounded="pill"
-                  :prepend-icon="isOpen ? 'mdi-folder-open' : 'mdi-folder'"
-                  v-bind="props"
-                  :title="rota.nome"
-               >
-               </v-list-item>
+    <v-navigation-drawer app v-model="drawerIsOpen" width="320">
+        <v-list class="py-0 w-100">
+          <v-list-item :title="usuario?.nome" :subtitle="usuario?.email" class="py-3 d-flex">
+            <template #prepend>
+                <v-icon class="justify-center">
+                  mdi-account
+                </v-icon>
             </template>
-            <v-list-item
-              v-for="(filho, i) in rota?.rotasFilhas"
-              :key="`${filho.nome}-${i}`"
-              base-color="grey-darken-4"
-              variant="text"
-              :title="filho.nome"
-              :to="filho.caminho"
-              :value="`${filho.nome}-${i}`"
-              rounded="pill"
-              class="mb-1"
-            >
-              <template #prepend>
-                  <v-icon size="small">
-                    {{ filho.icone }}
-                  </v-icon>
-                </template>
-            </v-list-item>
-         </v-list-group>
-      </v-list>
-   </v-navigation-drawer>
+          </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list nav v-model:opened="open" variant="flat"  base-color="grey-lighten-3" color="redNeveah" density="compact">
+          <v-list-group v-for="(rota, i) in rotas" :key="`${rota.nome}-${i}`" :value="`${rota.nome}-${i}`">
+              <template v-slot:activator="{ props, isOpen }">
+                <v-list-item
+                    rounded="pill"
+                    :prepend-icon="isOpen ? 'mdi-folder-open' : 'mdi-folder'"
+                    v-bind="props"
+                    :title="rota.nome"
+                >
+                </v-list-item>
+              </template>
+              <v-list-item
+                v-for="(filho, i) in rota?.rotasFilhas"
+                :key="`${filho.nome}-${i}`"
+                base-color="grey-darken-4"
+                variant="text"
+                :title="filho.nome"
+                :to="filho.caminho"
+                :value="`${filho.nome}-${i}`"
+                rounded="pill"
+                class="mb-1"
+              >
+                <template #prepend>
+                    <v-icon size="small">
+                      {{ filho.icone }}
+                    </v-icon>
+                  </template>
+              </v-list-item>
+          </v-list-group>
+        </v-list>
+    </v-navigation-drawer>
 </template>
 
 <script>
@@ -72,6 +72,7 @@ export default {
    },
    data() {
       return {
+        width: this.modelValue ? '250px' : '60px',
         open: [],
         rotas: [
           {

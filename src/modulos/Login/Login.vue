@@ -3,7 +3,7 @@
       <div class="d-flex w-100 fill-height justify-center align-center dynamic-background">
          <!-- <img src="@/assets/logo.png" alt="Logo da empresa" class="logo" /> -->
          <v-card class="d-flex flex-column ga-3 w-100 justify-center align-start content py-16 px-8 elevation-0" rounded="lg">
-            <span class="text-subtitle-2 gradient-text text-start font-weight-medium">Logistica inteligente, frete eficiente!</span>
+            <span class="text-subtitle-2 text-redNeveah text-start font-weight-medium">Logistica inteligente, frete eficiente!</span>
             <v-text-field
                v-model="email"
                prepend-inner-icon="mdi-account-circle"
@@ -48,7 +48,7 @@
                     :color=" !isHovering ? 'redNeveah' : 'orange-accent-4'"
                     @click="login"
                 >
-                    <strong>Entrar</strong>
+                    <strong>Acessar</strong>
                 </v-btn>
               </template>
             </v-hover>
@@ -144,14 +144,6 @@ export default {
   background: linear-gradient(to bottom, #1a1211e5, rgba(216, 0, 0, 0.26)); /* ou branco com opacidade */
   overflow: hidden; /* Garante que o pseudo-elemento não vaze */
   box-shadow: -10px -10px 20px 0px #4d0100be !important;
-}
-
-.gradient-text {
-  background: linear-gradient(180deg, #c20000b7, rgba(255, 102, 0, 0.733));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
 }
 
 .animated-gradient {
