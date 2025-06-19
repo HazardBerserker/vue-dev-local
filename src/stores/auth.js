@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import ApiService from '@/services/ApiService'
 import router from '@/router'
 import { useLoadingStore } from './loading'
+import { sleep } from '@/utils/sleep'
 
 
 
@@ -33,7 +34,7 @@ export const useAuthStore = defineStore('auth', {
 
           this.user = user_data
           this.returnUrl = null
-          router.push('/')
+          return res
         }
       } catch (error) {
         this.user = null

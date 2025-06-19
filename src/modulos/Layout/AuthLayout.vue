@@ -1,8 +1,8 @@
 <template>
   <v-app>
-      <RouteList v-model="drawer"/>
+      <RouteList/>
 
-      <AppBarHeader @onEscondeRouteList="drawer = !drawer" @onLogout="logout"/>
+      <AppBarHeader @onLogout="logout"/>
 
       <v-main class="height-screen d-flex align-center justify-center">
          <v-container class="main" fluid>
@@ -25,11 +25,6 @@ export default {
    components: {
       RouteList,
       AppBarHeader
-   },
-   data() {
-      return {
-         drawer: true,
-      }
    },
    methods: {
       logout() {

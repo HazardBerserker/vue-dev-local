@@ -1,7 +1,5 @@
 <template>
    <v-app-bar app class="diagonal-app-bar" color="redNeveah">
-      <v-app-bar-nav-icon @click="emitEscondeOuExpandeRouteList"/>
-
       <template v-slot:append>
           <v-img
             width="150"
@@ -34,20 +32,17 @@
 
 <script>
 export default {
-   name: 'AppBarHeader',
-   data() {
+  name: 'AppBarHeader',
+  data() {
     return {
       logo: new URL('@/assets/logo/cropped-LOGOSEMFUNDO-150x50.png', import.meta.url).href
     }
-   },
-   methods: {
-      emitEscondeOuExpandeRouteList() {
-        this.$emit('onEscondeRouteList')
-      },
-      emitLogout(){
-        this.$emit('onLogout')
-      }
-   }
+  },
+  methods: {
+    emitLogout(){
+      this.$emit('onLogout')
+    }
+  }
 }
 </script>
 
