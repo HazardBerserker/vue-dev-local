@@ -1,133 +1,264 @@
 <template>
    <div>
+    <v-breadcrumbs :items="['Cadastros', 'Clientes']" class="mb-6"></v-breadcrumbs>
 
-      <v-card outlined class="pa-6 elevation-6 mb-4">
-          <v-row class="pb-2">
-              <v-col class="py-2">
-                  <h3 class="pa-1 font-weight-bold">FILTROS:</h3>
-              </v-col>
-          </v-row>
+    <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
-          <v-divider></v-divider>
+    <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao">
+      <div class="d-flex flex-column w-100">
+        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 ps-1">Filtros:</h5>
+        <div class="d-flex my-auto ga-2">
+          <v-text-field
+            v-model="filtros.busca_geral"
+            hide-details
+            label="Busca Geral..."
+            width="500"
+            variant="solo-filled"
+            density="compact"
+            bg-color="white"
+            clearable
+            flat
+            rounded
+          ></v-text-field>
+          <v-select
+            v-model="filtros.ativo"
+            hide-details
+            label="Busca pelo Status de Ativo"
+            width="300"
+            variant="solo-filled"
+            density="compact"
+            :items="opcoesAtivo"
+            item-value="value"
+            item-title="label"
+            bg-color="white"
+            clearable
+            flat
+            rounded
+          ></v-select>
+          <v-btn
+            color="blue-darken-3"
+            variant="flat"
+            class="text-white fill-height"
+            @click="buscaCliente"
+            rounded="pill"
+          >
+            <v-icon>
+              mdi-magnify
+            </v-icon>
+          </v-btn>
+        </div>
 
-          <v-row class="pt-6">
-              <v-col cols="12" sm="3" class="py-2">
-                  <v-text-field
-                      v-model="filtros.id_cliente"
-                      density="compact"
-                      label="Busca geral"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="solo"
-                      hide-details
-                      clearable
-                  ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="3" class="py-2">
-                  <v-text-field
-                      density="compact"
-                      label="ID Cargo"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="solo"
-                      hide-details
-                      clearable
-                  ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="3" class="py-2">
-                  <v-text-field
-                      density="compact"
-                      label="Nome"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="solo"
-                      hide-details
-                      clearable
-                  ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="3" class="py-2">
-                <v-text-field
-                      density="compact"
-                      label="Nome"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="solo"
-                      hide-details
-                      clearable
-                  ></v-text-field>
-              </v-col>
-          </v-row>
-      </v-card>
+      </div>
 
+      <v-divider></v-divider>
 
-      <v-row >
-          <v-col cols="12" class="text-right">
-            <v-data-table-server
-              fixed-header
-              v-model:sort-by="datatable.ordenarPor"
-              :headers="datatable.cabecalho"
-              :cell-props="regraPintaLinha"
-              :items="datatable.itens"
-              :items-length="datatable.totalRegistros"
-              :page="datatable.pagina_atual"
-              :items-per-page="datatable.por_pagina"
-              :items-per-page-options="datatable.itens_por_pagina"
-              items-per-page-text="Itens por página"
-              :loading="datatable.carregando"
-              :item-value="datatable.chave_primaria"
-              multi-sort
-              loading-text="Buscando, aguarde..."
-              class="elevation-3 class-on-data-table hoverable-row"
-              @update:options="buscaCliente"
-              height="65vh"
+      <!-- KPIs -->
+      <div class="d-flex ga-2 my-auto">
+        <!-- Clientes Ativos -->
+        <v-card
+          width="250"
+          class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
+          color="blue-darken-4"
+        >
+            <v-avatar size="40" class="me-4 bg-white text-blue-darken-4">
+                <v-icon>mdi-account</v-icon>
+            </v-avatar>
+            <div class="d-flex flex-column">
+                <span class="text-body-2 text-white">Clientes Ativos</span>
+                <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
+                    <v-fade-transition mode="out-in">
+                        <span v-if="!datatable.carregando">
+                        <strong :key="'inativos'">
+                          {{ numeroDeClientesAtivos() }}
+                        </strong>
+                      </span>
+                        <span v-else>
+                          <v-progress-circular indeterminate color="primary" size="15"></v-progress-circular>
+                        </span>
+                    </v-fade-transition>
+                </v-chip>
+            </div>
+        </v-card>
+
+        <!-- Clientes Inativos -->
+        <v-card
+            width="250"
+            class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
+            color="red-darken-4"
+        >
+            <v-avatar size="40" class="me-4 bg-white text-red-darken-4">
+                <v-icon>mdi-account-off</v-icon>
+            </v-avatar>
+            <div class="d-flex flex-column justify-center">
+              <span class="text-body-2 text-white">Clientes Inativos</span>
+                <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4" loading="true">
+                    <v-fade-transition mode="out-in">
+                      <span v-if="!datatable.carregando">
+                        <strong :key="'inativos'">
+                          {{ numeroDeClientesInativos() }}
+                        </strong>
+                      </span>
+                      <span v-else>
+                        <v-progress-circular indeterminate color="red" size="15"></v-progress-circular>
+                      </span>
+                    </v-fade-transition>
+                </v-chip>
+            </div>
+        </v-card>
+      </div>
+
+    </v-card>
+
+    <div class="py-3 justify-space-between mt-6" v-if="permissao">
+        <div class="d-flex align-center ga-2">
+          <v-btn
+              color="green-darken-2"
+              prepend-icon="mdi-plus"
+              variant="tonal"
               density="comfortable"
-              no-data-text="Nenhum Cliente encontrado, tente alterar o(s) filtro(s)"
-            >
-              <template #[`item.ativo`]="{ item }">
-                <v-chip
-                      prepend-icon="mdi-alert-circle-outline"
-                      variant="flat"
-                      size="small"
-                      :color="item.ativo == SimENaoEnumDescricao.NAO ? 'red-darken-3' : 'primary'"
-                    >
-                      {{ SimENaoEnum[item.ativo] }}
-                  </v-chip>
-              </template>
-              <template #[`item.cep`]="{ item }">
-                {{ formataCep(item.cep) }}
-              </template>
-            </v-data-table-server>
+              class="text-white"
+              rounded="pill"
+          >
+              Criar cliente
+          </v-btn>
 
+          <v-btn
+              color="blue-darken-3"
+              prepend-icon="mdi-pencil"
+              variant="tonal"
+              density="comfortable"
+              class="text-white"
+              rounded="pill"
+              :disabled="desativaInput()"
+          >
+              Editar
+          </v-btn>
 
+          <v-btn
+              color="red-darken-3"
+              prepend-icon="mdi-delete"
+              variant="tonal"
+              density="comfortable"
+              class="text-white"
+              rounded="pill"
+              :disabled="desativaInput()"
+          >
+              Excluir
+          </v-btn>
 
-                      <!-- <template #item.cobrar_cliente="{ item, column }">
-                          <v-chip v-if="item.cobrar_cliente" size="small" :color="selecionaCorCobrarCliente(item.cobrar_cliente)" :style="`text-align: ${column.align};`">
-                              {{ item.cobrar_cliente }}
-                          </v-chip>
-                      </template>
+          <v-btn
+              color="teal-darken-2"
+              prepend-icon="mdi-file-export"
+              variant="tonal"
+              density="comfortable"
+              class="text-white"
+              rounded="pill"
+          >
+              Exportar
+          </v-btn>
+        </div>
 
-                      <template #item.acao="{ item }">
-                          <v-icon size="small" class="mr-2" @click="editaItem(item)">
-                              mdi-pencil
-                          </v-icon>
-                      </template> -->
-          </v-col>
-      </v-row>
-   </div>
+    </div>
+
+    <v-row v-if="permissao">
+      <v-col cols="12" class="text-right">
+        <v-card rounded="lg" elevation="3">
+          <v-data-table-server
+            show-select
+            fixed-header
+            v-model="datatable.itensSelecionados"
+            v-model:sort-by="datatable.ordenarPor"
+            :headers="datatable.cabecalho"
+            :cell-props="regraPintaLinha"
+            :items="datatable.itens"
+            :items-length="datatable.totalRegistros"
+            :page="datatable.pagina_atual"
+            :items-per-page="datatable.por_pagina"
+            :items-per-page-options="datatable.itens_por_pagina"
+            items-per-page-text="Itens por página"
+            :loading="datatable.carregando"
+            :item-value="datatable.chave_primaria"
+            multi-sort
+            loading-text="Buscando, aguarde..."
+            class="elevation-3 class-on-data-table hoverable-row"
+            @update:options="buscaCliente"
+            height="56vh"
+            density="comfortable"
+            no-data-text="Nenhum Cliente encontrado, tente alterar o(s) filtro(s)"
+          >
+            <template #[`item.ativo`]="{ item }">
+              <v-chip
+                prepend-icon="mdi-alert-circle-outline"
+                variant="flat"
+                size="small"
+                :color="item.ativo == SimENaoEnumDescricao.NAO ? 'red-darken-3' : 'primary'"
+              >
+                {{ SimENaoEnum[item.ativo] }}
+              </v-chip>
+            </template>
+            <template #[`item.cep`]="{ item }">
+              {{ formataCep(item.cep) }}
+            </template>
+          </v-data-table-server>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { formataCep } from '@/utils/formataCep';
+import { useAlertStore } from '@/stores/alertStore'
+import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
+import { useLoadingStore } from '@/stores/loading';
+import { endpoints } from '@/utils/apiEndpoints';
 
 export default {
   name: 'ClientesScreen',
+  components: {
+    GlobalAlertFixed
+  },
+  async mounted() {
+    const loading = useLoadingStore();
+    try {
+      loading.show('Carregando Clientes...')
+      await this.buscaCliente()
+      this.permissao = true
+    } catch (error) {
+      this.propriedadesDoAlertaFixo = {
+        type: 'error',
+        text: error?.response?.data?.message,
+        title: `Módulo inacessível (${error.status})`
+      }
+    } finally {
+      loading.hide();
+    }
+  },
   data () {
     return {
       formataCep,
       SimENaoEnumDescricao,
       SimENaoEnum,
+      permissao: false,
+      propriedadesDoAlertaFixo: null,
       filtros: {
-        id_cliente: null
+        id_cliente: null,
+        ativo: null
       },
+      opcoesAtivo: [
+        {
+          label: 'Sim',
+          value: 1,
+        },
+        {
+          label: 'Não',
+          value: 0,
+        }
+      ],
       datatable: {
+        itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
         chave_primaria: 'id_cliente',
@@ -251,32 +382,45 @@ export default {
     }
   },
   methods: {
-     gerarQuery( page, itemsPerPage, sortBy ) {
-        let arrayDeFiltros = []
+    gerarQuery( page, itemsPerPage, sortBy ) {
+      let arrayDeFiltros = []
 
-        //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
-        for (const chave in this.filtros) {
-            if (this.filtros[chave] != null && this.filtros[chave] !== '') {
-                const filtro = { key: [chave], value: this.filtros[chave] };
-                arrayDeFiltros.push(filtro)
-            }
-        }
+      //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
+      for (const chave in this.filtros) {
+          if (this.filtros[chave] != null && this.filtros[chave] !== '') {
+              const filtro = { key: [chave], value: this.filtros[chave] };
+              arrayDeFiltros.push(filtro)
+          }
+      }
 
-        let queryParams = new URLSearchParams();
+      let queryParams = new URLSearchParams();
 
-        queryParams.append('por_pagina', itemsPerPage);
-        queryParams.append('pagina_atual', page);
+      queryParams.append('por_pagina', itemsPerPage);
+      queryParams.append('pagina_atual', page);
 
-        sortBy.forEach(({ key, order }) => {
-            queryParams.append(`ordem[${key}]`, order);
-        });
+      sortBy.forEach(({ key, order }) => {
+          queryParams.append(`ordem[${key}]`, order);
+      });
 
-        arrayDeFiltros.forEach(({ key, value }) => {
-            queryParams.append(`filtro[${key}]`, value);
-        });
+      arrayDeFiltros.forEach(({ key, value }) => {
+          queryParams.append(`filtro[${key}]`, value);
+      });
 
-        return `?${queryParams.toString()}`;
+      return `?${queryParams.toString()}`;
+    },
 
+    numeroDeClientesInativos() {
+      const itensAtivos = this.datatable.itens.filter(item => {
+        return item.ativo == SimENaoEnumDescricao.NAO
+      })
+      return itensAtivos.length
+    },
+
+    numeroDeClientesAtivos() {
+      const itensAtivos = this.datatable.itens.filter(item => {
+        return item.ativo == SimENaoEnumDescricao.SIM
+      })
+      return itensAtivos.length
     },
 
     async buscaCliente( options = {} ) {
@@ -293,31 +437,27 @@ export default {
       this.itemsPerPage = itemsPerPage;
       this.sortBy = sortBy;
 
-
       try {
+        const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
+        const url = endpoints.cliente.datatable;
 
-          const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
+        const resposta =  await ApiService({
+            method: 'get',
+            url: `${url}/${query}`,
+        })
 
-          const resposta =  await ApiService({
-              method: 'get',
-              url: `http://api-dev.local/clientes/datatable/${query}`,
-          })
-
-          if(resposta?.data) {
-              console.log(resposta);
-              this.datatable.itens = resposta.data.data.itens;
-              this.datatable.totalRegistros = resposta.data.data.total;
-          }
+        if(resposta?.data) {
+          this.datatable.itens = resposta.data.data.itens;
+          this.datatable.totalRegistros = resposta.data.data.total;
+        }
 
       } catch (error) {
-          // if(this.permissao) {
-          //     useAlertStore().addAlert(erro.message, 'error');
-          //     return
-          // }
-            console.log(error.message);
-
-          // throw new Error(erro);
-
+        if(this.permissao) {
+          const alertStore = useAlertStore()
+          alertStore.addAlert(error.message, 'error', 3000);
+          return
+        }
+        throw error
       } finally {
         this.datatable.carregando = false;
       }
@@ -328,6 +468,14 @@ export default {
             class: item.index % 2 === 0 ? 'linhaPar' : 'linhaImpar', // Alterna classes com base no ID
         };
     },
+
+    desativaInput() {
+      if(this.datatable.itensSelecionados.length == 0) {
+        return true
+      }
+
+      return false;
+    }
   }
 }
 

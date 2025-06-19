@@ -66,20 +66,21 @@
                     <template v-else-if="estadoDoAcesso === 'falhou'">
                       <div class="d-flex align-center gap-2">
                         <span>Falhou</span>
-                        <v-icon size="small" class="ps-2">mdi-alert</v-icon>
+                        <v-icon size="small" class="ps-3">mdi-alert</v-icon>
                       </div>
                     </template>
 
                     <template v-else-if="estadoDoAcesso === 'sucesso'">
                       <div class="d-flex align-center gap-2">
                           <span>Sucesso</span>
-                          <v-icon size="small" class="ps-2">mdi-check</v-icon>
+                          <v-icon size="small" class="ps-3">mdi-check</v-icon>
                       </div>
                     </template>
 
                     <template v-else-if="estadoDoAcesso === 'novamente'">
                       <div class="d-flex align-center gap-2">
-                          <span>Tentar novamente</span>
+                          <span>Tente novamente</span>
+                          <v-icon size="small" class="ps-3">mdi-lightbulb-on</v-icon>
                       </div>
                     </template>
 
@@ -151,9 +152,9 @@ export default {
         } catch (error) {
           this.estadoDoAcesso = 'falhou'
           alertStore.addAlert(error.response?.data?.message || error.message, 'error', 3000)
-          await sleep(1000);
+          await sleep(1200);
           this.estadoDoAcesso = 'novamente'
-          await sleep(1000)
+          await sleep(1200)
           this.estadoDoAcesso = null
         } finally {
           loading.hide();

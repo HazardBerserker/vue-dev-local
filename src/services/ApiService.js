@@ -1,4 +1,6 @@
 import router from '@/router'
+import { useAlertStore } from '@/stores/alertStore';
+import { sleep } from '@/utils/sleep';
 import axios from 'axios'
 
 axios.defaults.withCredentials = true;
@@ -11,47 +13,33 @@ const ApiService = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-})
+});
+
+async function usuarioNaoAutenticado() {
+  router.push({ name: 'login' })
+  await sleep(500);
+  useAlertStore().addAlert('Não autorizado. Faça login novamente', 'warning', 4000)
+}
 
 ApiService.interceptors.response.use(
   response => response,
   error => {
     if (error.response) {
-      const status = error.response.status
+      const status = error.response.status;
 
       switch (status) {
         case 401:
-          console.error('Erro 401: Não autorizado. Faça login novamente.')
-          router.push({ name: 'login' })
-          break
+          usuarioNaoAutenticado();
+          break;
 
-        case 403:
-          console.error('Erro 403: Acesso negado. Você não tem permissão para acessar este recurso.')
-          break
-
-        case 404:
-          console.error('Erro 404: Recurso não encontrado.')
-          break
-
-        case 422:
-          console.error('Erro 422: Requisição mal formatada ou dados inválidos.')
-          break
-
-        case 500:
-          console.error('Erro 500: Erro interno no servidor. Tente novamente mais tarde.')
-          break
-
-        default:
-          console.error(`Erro ${status}: Ocorreu um erro inesperado.`)
+        // Não tratar 403, 404, 422, 500 aqui.
+        // Deixa o erro seguir para o catch do componente
       }
-    } else if (error.request) {
-      console.error('Erro de rede ou servidor não respondeu.')
-    } else {
-      console.error('Erro ao configurar a requisição:', error.message)
     }
-
-    return Promise.reject(error)
+    // Importantíssimo: Sempre propagar o erro para o catch dos componentes
+    return Promise.reject(error);
   }
-)
+);
+
 
 export default ApiService

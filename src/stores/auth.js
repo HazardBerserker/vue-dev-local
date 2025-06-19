@@ -2,9 +2,6 @@ import { defineStore } from 'pinia'
 import ApiService from '@/services/ApiService'
 import router from '@/router'
 import { useLoadingStore } from './loading'
-import { sleep } from '@/utils/sleep'
-
-
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
