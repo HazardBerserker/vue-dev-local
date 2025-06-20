@@ -31,9 +31,9 @@ ApiService.interceptors.response.use(
         case 401:
           usuarioNaoAutenticado();
           break;
-
-        // Não tratar 403, 404, 422, 500 aqui.
-        // Deixa o erro seguir para o catch do componente
+        case 419:
+          usuarioNaoAutenticado();
+          break;
       }
     }
     // Importantíssimo: Sempre propagar o erro para o catch dos componentes

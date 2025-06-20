@@ -1,4 +1,5 @@
 import { Mask } from 'maska';
+import dayjs from 'dayjs';
 
 function aplicarMascara(valor, padrao) {
   if (!valor) return '';
@@ -22,4 +23,8 @@ export function formataTelefone(telefone) {
   if (!telefone) return '';
   const padrao = telefone.length === 11 ? '(##) #####-####' : '(##) ####-####';
   return aplicarMascara(telefone, padrao);
+}
+
+export function formataData(data) {
+  return dayjs(data).format('DD/MM/YYYY HH:mm:ss');
 }

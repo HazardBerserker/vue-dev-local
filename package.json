@@ -13,6 +13,7 @@
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/js": "^7.4.47",
     "axios": "^1.9.0",
+    "dayjs": "^1.11.13",
     "js-cookie": "^3.0.5",
     "maska": "^3.1.1",
     "pinia": "^3.0.3",

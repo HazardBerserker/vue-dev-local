@@ -21,7 +21,7 @@
           :counter="counter"
           :label="label"
           :disabled="disabled"
-          :type="tipo"
+          :type="type"
           :maxLength="counter"
           :append-icon="iconeAppend"
           :prepend-icon="iconePrepend"
@@ -43,7 +43,7 @@
           :counter="counter"
           :label="label"
           :disabled="disabled"
-          :type="tipo"
+          :type="type"
           :maxLength="counter"
           :append-icon="iconeAppend"
           :prepend-icon="iconePrepend"
@@ -86,7 +86,7 @@ export default {
           type: String,
           default: ''
         },
-        tipo: {
+        type: {
           type: String,
           default: 'text'
         },

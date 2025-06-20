@@ -112,19 +112,7 @@
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
 
-          <CreateCliente  @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
-
-          <v-btn
-              color="blue-darken-3"
-              prepend-icon="mdi-pencil"
-              variant="tonal"
-              density="comfortable"
-              class="text-white"
-              rounded="pill"
-              :disabled="desativaInput()"
-          >
-              Editar
-          </v-btn>
+          <BtnCreateCliente @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <v-btn
               color="red-darken-3"
@@ -188,6 +176,9 @@
                 {{ SimENaoEnum[item.ativo] }}
               </v-chip>
             </template>
+            <template #[`item.acao`]="{ item }">
+              <BtnAtualizaCliente :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+            </template>
             <template #[`item.cep`]="{ item }">
               {{ formataCEP(item.cep) }}
             </template>
@@ -201,18 +192,21 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP } from '@/utils/masks';
+import { formataCEP, formataData } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-import CreateCliente from '@/components/Cadastros/Clientes/Embeeded/CreateCliente.vue';
+import BtnCreateCliente from '@/components/Cadastros/Clientes/Embeeded/BtnCreateCliente.vue';
+import BtnAtualizaCliente from '@/components/Cadastros/Clientes/Embeeded/BtnAtualizaCliente.vue';
+
 
 export default {
   name: 'ClientesScreen',
   components: {
     GlobalAlertFixed,
-    CreateCliente
+    BtnCreateCliente,
+    BtnAtualizaCliente
   },
   async mounted() {
     const loading = useLoadingStore();
@@ -272,6 +266,12 @@ export default {
         opcoes: {},
 
         cabecalho: [
+          {
+            title: 'Ação',
+            key: 'acao',
+            align: 'center',
+            width: '210',
+          },
           {
             title: 'ID',
             key: 'id_cliente',
@@ -459,6 +459,7 @@ export default {
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {
+        id_cliente: itemCriado.id_cliente,
         razao_social: itemCriado.razao_social,
         cnpj: itemCriado.cnpj,
         endereco: itemCriado.endereco,
@@ -469,12 +470,34 @@ export default {
         uf: itemCriado.uf,
         numero: itemCriado.numero,
         ativo: itemCriado.ativo,
-        data_criacao: itemCriado.data_criacao,
+        data_criacao: formataData(itemCriado.data_criacao),
         usuario_criacao: itemCriado.usuario_criacao,
         usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
-        data_ultima_alteracao: itemCriado.data_ultima_alteracao
+        data_ultima_alteracao: formataData(itemCriado.data_ultima_alteracao)
       }
-      this.datatable.itens.push(novoItem)
+      this.datatable.itens.unshift(novoItem)
+    },
+
+    onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
+      const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_cliente == itemAtualizado.id_cliente);
+
+      if (itemQueSeraAtualizado) {
+        itemQueSeraAtualizado.id_cliente = itemAtualizado.id_cliente
+        itemQueSeraAtualizado.razao_social = itemAtualizado.razao_social
+        itemQueSeraAtualizado.cnpj = itemAtualizado.cnpj
+        itemQueSeraAtualizado.endereco = itemAtualizado.endereco
+        itemQueSeraAtualizado.cep = itemAtualizado.cep
+        itemQueSeraAtualizado.cidade = itemAtualizado.cidade
+        itemQueSeraAtualizado.bairro = itemAtualizado.bairro
+        itemQueSeraAtualizado.pais = itemAtualizado.pais
+        itemQueSeraAtualizado.uf = itemAtualizado.uf
+        itemQueSeraAtualizado.numero = itemAtualizado.numero
+        itemQueSeraAtualizado.ativo = itemAtualizado.ativo
+        itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
+        itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
+        itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
+        itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
+      }
     },
 
     regraPintaLinha(item) {

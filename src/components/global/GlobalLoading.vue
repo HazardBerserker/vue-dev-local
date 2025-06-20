@@ -5,36 +5,37 @@
     persistent
     max-width="400"
   >
-    <v-list
-      class="py-2"
-      color="primary"
-      elevation="12"
-      rounded="lg"
-    >
-      <v-list-item
-        :title="loading.message"
+    <v-card class="rounded-xl">
+      <v-list
+        class="py-2"
+        color="primary"
+        elevation="12"
+        rounded="lg"
       >
-        <template v-slot:prepend>
-          <div class="pe-4">
-            <v-img
-              width="120"
-              src="/logo/cropped-LOGOSEMFUNDO-150x50.png"
-              alt="Logo Neveah"
-              class="me-3">
-            </v-img>
-          </div>
-        </template>
-
-        <template v-slot:append>
-          <v-progress-circular
-            color="primary"
-            indeterminate="disable-shrink"
-            size="16"
-            width="2"
-          ></v-progress-circular>
-        </template>
-      </v-list-item>
-    </v-list>
+        <v-list-item
+          :title="loading.message"
+        >
+          <template v-slot:prepend>
+            <div class="pe-4">
+              <v-img
+                width="120"
+                src="/logo/cropped-LOGOSEMFUNDO-150x50.png"
+                alt="Logo Neveah"
+                class="me-3">
+              </v-img>
+            </div>
+          </template>
+          <template v-slot:append>
+            <v-progress-circular
+              color="primary"
+              indeterminate="disable-shrink"
+              size="16"
+              width="2"
+            ></v-progress-circular>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-card>
   </v-dialog>
 </template>
 

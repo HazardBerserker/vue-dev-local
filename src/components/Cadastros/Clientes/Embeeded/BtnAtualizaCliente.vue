@@ -1,20 +1,20 @@
 <template>
   <div>
     <v-btn
-      color="green-darken-2"
-      prepend-icon="mdi-plus"
+      color="blue-darken-3"
+      prepend-icon="mdi-pencil"
       variant="tonal"
       density="comfortable"
       class="text-white"
       rounded="pill"
       @click="openDialog"
     >
-      Criar cliente
+      Editar
     </v-btn>
 
-    <DialogCreateCadastro ref="dialogCreate" :max-width="900">
+    <DialogCreateCadastro ref="dialogAtualiza" :max-width="900">
       <template #title>
-        Criar Cliente
+        Atualizar Cliente
       </template>
 
       <template #subtitle>
@@ -58,14 +58,7 @@
             </v-row>
             <v-row class="mb-3">
               <v-col cols="6" class="py-0">
-                <v-text-field
-                  v-model="numero"
-                  variant="outlined"
-                  label="Número"
-                  density="comfortable"
-                  :rules="regraNumero"
-                  clearable
-                />
+                <InputText label="Número" v-model="numero" :rules="regraNumero" type="number"/>
               </v-col>
               <v-col cols="6" class="py-0">
                 <v-select
@@ -86,7 +79,7 @@
       </v-form>
 
       <template #action-button>
-        <v-btn variant="flat" color="green" rounded="pill" @click="criaCliente">Criar Cliente</v-btn>
+        <v-btn variant="flat" color="blue-darken-3" rounded="pill" @click="atualizaCliente">Atualizar</v-btn>
       </template>
     </DialogCreateCadastro>
   </div>
@@ -104,10 +97,16 @@ import { useLoadingStore } from '@/stores/loading';
 // import ApiService from '@/services/ApiService.js';
 
 export default {
-    name: 'BtnClienteCreate',
+    name: 'BtnAtualizaCliente',
     components: {
       DialogCreateCadastro,
       InputText
+    },
+    props: {
+      item: {
+        type: Object,
+        required: true
+      },
     },
     data() {
       return {
@@ -120,7 +119,7 @@ export default {
         pais: null,
         uf: null,
         numero: null,
-        ativo: 1,
+        ativo: null,
         opcaoAtivo:[
           { valor: 1, descricao: 'Sim' },
           { valor: 0, descricao: 'Não' }
@@ -159,10 +158,21 @@ export default {
     },
     methods: {
         closeDialog() {
-          this.$refs.dialogCreate.onCloseDialog();
+          this.$refs.dialogAtualiza.onCloseDialog();
         },
         openDialog() {
-          this.$refs.dialogCreate.onOpenDialog();
+          this.$refs.dialogAtualiza.onOpenDialog();
+
+          this.razao_social = this.item.razao_social
+          this.cnpj = this.item.cnpj
+          this.endereco = this.item.endereco
+          this.cep = this.item.cep
+          this.cidade = this.item.cidade
+          this.bairro = this.item.bairro
+          this.pais = this.item.pais
+          this.uf = this.item.uf
+          this.numero = this.item.numero
+          this.ativo = this.item.ativo
         },
         validateForm() {
           return this.$refs.form.validate();
@@ -190,11 +200,11 @@ export default {
             pais: this.pais,
             uf: this.uf,
             numero: this.numero,
-            ativo: 1
+            ativo: this.ativo
           }
           return dadosParaEnvio
         },
-        async criaCliente() {
+        async atualizaCliente() {
 
           const alertStore = useAlertStore()
           const loading = useLoadingStore()
@@ -202,18 +212,16 @@ export default {
           const formValidado = await this.validateForm();
 
           if(!formValidado.valid) {
-              return;
+            return;
           }
 
           const dadosParaEnvio = this.formataDadosParaEnvio();
-          const url = endpoints.cliente.novo;
-
-          console.log(dadosParaEnvio)
+          const url = `${endpoints.cliente.atualiza}/${this.item.id_cliente}`;
 
           try {
-            loading.show('Criando Cliente...')
+            loading.show('Atualizando Cliente...')
             const resposta =  await ApiService({
-              method: 'post',
+              method: 'put',
               url: url,
               data: dadosParaEnvio
             });
@@ -222,10 +230,9 @@ export default {
 
             this.limpaCampos()
             this.closeDialog()
-            console.log(resposta);
 
-            const itemCriado = resposta?.data?.data
-            this.$emit('acrescentaODadoNoArrayLocalmente', itemCriado)
+            const itemAtualizado = resposta?.data?.data
+            this.$emit('atualizaODadoNoArrayLocalmente', itemAtualizado)
           } catch (erro) {
             alertStore.addAlert(erro.response?.data?.message, 'error')
           } finally {
