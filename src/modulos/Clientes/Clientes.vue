@@ -111,16 +111,8 @@
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
-          <v-btn
-              color="green-darken-2"
-              prepend-icon="mdi-plus"
-              variant="tonal"
-              density="comfortable"
-              class="text-white"
-              rounded="pill"
-          >
-              Criar cliente
-          </v-btn>
+
+          <CreateCliente  @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <v-btn
               color="blue-darken-3"
@@ -197,7 +189,7 @@
               </v-chip>
             </template>
             <template #[`item.cep`]="{ item }">
-              {{ formataCep(item.cep) }}
+              {{ formataCEP(item.cep) }}
             </template>
           </v-data-table-server>
         </v-card>
@@ -209,16 +201,18 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCep } from '@/utils/formataCep';
+import { formataCEP } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
+import CreateCliente from '@/components/Cadastros/Clientes/Embeeded/CreateCliente.vue';
 
 export default {
   name: 'ClientesScreen',
   components: {
-    GlobalAlertFixed
+    GlobalAlertFixed,
+    CreateCliente
   },
   async mounted() {
     const loading = useLoadingStore();
@@ -238,7 +232,7 @@ export default {
   },
   data () {
     return {
-      formataCep,
+      formataCEP,
       SimENaoEnumDescricao,
       SimENaoEnum,
       permissao: false,
@@ -461,6 +455,26 @@ export default {
       } finally {
         this.datatable.carregando = false;
       }
+    },
+
+    onAcrescentaODadoNoArrayLocalmente(itemCriado) {
+      const novoItem = {
+        razao_social: itemCriado.razao_social,
+        cnpj: itemCriado.cnpj,
+        endereco: itemCriado.endereco,
+        cep: itemCriado.cep,
+        cidade: itemCriado.cidade,
+        bairro: itemCriado.bairro,
+        pais: itemCriado.pais,
+        uf: itemCriado.uf,
+        numero: itemCriado.numero,
+        ativo: itemCriado.ativo,
+        data_criacao: itemCriado.data_criacao,
+        usuario_criacao: itemCriado.usuario_criacao,
+        usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
+        data_ultima_alteracao: itemCriado.data_ultima_alteracao
+      }
+      this.datatable.itens.push(novoItem)
     },
 
     regraPintaLinha(item) {

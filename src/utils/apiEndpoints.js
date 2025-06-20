@@ -3,9 +3,9 @@ import { URL_BASE } from '@/config/urlBase';
 export const endpoints = {
   cliente: {
     datatable: `${URL_BASE}/clientes/datatable`,
-    novo: `${URL_BASE}/clientes/novo`,
-    atualiza: `${URL_BASE}/clientes/atualiza`,
-    detalhe: `${URL_BASE}/clientes/detalhe`,
+    novo: `${URL_BASE}/clientes`,
+    atualiza: `${URL_BASE}/clientes`,
+    apaga: `${URL_BASE}/clientes`,
   },
   usuario: {
     lista: `${URL_BASE}/usuario`,
