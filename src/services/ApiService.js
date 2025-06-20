@@ -18,7 +18,7 @@ const ApiService = axios.create({
 async function usuarioNaoAutenticado() {
   router.push({ name: 'login' })
   await sleep(500);
-  useAlertStore().addAlert('Não autorizado. Faça login novamente', 'warning', 4000)
+  useAlertStore().addAlert('Não autenticado. Faça login novamente', 'warning', 4000)
 }
 
 ApiService.interceptors.response.use(

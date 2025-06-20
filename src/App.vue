@@ -1,10 +1,10 @@
 
 <template>
-    <router-view v-slot="{ Component }">
-      <v-fade-transition>
-        <component :is="Component"></component>
-      </v-fade-transition>
-    </router-view>
+  <router-view v-slot="{ Component }">
+    <v-fade-transition>
+      <component :is="Component"></component>
+    </v-fade-transition>
+  </router-view>
   <GlobalLoading />
   <GlobalAlert />
 </template>

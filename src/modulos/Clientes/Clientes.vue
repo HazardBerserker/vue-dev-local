@@ -114,7 +114,7 @@
 
           <BtnCreateCliente @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
-          <v-btn
+          <!-- <v-btn
               color="red-darken-3"
               prepend-icon="mdi-delete"
               variant="tonal"
@@ -122,9 +122,10 @@
               class="text-white"
               rounded="pill"
               :disabled="desativaInput()"
+              @click="desativaCliente"
           >
               Excluir
-          </v-btn>
+          </v-btn> -->
 
           <v-btn
               color="teal-darken-2"
@@ -200,13 +201,12 @@ import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateCliente from '@/components/Cadastros/Clientes/Embeeded/BtnCreateCliente.vue';
 import BtnAtualizaCliente from '@/components/Cadastros/Clientes/Embeeded/BtnAtualizaCliente.vue';
 
-
 export default {
   name: 'ClientesScreen',
   components: {
     GlobalAlertFixed,
     BtnCreateCliente,
-    BtnAtualizaCliente
+    BtnAtualizaCliente,
   },
   async mounted() {
     const loading = useLoadingStore();
@@ -457,6 +457,57 @@ export default {
       }
     },
 
+    // async desativaCliente() {
+    //   const mensagem = this.datatable.itensSelecionados.length === 1
+    //     ? `Deseja realmente desativar o Cliente de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
+    //     : `Deseja realmente desativar os <strong>${this.itensSelecionados.length}</strong> Clientes selecionados ?`
+
+    //   const confirmado = await this.$refs.dialogRef.open({
+    //     title: `Desativar cliente(s)`,
+    //     message: mensagem,
+    //     titleColor: 'error'
+    //   })
+
+    //   if(!confirmado) {
+    //     return
+    //   }
+
+    //   const alertStore = useAlertStore()
+
+    //   const requisicoesDeletar = this.itensSelecionados.map(async idSelecionado => {
+    //     const item = this.items.find(item => item.id_cliente == idSelecionado);
+
+    //     if (!item) {
+    //       alertStore.addAlert(`ID ${idSelecionado} não encontrado para excluir`, 'error');
+    //       return Promise.resolve(); // Evita que o Promise.all falhe com esse
+    //     }
+
+    //     const url = `${endpoints.cliente.apaga}/${this.item.id_cliente}`;
+
+    //     const resposta = await ApiService({
+    //       method: 'delete',
+    //       url: url,
+    //     });
+
+    //     return resposta;
+    //   });
+
+    //   try {
+    //       await Promise.all(requisicoesDeletar);
+
+    //       alertStore.addAlert(
+    //           `${this.itensSelecionados.length} Cliente(s) desativado(s) com sucesso.`,
+    //           'success'
+    //       );
+
+    //       this.apagarDadosDoArrayLocalmente();
+    //       this.itensSelecionados = [];
+
+    //   } catch (error) {
+    //       alertStore.addAlert(`Erro ao desativar Cliente(s): ${error?.response?.data?.message}`, 'error');
+    //   }
+    // },
+
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {
         id_cliente: itemCriado.id_cliente,
@@ -500,6 +551,13 @@ export default {
       }
     },
 
+    // apagarDadosDoArrayLocalmente() {
+    //   const arrayFiltrado = this.items.filter(item => {
+    //       return !this.datatable.itensSelecionados.includes(item.id_cliente);
+    //   })
+    //   this.datatable.itens = arrayFiltrado
+    // },
+
     regraPintaLinha(item) {
         return {
             class: item.index % 2 === 0 ? 'linhaPar' : 'linhaImpar', // Alterna classes com base no ID
@@ -510,7 +568,6 @@ export default {
       if(this.datatable.itensSelecionados.length == 0) {
         return true
       }
-
       return false;
     }
   }
