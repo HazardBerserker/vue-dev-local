@@ -141,7 +141,7 @@
 
     </div>
 
-    <v-row v-if="permissao">
+    <v-row v-show="permissao">
       <v-col cols="12" class="text-right">
         <v-card rounded="lg" elevation="3">
           <v-data-table-server
@@ -207,22 +207,6 @@ export default {
     GlobalAlertFixed,
     BtnCreateCliente,
     BtnAtualizaCliente,
-  },
-  async mounted() {
-    const loading = useLoadingStore();
-    try {
-      loading.show('Carregando Clientes...')
-      await this.buscaCliente()
-      this.permissao = true
-    } catch (error) {
-      this.propriedadesDoAlertaFixo = {
-        type: 'error',
-        text: error?.response?.data?.message,
-        title: `Módulo inacessível (${error.status})`
-      }
-    } finally {
-      loading.hide();
-    }
   },
   data () {
     return {
@@ -419,6 +403,10 @@ export default {
 
     async buscaCliente( options = {} ) {
       this.datatable.carregando = true;
+      if(!this.permissao) {
+        const loading = useLoadingStore()
+        loading.show('Carregando Clientes...')
+      }
       this.datatable.itensSelecionados = [];
 
       const {
@@ -440,6 +428,8 @@ export default {
             url: `${url}/${query}`,
         })
 
+        this.permissao = true
+
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
@@ -451,9 +441,15 @@ export default {
           alertStore.addAlert(error.message, 'error', 3000);
           return
         }
-        throw error
+        this.propriedadesDoAlertaFixo = {
+          type: 'error',
+          text: error?.response?.data?.message,
+          title: `Módulo inacessível (${error.status})`
+        }
       } finally {
         this.datatable.carregando = false;
+        const loading = useLoadingStore()
+        loading.hide()
       }
     },
 
