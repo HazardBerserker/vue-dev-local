@@ -128,12 +128,13 @@
           </v-btn> -->
 
           <v-btn
-              color="teal-darken-2"
-              prepend-icon="mdi-file-export"
-              variant="tonal"
-              density="comfortable"
-              class="text-white"
-              rounded="pill"
+            color="teal-darken-2"
+            prepend-icon="mdi-file-export"
+            variant="tonal"
+            density="comfortable"
+            class="text-white"
+            rounded="pill"
+            @click="exportarExcel"
           >
               Exportar
           </v-btn>
@@ -183,6 +184,9 @@
             <template #[`item.cep`]="{ item }">
               {{ formataCEP(item.cep) }}
             </template>
+            <template #[`item.cnpj`]="{ item }">
+              {{ formataCNPJ(item.cnpj) }}
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
@@ -193,13 +197,15 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData } from '@/utils/masks';
+import { formataCEP, formataData, formataCNPJ } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateCliente from '@/components/Cadastros/Clientes/Embeeded/BtnCreateCliente.vue';
 import BtnAtualizaCliente from '@/components/Cadastros/Clientes/Embeeded/BtnAtualizaCliente.vue';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default {
   name: 'ClientesScreen',
@@ -227,6 +233,7 @@ export default {
   data () {
     return {
       formataCEP,
+      formataCNPJ,
       SimENaoEnumDescricao,
       SimENaoEnum,
       permissao: false,
@@ -307,6 +314,12 @@ export default {
             cellProps: {
               class: 'text-start'
             },
+          },
+          {
+            title: 'CNPJ',
+            key: 'cnpj',
+            width: '300',
+            align:'center',
           },
           {
             title: 'Endereço',
@@ -584,6 +597,40 @@ export default {
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
         itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
       }
+    },
+
+    async exportarExcel() {
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Clientes');
+
+      // Adicionando cabeçalhos
+      worksheet.columns = [
+      { header: 'ID', key: 'id_cliente', width: 15 },
+      { header: 'Ativo', key: 'ativo', width: 15 },
+      { header: 'Razão Social', key: 'razao_social', width: 40 },
+      { header: 'CNPJ', key: 'cnpj', width: 40 },
+      { header: 'Endereço', key: 'endereco', width: 40 },
+      { header: 'Cep', key: 'cep', width: 30 },
+      { header: 'Cidade', key: 'cidade', width: 25 },
+      { header: 'Bairro', key: 'bairro', width: 30 },
+      { header: 'Número', key: 'numero', width: 25 },
+      { header: 'País', key: 'pais', width: 30 },
+      { header: 'UF', key: 'uf', width: 10 },
+      { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
+      { header: 'Data Criação', key: 'data_criacao', width: 25 },
+      { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
+      { header: 'Data Última Alteração', key: 'data_ultima_alteracao', width: 25 }
+    ];
+
+      // Adicionando os dados
+      this.datatable.itens.forEach(item => worksheet.addRow(item));
+
+      // Gerando o arquivo
+      const buffer = await workbook.xlsx.writeBuffer();
+
+      // Salvando
+      saveAs(new Blob([buffer]), 'clientes.xlsx');
     },
 
     // apagarDadosDoArrayLocalmente() {
