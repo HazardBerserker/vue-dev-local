@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import Login from '@/modulos/Login/Login.vue'
 import AuthLayout from '@/modulos/Layout/AuthLayout.vue'
 import Clientes from '@/modulos/Clientes/Clientes.vue'
+import Motoristas from '@/modulos/Motoristas/Motoristas.vue'
 
 AuthLayout
 
@@ -22,11 +23,11 @@ const routes = [
         name: 'Cliente',
         component: Clientes
       },
-      // {
-      //   path: 'cadastros/cliente',
-      //   name: 'Teste2',
-      //   component: Teste2
-      // },
+      {
+        path: 'cadastros/motoristas',
+        name: 'Motorista',
+        component: Motoristas
+      },
       // // {
       //   path:
       //   'profile',

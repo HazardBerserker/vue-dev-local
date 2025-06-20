@@ -8,8 +8,10 @@ export const endpoints = {
     apaga: `${URL_BASE}/clientes`,
     buscaClienteNaApiDoGoverno: `${URL_BASE}/clientes/busca-cliente-pelo-cnpj-na-api-do-governo`,
   },
-  usuario: {
-    lista: `${URL_BASE}/usuario`,
-    novo: `${URL_BASE}/usuario/novo`,
+  motorista: {
+    datatable: `${URL_BASE}/motoristas/datatable`,
+    novo: `${URL_BASE}/motoristas`,
+    atualiza: `${URL_BASE}/motoristas`,
+    apaga: `${URL_BASE}/motoristas`,
   },
 };

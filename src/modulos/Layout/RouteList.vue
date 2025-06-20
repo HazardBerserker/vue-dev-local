@@ -93,7 +93,7 @@ export default {
             },
             {
                 nome: 'Motoristas',
-                caminho: '',
+                caminho: '/cadastros/motoristas',
                 icone: 'mdi-card-account-details-outline'
             }
           ],

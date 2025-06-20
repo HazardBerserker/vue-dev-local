@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialogIsOpen" :max-width="maxWidth">
+    <v-dialog v-model="dialogIsOpen" :max-width="maxWidth" persistent>
       <v-card class="rounded-xl">
         <v-card-title class="d-flex justify-space-between align-center">
             <div class="text-h6 text-medium-emphasis ps-2">

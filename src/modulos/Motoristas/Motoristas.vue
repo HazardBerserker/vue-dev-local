@@ -1,6 +1,6 @@
 <template>
    <div>
-    <v-breadcrumbs :items="['Cadastros', 'Clientes']" class="mb-6"></v-breadcrumbs>
+    <v-breadcrumbs :items="['Cadastros', 'Motoristas']" class="mb-6"></v-breadcrumbs>
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
@@ -39,7 +39,7 @@
             color="blue-darken-3"
             variant="flat"
             class="text-white fill-height"
-            @click="buscaCliente"
+            @click="buscaMotorista"
             rounded="pill"
           >
             <v-icon>
@@ -54,7 +54,7 @@
 
       <!-- KPIs -->
       <div class="d-flex ga-2 my-auto">
-        <!-- Clientes Ativos -->
+        <!-- Motoristas Ativos -->
         <v-card
           width="250"
           class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
@@ -64,12 +64,12 @@
                 <v-icon>mdi-account</v-icon>
             </v-avatar>
             <div class="d-flex flex-column">
-                <span class="text-body-2 text-white">Clientes Ativos</span>
+                <span class="text-body-2 text-white">Motoristas Ativos</span>
                 <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
                     <v-fade-transition mode="out-in">
                         <span v-if="!datatable.carregando">
                         <strong :key="'inativos'">
-                          {{ numeroDeClientesAtivos() }}
+                          {{ numeroDeMotoristasAtivos() }}
                         </strong>
                       </span>
                         <span v-else>
@@ -80,7 +80,7 @@
             </div>
         </v-card>
 
-        <!-- Clientes Inativos -->
+        <!-- Motoristas Inativos -->
         <v-card
             width="250"
             class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
@@ -90,12 +90,12 @@
                 <v-icon>mdi-account-off</v-icon>
             </v-avatar>
             <div class="d-flex flex-column justify-center">
-              <span class="text-body-2 text-white">Clientes Inativos</span>
+              <span class="text-body-2 text-white">Motoristas Inativos</span>
                 <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4" loading="true">
                     <v-fade-transition mode="out-in">
                       <span v-if="!datatable.carregando">
                         <strong :key="'inativos'">
-                          {{ numeroDeClientesInativos() }}
+                          {{ numeroDeMotoristasInativos() }}
                         </strong>
                       </span>
                       <span v-else>
@@ -112,7 +112,7 @@
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
 
-          <BtnCreateCliente @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
+          <BtnCreateMotorista @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <!-- <v-btn
               color="red-darken-3"
@@ -122,7 +122,7 @@
               class="text-white"
               rounded="pill"
               :disabled="desativaInput()"
-              @click="desativaCliente"
+              @click="desativaMotorista"
           >
               Excluir
           </v-btn> -->
@@ -164,10 +164,10 @@
             multi-sort
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
-            @update:options="buscaCliente"
+            @update:options="buscaMotorista"
             height="56vh"
             density="comfortable"
-            no-data-text="Nenhum Cliente encontrado, tente alterar o(s) filtro(s)"
+            no-data-text="Nenhum Motorista encontrado, tente alterar o(s) filtro(s)"
           >
             <template #[`item.ativo`]="{ item }">
               <v-chip
@@ -180,13 +180,16 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaCliente :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+              <BtnAtualizaMotorista :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
-            <template #[`item.cep`]="{ item }">
-              {{ formataCEP(item.cep) }}
+            <template #[`item.cep_residencia`]="{ item }">
+              {{ formataCEP(item.cep_residencia) }}
             </template>
-            <template #[`item.cnpj`]="{ item }">
-              {{ formataCNPJ(item.cnpj) }}
+            <template #[`item.cpf`]="{ item }">
+              {{ formataCPF(item.cpf) }}
+            </template>
+            <template #[`item.telefone`]="{ item }">
+              {{ formataTelefone(item.telefone) }}
             </template>
           </v-data-table-server>
         </v-card>
@@ -198,28 +201,28 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData, formataCNPJ } from '@/utils/masks';
+import { formataCEP, formataData, formataCPF, formataTelefone } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-import BtnCreateCliente from '@/components/Cadastros/Clientes/Embeeded/BtnCreateCliente.vue';
-import BtnAtualizaCliente from '@/components/Cadastros/Clientes/Embeeded/BtnAtualizaCliente.vue';
+import BtnCreateMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnCreateMotorista.vue';
+import BtnAtualizaMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnAtualizaMotorista.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 export default {
-  name: 'ClientesScreen',
+  name: 'MotoristasScreen',
   components: {
     GlobalAlertFixed,
-    BtnCreateCliente,
-    BtnAtualizaCliente,
+    BtnCreateMotorista,
+    BtnAtualizaMotorista,
   },
   async mounted() {
     const loading = useLoadingStore();
     try {
-      loading.show('Carregando Clientes...')
-      // await this.buscaCliente()
+      loading.show('Carregando Motoristas...')
+      // await this.buscaMotorista()
       this.permissao = true
     } catch (error) {
       this.propriedadesDoAlertaFixo = {
@@ -234,7 +237,8 @@ export default {
   data () {
     return {
       formataCEP,
-      formataCNPJ,
+      formataCPF,
+      formataTelefone,
       SimENaoEnumDescricao,
       SimENaoEnum,
       permissao: false,
@@ -244,16 +248,17 @@ export default {
       },
       busca_geral: null,
       filtrosDaBuscaGeral: {
-        id_cliente: null,
-        razao_social: null,
-        cnpj: null,
-        endereco: null,
-        cep: null,
-        cidade: null,
-        bairro: null,
-        pais: null,
-        uf: null,
-        numero: null,
+        id_motorista: null,
+        nome_completo: null,
+        cpf: null,
+        telefone: null,
+        placa_carro: null,
+        placa_carreta: null,
+        tipo_veiculo: null,
+        pix: null,
+        uf_residencia: null,
+        cidade_residencia: null,
+        cep_residencia: null,
         usuario_criacao: null,
         usuario_ultima_alteracao: null,
       },
@@ -271,7 +276,7 @@ export default {
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
-        chave_primaria: 'id_cliente',
+        chave_primaria: 'id_motorista',
         itens: [],
         itens_por_pagina: [
             {value: 50, title: '50'},
@@ -283,7 +288,7 @@ export default {
         ultima_pagina: 0,
         pagina_atual: 1,
         por_pagina: 50,
-        ordenarPor: [{key: 'id_cliente', order: 'desc'}],
+        ordenarPor: [{key: 'id_motorista', order: 'desc'}],
         ordenarDirecao: true,
         opcoes: {},
 
@@ -296,7 +301,7 @@ export default {
           },
           {
             title: 'ID',
-            key: 'id_cliente',
+            key: 'id_motorista',
             align: 'center',
             width: '150',
           },
@@ -307,73 +312,70 @@ export default {
             width: '150',
           },
           {
-            title: 'Razão Social',
-            key: 'razao_social',
-            width: '400',
+            title: 'Nome Completo',
+            key: 'nome_completo',
             align:'start',
             cellProps: {
               class: 'text-start'
             },
+            width: '350',
           },
           {
-            title: 'CNPJ',
-            key: 'cnpj',
+            title: 'CPF',
+            key: 'cpf',
             width: '300',
             align:'center',
           },
           {
-            title: 'Endereço',
-            key: 'endereco',
-            align:'start',
-            cellProps: {
-              class: 'text-start'
-            },
-            width: '400'
+            title: 'Telefone',
+            key: 'telefone',
+            align: 'center',
+            width: '150'
           },
           {
-            title: 'Cep',
-            key: 'cep',
+            title: 'Placa Carro',
+            key: 'placa_carro',
             align: 'center',
             width: '300'
           },
           {
-            title: 'Cidade',
-            key: 'cidade',
-            width: '250',
-            align:'start',
-            cellProps: {
-              class: 'text-start'
-            }
+            title: 'Placa Carreta',
+            key: 'placa_carreta',
+            align: 'center',
+            width: '300'
           },
           {
-            title: 'Bairro',
-            key: 'bairro',
-            width: '300',
-            align:'start',
+            title: 'Tipo Veículo',
+            key: 'tipo_veiculo',
+            align: 'start',
             cellProps: {
               class: 'text-start'
             },
+            width: '300'
           },
           {
-            title: 'Número',
-            key: 'numero',
+            title: 'Pix',
+            key: 'pix',
+            align: 'center',
+            width: '300'
+          },
+          {
+            title: 'UF Residência',
+            key: 'uf_residencia',
             width: '250',
             align: 'center'
           },
           {
-            title: 'País',
-            key: 'pais',
-            width: '300',
-            align:'start',
-            cellProps: {
-              class: 'text-start'
-            },
+            title: 'Cidade Residência',
+            key: 'cidade_residencia',
+            width: '250',
+            align: 'center'
           },
           {
-            title: 'UF',
-            key: 'uf',
-            width: '100',
-            align: 'center'
+            title: 'CEP Residência',
+            key: 'cep_residencia',
+            width: '250',
+            align:'center',
           },
           {
             title: 'Usuário Criação',
@@ -448,28 +450,28 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeClientesInativos() {
+    numeroDeMotoristasInativos() {
       const itensAtivos = this.datatable.itens.filter(item => {
         return item.ativo == SimENaoEnumDescricao.NAO
       })
       return itensAtivos.length
     },
 
-    numeroDeClientesAtivos() {
+    numeroDeMotoristasAtivos() {
       const itensAtivos = this.datatable.itens.filter(item => {
         return item.ativo == SimENaoEnumDescricao.SIM
       })
       return itensAtivos.length
     },
 
-    async buscaCliente( options = {} ) {
+    async buscaMotorista( options = {} ) {
       this.datatable.carregando = true;
       this.datatable.itensSelecionados = [];
 
       const {
           page = this.page || 1,
           itemsPerPage = this.itemsPerPage || 50,
-          sortBy = this.sortBy || [{ key: 'id_cliente', order: 'desc' }]
+          sortBy = this.sortBy || [{ key: 'id_motorista', order: 'desc' }]
       } = options;
 
       this.page = page;
@@ -481,7 +483,7 @@ export default {
 
         console.log(query);
 
-        const url = endpoints.cliente.datatable;
+        const url = endpoints.motorista.datatable;
 
         const resposta =  await ApiService({
             method: 'get',
@@ -505,13 +507,13 @@ export default {
       }
     },
 
-    // async desativaCliente() {
+    // async desativaMotorista() {
     //   const mensagem = this.datatable.itensSelecionados.length === 1
-    //     ? `Deseja realmente desativar o Cliente de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
-    //     : `Deseja realmente desativar os <strong>${this.itensSelecionados.length}</strong> Clientes selecionados ?`
+    //     ? `Deseja realmente desativar o Motorista de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
+    //     : `Deseja realmente desativar os <strong>${this.itensSelecionados.length}</strong> Motoristas selecionados ?`
 
     //   const confirmado = await this.$refs.dialogRef.open({
-    //     title: `Desativar cliente(s)`,
+    //     title: `Desativar motorista(s)`,
     //     message: mensagem,
     //     titleColor: 'error'
     //   })
@@ -523,14 +525,14 @@ export default {
     //   const alertStore = useAlertStore()
 
     //   const requisicoesDeletar = this.itensSelecionados.map(async idSelecionado => {
-    //     const item = this.items.find(item => item.id_cliente == idSelecionado);
+    //     const item = this.items.find(item => item.id_motorista == idSelecionado);
 
     //     if (!item) {
     //       alertStore.addAlert(`ID ${idSelecionado} não encontrado para excluir`, 'error');
     //       return Promise.resolve(); // Evita que o Promise.all falhe com esse
     //     }
 
-    //     const url = `${endpoints.cliente.apaga}/${this.item.id_cliente}`;
+    //     const url = `${endpoints.motorista.apaga}/${this.item.id_motorista}`;
 
     //     const resposta = await ApiService({
     //       method: 'delete',
@@ -544,7 +546,7 @@ export default {
     //       await Promise.all(requisicoesDeletar);
 
     //       alertStore.addAlert(
-    //           `${this.itensSelecionados.length} Cliente(s) desativado(s) com sucesso.`,
+    //           `${this.itensSelecionados.length} Motorista(s) desativado(s) com sucesso.`,
     //           'success'
     //       );
 
@@ -552,22 +554,23 @@ export default {
     //       this.itensSelecionados = [];
 
     //   } catch (error) {
-    //       alertStore.addAlert(`Erro ao desativar Cliente(s): ${error?.response?.data?.message}`, 'error');
+    //       alertStore.addAlert(`Erro ao desativar Motorista(s): ${error?.response?.data?.message}`, 'error');
     //   }
     // },
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {
-        id_cliente: itemCriado.id_cliente,
-        razao_social: itemCriado.razao_social,
-        cnpj: itemCriado.cnpj,
-        endereco: itemCriado.endereco,
-        cep: itemCriado.cep,
-        cidade: itemCriado.cidade,
-        bairro: itemCriado.bairro,
-        pais: itemCriado.pais,
-        uf: itemCriado.uf,
-        numero: itemCriado.numero,
+        id_motorista: itemCriado.id_motorista,
+        nome_completo: itemCriado.nome_completo,
+        cpf: itemCriado.cpf,
+        telefone: itemCriado.telefone,
+        placa_carro: itemCriado.placa_carro,
+        placa_carreta: itemCriado.placa_carreta,
+        tipo_veiculo: itemCriado.tipo_veiculo,
+        pix: itemCriado.pix,
+        uf_residencia: itemCriado.uf_residencia,
+        cidade_residencia: itemCriado.cidade_residencia,
+        cep_residencia: itemCriado.cep_residencia,
         ativo: itemCriado.ativo,
         data_criacao: formataData(itemCriado.data_criacao),
         usuario_criacao: itemCriado.usuario_criacao,
@@ -578,19 +581,20 @@ export default {
     },
 
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
-      const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_cliente == itemAtualizado.id_cliente);
+      const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_motorista == itemAtualizado.id_motorista);
 
       if (itemQueSeraAtualizado) {
-        itemQueSeraAtualizado.id_cliente = itemAtualizado.id_cliente
-        itemQueSeraAtualizado.razao_social = itemAtualizado.razao_social
-        itemQueSeraAtualizado.cnpj = itemAtualizado.cnpj
-        itemQueSeraAtualizado.endereco = itemAtualizado.endereco
-        itemQueSeraAtualizado.cep = itemAtualizado.cep
-        itemQueSeraAtualizado.cidade = itemAtualizado.cidade
-        itemQueSeraAtualizado.bairro = itemAtualizado.bairro
-        itemQueSeraAtualizado.pais = itemAtualizado.pais
-        itemQueSeraAtualizado.uf = itemAtualizado.uf
-        itemQueSeraAtualizado.numero = itemAtualizado.numero
+        itemQueSeraAtualizado.id_motorista = itemAtualizado.id_motorista
+        itemQueSeraAtualizado.nome_completo = itemAtualizado.nome_completo
+        itemQueSeraAtualizado.cpf = itemAtualizado.cpf
+        itemQueSeraAtualizado.telefone = itemAtualizado.telefone
+        itemQueSeraAtualizado.placa_carro = itemAtualizado.placa_carro
+        itemQueSeraAtualizado.placa_carreta = itemAtualizado.placa_carreta
+        itemQueSeraAtualizado.tipo_veiculo = itemAtualizado.tipo_veiculo
+        itemQueSeraAtualizado.pix = itemAtualizado.pix
+        itemQueSeraAtualizado.uf_residencia = itemAtualizado.uf_residencia
+        itemQueSeraAtualizado.cidade_residencia = itemAtualizado.cidade_residencia
+        itemQueSeraAtualizado.cep_residencia = itemAtualizado.cep_residencia
         itemQueSeraAtualizado.ativo = itemAtualizado.ativo
         itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
@@ -602,7 +606,7 @@ export default {
     async exportarExcel() {
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Clientes');
+      const worksheet = workbook.addWorksheet('Motoristas');
 
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,
@@ -611,17 +615,20 @@ export default {
 
       // Adicionando cabeçalhos
       worksheet.columns = [
-      { header: 'ID', key: 'id_cliente', width: 15 },
+      { header: 'ID', key: 'id_motorista', width: 15 },
       { header: 'Ativo', key: 'ativo', width: 15 },
-      { header: 'Razão Social', key: 'razao_social', width: 40 },
-      { header: 'CNPJ', key: 'cnpj', width: 40 },
-      { header: 'Endereço', key: 'endereco', width: 40 },
-      { header: 'Cep', key: 'cep', width: 30 },
-      { header: 'Cidade', key: 'cidade', width: 25 },
-      { header: 'Bairro', key: 'bairro', width: 30 },
+      { header: 'Nome Completo', key: 'nome_completo', width: 15 },
+      { header: 'cpf', key: 'cpf', width: 40 },
+      { header: 'telefone', key: 'telefone', width: 40 },
+      { header: 'Placa Carro', key: 'placa_carro', width: 40 },
+      { header: 'Placa Carreta', key: 'placa_carreta', width: 30 },
+      { header: 'Tipo Veiculo', key: 'tipo_veiculo', width: 25 },
+      { header: 'Pix', key: 'pix', width: 30 },
       { header: 'Número', key: 'numero', width: 25 },
       { header: 'País', key: 'pais', width: 30 },
-      { header: 'UF', key: 'uf', width: 10 },
+      { header: 'UF Residência', key: 'uf_residencia', width: 10 },
+      { header: 'Cidade Residência', key: 'cidade_residencia', width: 30 },
+      { header: 'CEP Residência', key: 'cep_residencia', width: 30 },
       { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
       { header: 'Data Criação', key: 'data_criacao', width: 25 },
       { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
@@ -635,12 +642,12 @@ export default {
       const buffer = await workbook.xlsx.writeBuffer();
 
       // Salvando
-      saveAs(new Blob([buffer]), 'clientes.xlsx');
+      saveAs(new Blob([buffer]), 'motoristas.xlsx');
     },
 
     // apagarDadosDoArrayLocalmente() {
     //   const arrayFiltrado = this.items.filter(item => {
-    //       return !this.datatable.itensSelecionados.includes(item.id_cliente);
+    //       return !this.datatable.itensSelecionados.includes(item.id_motorista);
     //   })
     //   this.datatable.itens = arrayFiltrado
     // },

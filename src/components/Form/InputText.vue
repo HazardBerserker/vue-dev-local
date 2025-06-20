@@ -35,23 +35,23 @@
       </v-badge>
 
       <v-text-field
-          v-else
-          :variant="variant"
-          :density="density"
-          v-model="modelProxy"
-          :rules="rules"
-          :counter="counter"
-          :label="label"
-          :disabled="disabled"
-          :type="type"
-          :maxLength="counter"
-          :append-icon="iconeAppend"
-          :prepend-icon="iconePrepend"
-          :bg-color="backgroundColor"
-          :clearable="clearable"
-          hide-spin-buttons
-          @update:focused="acionaBlur"
-          :hide-details="rules.length != 0 ? false : hideDetails"
+        v-else
+        :variant="variant"
+        :density="density"
+        v-model="modelProxy"
+        :rules="rules"
+        :counter="counter"
+        :label="label"
+        :disabled="disabled"
+        :type="type"
+        :maxLength="counter"
+        :append-icon="iconeAppend"
+        :prepend-icon="iconePrepend"
+        :bg-color="backgroundColor"
+        :clearable="clearable"
+        hide-spin-buttons
+        @update:focused="acionaBlur"
+        :hide-details="rules.length != 0 ? false : hideDetails"
       >
       </v-text-field>
     </div>
