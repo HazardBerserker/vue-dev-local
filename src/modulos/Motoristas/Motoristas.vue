@@ -143,7 +143,7 @@
 
     </div>
 
-    <v-row v-if="permissao">
+    <v-row v-show="permissao">
       <v-col cols="12" class="text-right">
         <v-card rounded="lg" elevation="3">
           <v-data-table-server
@@ -203,7 +203,7 @@ import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { formataCEP, formataData, formataCPF, formataTelefone } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
-import GlobalAlertFixed from '@/components/global/GlobalAlertFixed.vue';
+import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnCreateMotorista.vue';
@@ -217,22 +217,6 @@ export default {
     GlobalAlertFixed,
     BtnCreateMotorista,
     BtnAtualizaMotorista,
-  },
-  async mounted() {
-    const loading = useLoadingStore();
-    try {
-      loading.show('Carregando Motoristas...')
-      // await this.buscaMotorista()
-      this.permissao = true
-    } catch (error) {
-      this.propriedadesDoAlertaFixo = {
-        type: 'error',
-        text: error?.response?.data?.message,
-        title: `Módulo inacessível (${error.status})`
-      }
-    } finally {
-      loading.hide();
-    }
   },
   data () {
     return {
@@ -411,7 +395,6 @@ export default {
       let arrayDeFiltrosGerais = []
 
       for (const chave in this.filtrosDaBuscaGeral) {
-        console.log(chave)
         if (this.busca_geral != null && this.busca_geral !== '') {
           const filtro = {
             key: [chave], value: this.busca_geral
@@ -419,8 +402,6 @@ export default {
           arrayDeFiltrosGerais.push(filtro)
         }
       }
-
-      console.log(arrayDeFiltrosGerais)
 
       //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
       for (const chave in this.filtros) {
@@ -466,6 +447,10 @@ export default {
 
     async buscaMotorista( options = {} ) {
       this.datatable.carregando = true;
+      if(!this.permissao) {
+        const loading = useLoadingStore()
+        loading.show('Carregando Motoristas...')
+      }
       this.datatable.itensSelecionados = [];
 
       const {
@@ -480,15 +465,14 @@ export default {
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
-
-        console.log(query);
-
         const url = endpoints.motorista.datatable;
 
         const resposta =  await ApiService({
-            method: 'get',
-            url: `${url}/${query}`,
+          method: 'get',
+          url: `${url}/${query}`,
         })
+
+        this.permissao = true
 
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
@@ -501,9 +485,15 @@ export default {
           alertStore.addAlert(error.message, 'error', 3000);
           return
         }
-        throw error
+        this.propriedadesDoAlertaFixo = {
+          type: 'error',
+          text: error?.response?.data?.message,
+          title: `Módulo inacessível (${error.status})`
+        }
       } finally {
         this.datatable.carregando = false;
+        const loading = useLoadingStore()
+        loading.hide()
       }
     },
 
