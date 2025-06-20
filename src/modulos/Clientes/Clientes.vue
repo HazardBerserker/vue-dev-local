@@ -9,7 +9,7 @@
         <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 ps-1">Filtros:</h5>
         <div class="d-flex my-auto ga-2">
           <v-text-field
-            v-model="filtros.busca_geral"
+            v-model="busca_geral"
             hide-details
             label="Busca Geral..."
             width="500"
@@ -195,7 +195,7 @@ import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { formataCEP, formataData } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
-import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
+import GlobalAlertFixed from '@/components/global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateCliente from '@/components/Cadastros/Clientes/Embeeded/BtnCreateCliente.vue';
@@ -212,7 +212,7 @@ export default {
     const loading = useLoadingStore();
     try {
       loading.show('Carregando Clientes...')
-      await this.buscaCliente()
+      // await this.buscaCliente()
       this.permissao = true
     } catch (error) {
       this.propriedadesDoAlertaFixo = {
@@ -234,6 +234,21 @@ export default {
       filtros: {
         id_cliente: null,
         ativo: null
+      },
+      busca_geral: null,
+      filtrosDaBuscaGeral: {
+        id_cliente: null,
+        razao_social: null,
+        cnpj: null,
+        endereco: null,
+        cep: null,
+        cidade: null,
+        bairro: null,
+        pais: null,
+        uf: null,
+        numero: null,
+        usuario_criacao: null,
+        usuario_ultima_alteracao: null,
       },
       opcoesAtivo: [
         {
@@ -378,13 +393,26 @@ export default {
   methods: {
     gerarQuery( page, itemsPerPage, sortBy ) {
       let arrayDeFiltros = []
+      let arrayDeFiltrosGerais = []
+
+      for (const chave in this.filtrosDaBuscaGeral) {
+        console.log(chave)
+        if (this.busca_geral != null && this.busca_geral !== '') {
+          const filtro = {
+            key: [chave], value: this.busca_geral
+          }
+          arrayDeFiltrosGerais.push(filtro)
+        }
+      }
+
+      console.log(arrayDeFiltrosGerais)
 
       //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
       for (const chave in this.filtros) {
-          if (this.filtros[chave] != null && this.filtros[chave] !== '') {
-              const filtro = { key: [chave], value: this.filtros[chave] };
-              arrayDeFiltros.push(filtro)
-          }
+        if (this.filtros[chave] != null && this.filtros[chave] !== '') {
+          const filtro = { key: [chave], value: this.filtros[chave] };
+          arrayDeFiltros.push(filtro)
+        }
       }
 
       let queryParams = new URLSearchParams();
@@ -393,11 +421,15 @@ export default {
       queryParams.append('pagina_atual', page);
 
       sortBy.forEach(({ key, order }) => {
-          queryParams.append(`ordem[${key}]`, order);
+        queryParams.append(`ordem[${key}]`, order);
       });
 
       arrayDeFiltros.forEach(({ key, value }) => {
-          queryParams.append(`filtro[${key}]`, value);
+        queryParams.append(`filtro[${key}]`, value);
+      });
+
+      arrayDeFiltrosGerais.forEach(({ key, value }) => {
+        queryParams.append(`filtro[${key}]`, value);
       });
 
       return `?${queryParams.toString()}`;
@@ -433,6 +465,9 @@ export default {
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
+
+        console.log(query);
+
         const url = endpoints.cliente.datatable;
 
         const resposta =  await ApiService({

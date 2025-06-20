@@ -6,6 +6,7 @@ export const endpoints = {
     novo: `${URL_BASE}/clientes`,
     atualiza: `${URL_BASE}/clientes`,
     apaga: `${URL_BASE}/clientes`,
+    buscaClienteNaApiDoGoverno: `${URL_BASE}/clientes/busca-cliente-pelo-cnpj-na-api-do-governo`,
   },
   usuario: {
     lista: `${URL_BASE}/usuario`,

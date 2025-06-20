@@ -18,7 +18,20 @@
       </template>
 
       <template #subtitle>
-        Todos os campos são obrigatórios
+          <span>Todos os campos são obrigatórios</span>
+          <div class="d-flex flex-column ga-2">
+            <v-btn
+              variant="flat"
+              color="blue-darken-3"
+              rounded="pill"
+              prepend-icon="mdi-sync"
+              :disabled="cnpj?.length != 14 ? true : false"
+              @click="preencheDadosDoClienteAutomaticamente">Preenchimento automatico
+            </v-btn>
+            <span class="text-caption text-center">
+              Preencha o CNPJ para ativar essa funcionalidade
+            </span>
+          </div>
       </template>
 
       <v-form ref="form">
@@ -34,7 +47,7 @@
             </v-row>
             <v-row class="mb-3">
               <v-col cols="6" class="py-0">
-                <v-text-field  variant="outlined" label="Endereço" density="comfortable" v-model="endereco" :rules="regraEndereco" clearable/>
+                <v-text-field  variant="outlined" label="Logradouro" density="comfortable" v-model="logradouro" :rules="regraEndereco" clearable/>
               </v-col>
               <v-col cols="6" class="py-0">
                 <InputText label="CEP" v-model="cep" mask="#####-###" :rules="regraCEP" counter="9"/>
@@ -106,7 +119,7 @@ export default {
       return {
         razao_social: null,
         cnpj: null,
-        endereco: null,
+        logradouro: null,
         cep: null,
         cidade: null,
         bairro: null,
@@ -163,7 +176,7 @@ export default {
         limpaCampos() {
           this.razao_social = null,
           this.cnpj = null,
-          this.endereco = null,
+          this.logradouro = null,
           this.cep = null,
           this.cidade = null,
           this.bairro = null,
@@ -176,7 +189,7 @@ export default {
           const dadosParaEnvio = {
             razao_social: this.razao_social,
             cnpj: this.cnpj,
-            endereco: this.endereco,
+            endereco: this.logradouro,
             cep: this.cep,
             cidade: this.cidade,
             bairro: this.bairro,
@@ -187,6 +200,44 @@ export default {
           }
           return dadosParaEnvio
         },
+
+        async preencheDadosDoClienteAutomaticamente() {
+
+          const loading = useLoadingStore()
+          const alertStore = useAlertStore()
+
+          const url = `${endpoints.cliente.buscaClienteNaApiDoGoverno}/${this.cnpj}`;
+
+          try {
+            loading.show('Buscando dados...')
+            const resposta =  await ApiService({
+              method: 'post',
+              url: url,
+            });
+
+            console.log(resposta)
+            this.preencheDadosEncontrados(resposta?.data?.data)
+            alertStore.addAlert('Dados preenchidos automaticamente', 'info')
+
+
+          } catch (erro) {
+            alertStore.addAlert(erro.response?.data?.message, 'error')
+          } finally {
+            loading.hide()
+          }
+
+        },
+        preencheDadosEncontrados(clienteEncontrado) {
+          this.bairro = clienteEncontrado.bairro
+          this.cep = clienteEncontrado.cep
+          this.logradouro = clienteEncontrado.logradouro
+          this.razao_social = clienteEncontrado.nome
+          this.numero = clienteEncontrado.numero
+          this.uf = clienteEncontrado.uf
+          this.cidade = clienteEncontrado.municipio
+          this.pais = 'Brasil'
+        },
+
         async criaCliente() {
 
           const alertStore = useAlertStore()
