@@ -10,6 +10,6 @@
 </template>
 
 <script setup>
-  import GlobalLoading from '@/components/Global/GlobalLoading.vue'
-  import GlobalAlert from '@/components/Global/GlobalAlert.vue';
+  import GlobalLoading from '@/components/global/GlobalLoading.vue'
+  import GlobalAlert from '@/components/global/GlobalAlert.vue';
 </script>

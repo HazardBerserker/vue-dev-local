@@ -1,37 +1,24 @@
 <template>
   <div>
     <v-btn
-      color="green-darken-2"
-      prepend-icon="mdi-plus"
+      color="blue-darken-3"
+      prepend-icon="mdi-pencil"
       variant="tonal"
       density="comfortable"
       class="text-white"
       rounded="pill"
       @click="openDialog"
     >
-      Criar cliente
+      Editar
     </v-btn>
 
-    <DialogCreateCadastro ref="dialogCreate" :max-width="900">
+    <DialogCreateCadastro ref="dialogAtualiza" :max-width="900">
       <template #title>
-        Criar Cliente
+        Atualizar Motorista
       </template>
 
       <template #subtitle>
-          <span>Todos os campos são obrigatórios</span>
-          <div class="d-flex flex-column ga-2">
-            <v-btn
-              variant="flat"
-              color="blue-darken-3"
-              rounded="pill"
-              prepend-icon="mdi-sync"
-              :disabled="cnpj?.length != 14 ? true : false"
-              @click="preencheDadosDoClienteAutomaticamente">Preenchimento automatico
-            </v-btn>
-            <span class="text-caption text-center">
-              Preencha o CNPJ para ativar essa funcionalidade
-            </span>
-          </div>
+        Todos os campos são obrigatórios
       </template>
 
       <v-form ref="form">
@@ -47,7 +34,7 @@
             </v-row>
             <v-row class="mb-3">
               <v-col cols="6" class="py-0">
-                <v-text-field  variant="outlined" label="Logradouro" density="comfortable" v-model="logradouro" :rules="regraEndereco" clearable/>
+                <v-text-field  variant="outlined" label="Endereço" density="comfortable" v-model="endereco" :rules="regraEndereco" clearable/>
               </v-col>
               <v-col cols="6" class="py-0">
                 <InputText label="CEP" v-model="cep" mask="#####-###" :rules="regraCEP" counter="9"/>
@@ -92,7 +79,7 @@
       </v-form>
 
       <template #action-button>
-        <v-btn variant="flat" color="green" rounded="pill" @click="criaCliente">Criar Cliente</v-btn>
+        <v-btn variant="flat" color="blue-darken-3" rounded="pill" @click="atualizaMotorista">Atualizar</v-btn>
       </template>
     </DialogCreateCadastro>
   </div>
@@ -110,23 +97,29 @@ import { useLoadingStore } from '@/stores/loading';
 // import ApiService from '@/services/ApiService.js';
 
 export default {
-    name: 'BtnCreateCliente',
+    name: 'BtnAtualizaMotorista',
     components: {
       DialogCreateCadastro,
       InputText
+    },
+    props: {
+      item: {
+        type: Object,
+        required: true
+      },
     },
     data() {
       return {
         razao_social: null,
         cnpj: null,
-        logradouro: null,
+        endereco: null,
         cep: null,
         cidade: null,
         bairro: null,
         pais: null,
         uf: null,
         numero: null,
-        ativo: 1,
+        ativo: null,
         opcaoAtivo:[
           { valor: 1, descricao: 'Sim' },
           { valor: 0, descricao: 'Não' }
@@ -165,10 +158,21 @@ export default {
     },
     methods: {
         closeDialog() {
-          this.$refs.dialogCreate.onCloseDialog();
+          this.$refs.dialogAtualiza.onCloseDialog();
         },
         openDialog() {
-          this.$refs.dialogCreate.onOpenDialog();
+          this.$refs.dialogAtualiza.onOpenDialog();
+
+          this.razao_social = this.item.razao_social
+          this.cnpj = this.item.cnpj
+          this.endereco = this.item.endereco
+          this.cep = this.item.cep
+          this.cidade = this.item.cidade
+          this.bairro = this.item.bairro
+          this.pais = this.item.pais
+          this.uf = this.item.uf
+          this.numero = this.item.numero
+          this.ativo = this.item.ativo
         },
         validateForm() {
           return this.$refs.form.validate();
@@ -176,7 +180,7 @@ export default {
         limpaCampos() {
           this.razao_social = null,
           this.cnpj = null,
-          this.logradouro = null,
+          this.endereco = null,
           this.cep = null,
           this.cidade = null,
           this.bairro = null,
@@ -189,7 +193,7 @@ export default {
           const dadosParaEnvio = {
             razao_social: this.razao_social,
             cnpj: this.cnpj,
-            endereco: this.logradouro,
+            endereco: this.endereco,
             cep: this.cep,
             cidade: this.cidade,
             bairro: this.bairro,
@@ -200,45 +204,7 @@ export default {
           }
           return dadosParaEnvio
         },
-
-        async preencheDadosDoClienteAutomaticamente() {
-
-          const loading = useLoadingStore()
-          const alertStore = useAlertStore()
-
-          const url = `${endpoints.cliente.buscaClienteNaApiDoGoverno}/${this.cnpj}`;
-
-          try {
-            loading.show('Buscando dados...')
-            const resposta =  await ApiService({
-              method: 'post',
-              url: url,
-            });
-
-            console.log(resposta)
-            this.preencheDadosEncontrados(resposta?.data?.data)
-            alertStore.addAlert('Dados preenchidos automaticamente', 'info')
-
-
-          } catch (erro) {
-            alertStore.addAlert(erro.response?.data?.message, 'error')
-          } finally {
-            loading.hide()
-          }
-
-        },
-        preencheDadosEncontrados(clienteEncontrado) {
-          this.bairro = clienteEncontrado.bairro
-          this.cep = clienteEncontrado.cep
-          this.logradouro = clienteEncontrado.logradouro
-          this.razao_social = clienteEncontrado.nome
-          this.numero = clienteEncontrado.numero
-          this.uf = clienteEncontrado.uf
-          this.cidade = clienteEncontrado.municipio
-          this.pais = 'Brasil'
-        },
-
-        async criaCliente() {
+        async atualizaMotorista() {
 
           const alertStore = useAlertStore()
           const loading = useLoadingStore()
@@ -246,16 +212,16 @@ export default {
           const formValidado = await this.validateForm();
 
           if(!formValidado.valid) {
-              return;
+            return;
           }
 
           const dadosParaEnvio = this.formataDadosParaEnvio();
-          const url = endpoints.cliente.novo;
+          const url = `${endpoints.motorista.atualiza}/${this.item.id_motorista}`;
 
           try {
-            loading.show('Criando Cliente...')
+            loading.show('Atualizando Motorista...')
             const resposta =  await ApiService({
-              method: 'post',
+              method: 'put',
               url: url,
               data: dadosParaEnvio
             });
@@ -265,8 +231,8 @@ export default {
             this.limpaCampos()
             this.closeDialog()
 
-            const itemCriado = resposta?.data?.data
-            this.$emit('acrescentaODadoNoArrayLocalmente', itemCriado)
+            const itemAtualizado = resposta?.data?.data
+            this.$emit('atualizaODadoNoArrayLocalmente', itemAtualizado)
           } catch (erro) {
             alertStore.addAlert(erro.response?.data?.message, 'error')
           } finally {

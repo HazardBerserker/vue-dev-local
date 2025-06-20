@@ -20,10 +20,10 @@
         <v-divider class="mb-4"></v-divider>
 
         <v-card-text>
-            <div class="text-medium-emphasis mb-8">
-                <slot name="subtitle">
+            <div class="text-medium-emphasis mb-12 d-flex justify-space-between align-top">
+              <slot name="subtitle">
 
-                </slot>
+              </slot>
             </div>
 
             <slot>

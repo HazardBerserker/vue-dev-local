@@ -20,10 +20,10 @@ export default defineConfig({
   //   port: 5173,
   //   https: false, // ou true se você gerar certificado local
   // }
-  server: {
-    host: 'frontend.api-dev.local',
-    port: 5173,
-    https: false,
-    cors: true
-  }
+  // server: {
+  //   host: 'frontend.api-dev.local',
+  //   port: 5173,
+  //   https: false,
+  //   cors: true
+  // }
 })
