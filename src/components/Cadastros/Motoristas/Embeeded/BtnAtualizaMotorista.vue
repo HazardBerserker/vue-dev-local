@@ -124,29 +124,35 @@ export default {
           { valor: 1, descricao: 'Sim' },
           { valor: 0, descricao: 'Não' }
         ],
-        regraRazaoSocial: [
-          (v) => !!v || 'A Razão social é obrigatória',
+        regraNomeCompleto: [
+          (v) => !!v || 'O Nome é obrigatório',
         ],
-        regraCNPJ: [
-          (v) => !!v || 'O CNPJ é obrigatório',
+        regraTelefone: [
+          (v) => !!v || 'O Telefone é obrigatório',
         ],
-        regraEndereco: [
-          (v) => !!v || 'O Endereço é obrigatório',
+        regraCPF: [
+          (v) => !!v || 'O CPF é obrigatório',
+          (v) => (v && v.length === 14) || 'O CPF deve ter 14 caracteres (incluindo pontos e traço)',
+        ],
+        regraPlaca: [
+          (v) => !!v || 'A Placa é obrigatória',
         ],
         regraCEP: [
           (v) => !!v || 'O CEP é obrigatório',
+          (v) => (v && v.length === 8) || 'O CEP deve ter 8 caracteres (incluindo pontos e traço)',
         ],
         regraCidade: [
           (v) => !!v || 'A Cidade é obrigatória',
         ],
-        regraBairro: [
-          (v) => !!v || 'O Bairro é obrigatório',
+        regraTipoVeiculo: [
+          (v) => !!v || 'O Tipo do Veículo é obrigatório',
         ],
-        regraPais: [
-          (v) => !!v || 'O País é obrigatório',
+        regraPix: [
+          (v) => !!v || 'A Chave Pix é obrigatória',
         ],
         regraUF: [
           (v) => !!v || 'O UF é obrigatório',
+          (v) => (v && v.length === 2) || 'O UF deve ter 2 caracteres',
         ],
         regraNumero: [
           (v) => !!v || 'O Número é obrigatório',

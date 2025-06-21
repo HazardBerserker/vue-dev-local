@@ -24,20 +24,34 @@
               align-tabs="center"
               color="redNeveah"
             >
-              <v-tab :value="1">Dados do Motorista</v-tab>
-              <v-tab :value="2">Arquivos</v-tab>
+              <v-tab :value="1">
+                <div>
+                  <v-badge v-if="numeroDeErrosFormDados" :content="numeroDeErrosFormDados" color="red" floating>
+                    Dados
+                  </v-badge>
+                  <span v-else>Dados</span>
+                </div>
+              </v-tab>
+              <v-tab :value="2">
+                <div>
+                  <v-badge v-if="numeroDeErrosFormArquivos" :content="numeroDeErrosFormArquivos" color="red" floating>
+                    Arquivos
+                  </v-badge>
+                  <span v-else>Arquivos</span>
+                </div>
+              </v-tab>
             </v-tabs>
           </div>
       </template>
 
       <v-tabs-window v-model="tab">
 
-        <v-tabs-window-item :value="1">
+        <v-tabs-window-item :value="1" eager>
           <v-container fluid>
             <v-form ref="formDados">
               <v-row class="mb-3">
                 <v-col cols="6" class="py-0">
-                  <v-text-field  variant="outlined" label="Nome Completo" density="comfortable" v-model="nome_completo" :rules="regraNomeCompleto" clearable/>
+                  <v-text-field variant="outlined" label="Nome Completo" density="comfortable" v-model="nome_completo" :rules="regraNomeCompleto" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
                   <InputText label="CPF" v-model="cpf" mask="###.###.###-##" :rules="regraCPF" counter="14"/>
@@ -61,23 +75,24 @@
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="6" class="py-0">
-                  <v-text-field  variant="outlined" label="Chave Pix" density="comfortable" v-model="pix" :rules="regraPix" clearable/>
+                  <v-text-field variant="outlined" label="Chave Pix" density="comfortable" v-model="pix" :rules="regraPix" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
-                  <v-text-field variant="outlined" label="UF Residência" density="comfortable" v-model="uf_residencia" :rules="regraUF" clearable/>
+                  <InputText label="UF" v-model="uf_residencia" :rules="regraUF" counter="2"/>
                 </v-col>
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="6" class="py-0">
-                  <v-text-field  variant="outlined" label="Cidade Residência" density="comfortable" v-model="cidade_residencia" :rules="regraCidade" clearable/>
+                  <v-text-field variant="outlined" label="Cidade Residência" density="comfortable" v-model="cidade_residencia" :rules="regraCidade" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
-                  <v-text-field  variant="outlined" label="CEP Residência" density="comfortable" v-model="cep_residencia" :rules="regraCEP" clearable/>
+                  <InputText label="CEP" v-model="cep_residencia" mask="#####-###" :rules="regraCEP" counter="9"/>
                 </v-col>
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="12" class="py-0">
                   <v-select
+                    ref="ativo"
                     v-model="ativo"
                     variant="outlined"
                     density="comfortable"
@@ -90,32 +105,43 @@
                   </v-select>
                 </v-col>
               </v-row>
+              <v-row class="mb-3">
+                <v-col cols="12" class="py-0">
+                  <v-textarea
+                    v-model="observacoes"
+                    label="Observações"
+                    density="comfortable"
+                    variant="outlined"
+                  >
+                  </v-textarea>
+                </v-col>
+              </v-row>
             </v-form>
           </v-container>
         </v-tabs-window-item>
 
-        <v-tabs-window-item :value="2">
+        <v-tabs-window-item :value="2" eager>
           <v-container fluid>
             <v-form ref="formArquivos">
               <v-row>
                 <v-col>
-                  <v-file-input density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar CNH" variant="outlined"></v-file-input>
+                  <v-file-input v-model="arquivo_cnh" :rules="regraArquivo" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar CNH" variant="outlined"></v-file-input>
                 </v-col>
                 <v-col>
-                  <v-file-input density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar Comprovante de Residência" variant="outlined"></v-file-input>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <v-file-input density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Documento do Carro" variant="outlined"></v-file-input>
-                </v-col>
-                <v-col>
-                  <v-file-input density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar ANTT" variant="outlined"></v-file-input>
+                  <v-file-input v-model="arquivo_comprovante_residencia" :rules="regraArquivo" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar Comprovante de Residência" variant="outlined"></v-file-input>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-file-input density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Foto do Veículo" variant="outlined"></v-file-input>
+                  <v-file-input v-model="arquivo_documento_carro" :rules="regraArquivo" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Documento do Carro" variant="outlined"></v-file-input>
+                </v-col>
+                <v-col>
+                  <v-file-input v-model="arquivo_antt" :rules="regraArquivo" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar ANTT" variant="outlined"></v-file-input>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-file-input v-model="arquivo_foto_veiculo" :rules="regraArquivo" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Foto do Veículo" variant="outlined"></v-file-input>
                 </v-col>
               </v-row>
             </v-form>
@@ -143,140 +169,194 @@ import { useLoadingStore } from '@/stores/loading';
 // import ApiService from '@/services/ApiService.js';
 
 export default {
-    name: 'BtnCreateMotorista',
-    components: {
-      DialogCreateCadastro,
-      InputText
-    },
-    data() {
-      return {
-        tab: null,
-        nome_completo: null,
-        cpf: null,
-        telefone: null,
-        placa_carro: null,
-        placa_carreta: null,
-        tipo_veiculo: null,
-        pix: null,
-        uf_residencia: null,
-        cidade_residencia: null,
-        cep_residencia: null,
-        ativo: 1,
-        opcaoAtivo:[
-          { valor: 1, descricao: 'Sim' },
-          { valor: 0, descricao: 'Não' }
-        ],
-        regraNomeCompleto: [
-          (v) => !!v || 'O Nome é obrigatório',
-        ],
-        regraTelefone: [
-          (v) => !!v || 'O Telefone é obrigatório',
-        ],
-        regraCPF: [
-          (v) => !!v || 'O CPF é obrigatório',
-        ],
-        regraPlaca: [
-          (v) => !!v || 'A Placa é obrigatória',
-        ],
-        regraCEP: [
-          (v) => !!v || 'O CEP é obrigatório',
-        ],
-        regraCidade: [
-          (v) => !!v || 'A Cidade é obrigatória',
-        ],
-        regraTipoVeiculo: [
-          (v) => !!v || 'O Tipo do Veículo é obrigatório',
-        ],
-        regraPix: [
-          (v) => !!v || 'A Chave Pix é obrigatória',
-        ],
-        regraUF: [
-          (v) => !!v || 'O UF é obrigatório',
-        ],
-        regraNumero: [
-          (v) => !!v || 'O Número é obrigatório',
-        ],
-        regraAtivo: [
-          (v) => v !== null && v !== undefined || 'O Campo Ativo é obrigatório',
-        ],
-      }
-    },
-    methods: {
-        closeDialog() {
-          this.$refs.dialogCreate.onCloseDialog();
-        },
-        openDialog() {
-          this.$refs.dialogCreate.onOpenDialog();
-        },
-        validateForm() {
-          return this.$refs.form.validate();
-        },
-        limpaCampos() {
-          this.nome_completo = null
-          this.cpf = null
-          this.telefone = null
-          this.placa_carro = null
-          this.placa_carreta = null
-          this.tipo_veiculo = null
-          this.pix = null
-          this.uf_residencia = null
-          this.cidade_residencia = null
-          this.cep_residencia = null
-          this.ativo = 1
-        },
-        formataDadosParaEnvio() {
-          const dadosParaEnvio = {
-            nome_completo: this.nome_completo,
-            cpf: this.cpf,
-            telefone: this.telefone,
-            placa_carro: this.placa_carro,
-            placa_carreta: this.placa_carreta,
-            tipo_veiculo: this.tipo_veiculo,
-            pix: this.pix,
-            uf_residencia: this.uf_residencia,
-            cidade_residencia: this.cidade_residencia,
-            cep_residencia: this.cep_residencia,
-            ativo: this.ativo
-          }
-          return dadosParaEnvio
-        },
-
-        async criaMotorista() {
-
-          const alertStore = useAlertStore()
-          const loading = useLoadingStore()
-
-          const formValidado = await this.validateForm();
-
-          if(!formValidado.valid) {
-              return;
-          }
-
-          const dadosParaEnvio = this.formataDadosParaEnvio();
-          const url = endpoints.motorista.novo;
-
-          try {
-            loading.show('Criando Motorista...')
-            const resposta =  await ApiService({
-              method: 'post',
-              url: url,
-              data: dadosParaEnvio
-            });
-
-            alertStore.addAlert(resposta?.data.message, 'success')
-
-            this.limpaCampos()
-            this.closeDialog()
-
-            const itemCriado = resposta?.data?.data
-            this.$emit('acrescentaODadoNoArrayLocalmente', itemCriado)
-          } catch (erro) {
-            alertStore.addAlert(erro.response?.data?.message, 'error')
-          } finally {
-            loading.hide()
-          }
-        }
-
+  name: 'BtnCreateMotorista',
+  components: {
+    DialogCreateCadastro,
+    InputText
+  },
+  data() {
+    return {
+      numeroDeErrosFormDados: 0,
+      numeroDeErrosFormArquivos: 0,
+      tab: null,
+      nome_completo: null,
+      cpf: null,
+      telefone: null,
+      placa_carro: null,
+      placa_carreta: null,
+      tipo_veiculo: null,
+      pix: null,
+      uf_residencia: null,
+      cidade_residencia: null,
+      cep_residencia: null,
+      arquivo_cnh: null,
+      arquivo_comprovante_residencia: null,
+      arquivo_documento_carro: null,
+      arquivo_antt: null,
+      arquivo_foto_veiculo: null,
+      observacoes: null,
+      ativo: 1,
+      opcaoAtivo:[
+        { valor: 1, descricao: 'Sim' },
+        { valor: 0, descricao: 'Não' }
+      ],
+      regraNomeCompleto: [
+        (v) => !!v || 'O Nome é obrigatório',
+      ],
+      regraTelefone: [
+        (v) => !!v || 'O Telefone é obrigatório',
+      ],
+      regraCPF: [
+        (v) => !!v || 'O CPF é obrigatório',
+        (v) => (v && v.length === 14) || 'O CPF deve ter 14 caracteres (incluindo pontos e traço)',
+      ],
+      regraPlaca: [
+        (v) => !!v || 'A Placa é obrigatória',
+      ],
+      regraCEP: [
+        (v) => !!v || 'O CEP é obrigatório',
+        (v) => (v && v.length === 9) || 'O CEP deve ter 9 caracteres (incluindo pontos e traço)',
+      ],
+      regraCidade: [
+        (v) => !!v || 'A Cidade é obrigatória',
+      ],
+      regraTipoVeiculo: [
+        (v) => !!v || 'O Tipo do Veículo é obrigatório',
+      ],
+      regraPix: [
+        (v) => !!v || 'A Chave Pix é obrigatória',
+      ],
+      regraUF: [
+        (v) => !!v || 'O UF é obrigatório',
+        (v) => typeof v === 'string' || 'O UF deve ser um texto',
+        (v) => /^[A-Za-z]{2}$/.test(v) || 'O UF deve conter exatamente 2 letras (sem números ou símbolos)',
+      ],
+      regraNumero: [
+        (v) => !!v || 'O Número é obrigatório',
+      ],
+      regraAtivo: [
+        (v) => v !== null && v !== undefined || 'O Campo Ativo é obrigatório',
+      ],
+      regraArquivo: [
+        (v) => v !== null && v !== undefined || 'O Arquivo é obrigatório',
+      ],
     }
+  },
+  methods: {
+    closeDialog() {
+      this.$refs.dialogCreate.onCloseDialog();
+    },
+    openDialog() {
+      this.$refs.dialogCreate.onOpenDialog();
+    },
+
+    async validarTudo() {
+      const formDados = await this.$refs.formDados?.validate() ?? false;
+      this.numeroDeErrosFormDados = formDados?.errors.length
+
+      const formArquivos = await this.$refs.formArquivos?.validate();
+
+      this.numeroDeErrosFormArquivos = formArquivos?.errors.length
+
+      if (formDados.valid && formArquivos.valid ) {
+        return true;
+      }
+
+      return false;
+    },
+
+    limpaCampos() {
+      this.nome_completo = null
+      this.cpf = null
+      this.telefone = null
+      this.placa_carro = null
+      this.placa_carreta = null
+      this.tipo_veiculo = null
+      this.pix = null
+      this.uf_residencia = null
+      this.cidade_residencia = null
+      this.cep_residencia = null
+      this.arquivo_cnh = null,
+      this.arquivo_comprovante_residencia = null,
+      this.arquivo_documento_carro = null,
+      this.arquivo_antt = null,
+      this.arquivo_foto_veiculo = null,
+      this.observacoes = null,
+      this.ativo = 1
+    },
+    formataDadosParaEnvio() {
+      const formData = new FormData();
+
+      formData.append('nome_completo', this.nome_completo);
+      formData.append('cpf', this.cpf);
+      formData.append('telefone', this.telefone);
+      formData.append('placa_carro', this.placa_carro);
+      formData.append('placa_carreta', this.placa_carreta);
+      formData.append('tipo_veiculo', this.tipo_veiculo);
+      formData.append('pix', this.pix);
+      formData.append('uf_residencia', this.uf_residencia);
+      formData.append('cidade_residencia', this.cidade_residencia);
+      formData.append('cep_residencia', this.cep_residencia);
+      formData.append('ativo', this.ativo);
+      formData.append('observacoes', this.observacoes);
+
+      // Adiciona os arquivos, se existirem
+      if (this.arquivo_cnh) {
+        formData.append('arquivo_cnh', this.arquivo_cnh);
+      }
+      if (this.arquivo_comprovante_residencia) {
+        formData.append('arquivo_comprovante_residencia', this.arquivo_comprovante_residencia);
+      }
+      if (this.arquivo_documento_carro) {
+        formData.append('arquivo_documento_carro', this.arquivo_documento_carro);
+      }
+      if (this.arquivo_antt) {
+        formData.append('arquivo_antt', this.arquivo_antt);
+      }
+      if (this.arquivo_foto_veiculo) {
+        formData.append('arquivo_foto_veiculo', this.arquivo_foto_veiculo);
+      }
+      return formData;
+    },
+
+    async criaMotorista() {
+
+      const alertStore = useAlertStore()
+      const loading = useLoadingStore()
+
+      const formValidado = await this.validarTudo();
+
+      if(!formValidado) {
+          return;
+      }
+
+      const dadosParaEnvio = this.formataDadosParaEnvio();
+      const url = endpoints.motorista.novo;
+
+      try {
+        loading.show('Criando Motorista...')
+        const resposta =  await ApiService({
+          method: 'post',
+          url: url,
+          data: dadosParaEnvio,
+          headers: {
+            'Content-Type': 'multipart/form-data', // importante!
+          },
+        });
+
+        alertStore.addAlert(resposta?.data.message, 'success')
+
+        this.limpaCampos()
+        this.closeDialog()
+
+        const itemCriado = resposta?.data?.data
+        this.$emit('acrescentaODadoNoArrayLocalmente', itemCriado)
+      } catch (erro) {
+        alertStore.addAlert(erro.response?.data?.message, 'error')
+      } finally {
+        loading.hide()
+      }
+    }
+  }
 }
 </script>

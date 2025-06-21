@@ -136,12 +136,14 @@ export default {
         ],
         regraCNPJ: [
           (v) => !!v || 'O CNPJ é obrigatório',
+          (v) => (v && v.length === 18) || 'O CNPJ deve ter 18 caracteres (incluindo pontos e traço)',
         ],
         regraEndereco: [
-          (v) => !!v || 'O Endereço é obrigatório',
+          (v) => !!v || 'O Logradouro é obrigatório',
         ],
         regraCEP: [
           (v) => !!v || 'O CEP é obrigatório',
+          (v) => (v && v.length === 9) || 'O CEP deve ter 9 caracteres (incluindo pontos e traço)',
         ],
         regraCidade: [
           (v) => !!v || 'A Cidade é obrigatória',
@@ -154,6 +156,8 @@ export default {
         ],
         regraUF: [
           (v) => !!v || 'O UF é obrigatório',
+          (v) => typeof v === 'string' || 'O UF deve ser um texto',
+          (v) => /^[A-Za-z]{2}$/.test(v) || 'O UF deve conter exatamente 2 letras (sem números ou símbolos)',
         ],
         regraNumero: [
           (v) => !!v || 'O Número é obrigatório',
@@ -194,7 +198,7 @@ export default {
             cidade: this.cidade,
             bairro: this.bairro,
             pais: this.pais,
-            uf: this.uf,
+            uf: this.uf.toUpperCase(),
             numero: this.numero,
             ativo: this.ativo
           }
@@ -215,7 +219,6 @@ export default {
               url: url,
             });
 
-            console.log(resposta)
             this.preencheDadosEncontrados(resposta?.data?.data)
             alertStore.addAlert('Dados preenchidos automaticamente', 'info')
 

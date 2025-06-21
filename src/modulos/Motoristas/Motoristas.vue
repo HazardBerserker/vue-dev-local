@@ -191,10 +191,37 @@
             <template #[`item.telefone`]="{ item }">
               {{ formataTelefone(item.telefone) }}
             </template>
+            <template #[`item.detalhes`]="{ item }">
+              <v-hover>
+                <template v-slot:default="{ isHovering, props }">
+                  <v-icon
+                    v-if="isHovering"
+                    size="25"
+                    v-bind="props"
+                    @click="abrirDialogDetalhesMotorista(item)"
+                    class="cursor-pointer"
+                    key="olhoAberto"
+                  >
+                    mdi-eye
+                  </v-icon>
+                  <v-icon
+                  v-else
+                    size="25"
+                    v-bind="props"
+                    @click="abrirDialogDetalhesMotorista(item)"
+                    class="cursor-pointer"
+                    key="olhoFechado"
+                  >
+                    mdi-eye-outline
+                  </v-icon>
+                </template>
+              </v-hover>
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
     </v-row>
+    <MotoristaDetalhesDialog ref="dialogMotorista"/>
   </div>
 </template>
 
@@ -210,6 +237,8 @@ import BtnCreateMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnCr
 import BtnAtualizaMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnAtualizaMotorista.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import MotoristaDetalhesDialog from '@/components/Cadastros/Motoristas/Embeeded/MotoristaDetalhesDialog.vue';
+
 
 export default {
   name: 'MotoristasScreen',
@@ -217,6 +246,8 @@ export default {
     GlobalAlertFixed,
     BtnCreateMotorista,
     BtnAtualizaMotorista,
+    MotoristaDetalhesDialog
+
   },
   data () {
     return {
@@ -277,6 +308,12 @@ export default {
         opcoes: {},
 
         cabecalho: [
+          {
+            title: 'Detalhes',
+            key: 'detalhes',
+            align: 'center',
+            width: '150',
+          },
           {
             title: 'Ação',
             key: 'acao',
@@ -362,6 +399,15 @@ export default {
             align:'center',
           },
           {
+            title: 'Observações',
+            key: 'observacoes',
+            width: '250',
+            align:'start',
+            cellProps: {
+              class: 'text-start'
+            },
+          },
+          {
             title: 'Usuário Criação',
             key: 'usuario_criacao',
             width: '300',
@@ -390,6 +436,9 @@ export default {
     }
   },
   methods: {
+    abrirDialogDetalhesMotorista(motorista) {
+      this.$refs.dialogMotorista.abrir(motorista);
+    },
     gerarQuery( page, itemsPerPage, sortBy ) {
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
@@ -549,6 +598,8 @@ export default {
     // },
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
+      console.log(itemCriado);
+
       const novoItem = {
         id_motorista: itemCriado.id_motorista,
         nome_completo: itemCriado.nome_completo,
@@ -562,6 +613,12 @@ export default {
         cidade_residencia: itemCriado.cidade_residencia,
         cep_residencia: itemCriado.cep_residencia,
         ativo: itemCriado.ativo,
+        arquivo_cnh: itemCriado.arquivo_cnh,
+        arquivo_comprovante_residencia: itemCriado.arquivo_comprovante_residencia,
+        arquivo_documento_carro: itemCriado.arquivo_documento_carro,
+        arquivo_antt: itemCriado.arquivo_antt,
+        arquivo_foto_veiculo: itemCriado.arquivo_foto_veiculo,
+        observacoes: itemCriado.observacoes,
         data_criacao: formataData(itemCriado.data_criacao),
         usuario_criacao: itemCriado.usuario_criacao,
         usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
