@@ -9,7 +9,16 @@
   <GlobalAlert />
 </template>
 
-<script setup>
-  import GlobalLoading from '@/components/Global/GlobalLoading.vue'
-  import GlobalAlert from '@/components/Global/GlobalAlert.vue';
+<script>
+  import GlobalLoading from '@/components/GlobalComponents/GlobalLoading.vue';
+  import GlobalAlert from '@/components/GlobalComponents/GlobalAlert.vue';
+
+
+export default {
+  components: {
+    GlobalLoading,
+    GlobalAlert
+  }
+}
 </script>
+

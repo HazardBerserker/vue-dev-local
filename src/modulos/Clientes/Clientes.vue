@@ -200,7 +200,7 @@ import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { formataCEP, formataData, formataCNPJ } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
-import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
+import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateCliente from '@/components/Cadastros/Clientes/Embeeded/BtnCreateCliente.vue';

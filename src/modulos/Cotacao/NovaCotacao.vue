@@ -309,7 +309,7 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
 // import { useAlertStore } from '@/stores/alertStore'
-import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
+import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { endpoints } from '@/utils/apiEndpoints';
 import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
