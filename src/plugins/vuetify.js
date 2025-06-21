@@ -4,11 +4,15 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import 'vuetify/styles'
-
-
+import { VDateInput } from 'vuetify/labs/VDateInput'
+import { VFileUpload } from 'vuetify/labs/VFileUpload'
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VDateInput,
+    VFileUpload
+  },
   directives,
   icons: {
     defaultSet: 'mdi', // define como padrão

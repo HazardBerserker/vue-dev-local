@@ -129,12 +129,14 @@ export default {
         ],
         regraCNPJ: [
           (v) => !!v || 'O CNPJ é obrigatório',
+          (v) => (v && v.length === 18) || 'O CNPJ deve ter 18 caracteres (incluindo pontos e traço)',
         ],
         regraEndereco: [
-          (v) => !!v || 'O Endereço é obrigatório',
+          (v) => !!v || 'O Logradouro é obrigatório',
         ],
         regraCEP: [
           (v) => !!v || 'O CEP é obrigatório',
+          (v) => (v && v.length === 9) || 'O CEP deve ter 9 caracteres (incluindo pontos e traço)',
         ],
         regraCidade: [
           (v) => !!v || 'A Cidade é obrigatória',
@@ -147,6 +149,7 @@ export default {
         ],
         regraUF: [
           (v) => !!v || 'O UF é obrigatório',
+          (v) => (v && v.length === 2) || 'O UF deve ter 2 caracteres',
         ],
         regraNumero: [
           (v) => !!v || 'O Número é obrigatório',

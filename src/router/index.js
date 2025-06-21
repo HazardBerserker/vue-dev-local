@@ -4,6 +4,7 @@ import Login from '@/modulos/Login/Login.vue'
 import AuthLayout from '@/modulos/Layout/AuthLayout.vue'
 import Clientes from '@/modulos/Clientes/Clientes.vue'
 import Motoristas from '@/modulos/Motoristas/Motoristas.vue'
+import NovaCotacao from '@/modulos/Cotacao/NovaCotacao.vue'
 
 AuthLayout
 
@@ -28,12 +29,11 @@ const routes = [
         name: 'Motorista',
         component: Motoristas
       },
-      // // {
-      //   path:
-      //   'profile',
-      //   name: 'profile',
-      //   component: ProfileView
-      // },
+      {
+        path: 'cotacoes/nova-cotacao',
+        name: 'Nova Cotação',
+        component: NovaCotacao
+      },
       // {
       //   path: '/about',
       //   name: 'about',

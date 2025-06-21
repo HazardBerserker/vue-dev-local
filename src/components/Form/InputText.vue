@@ -28,6 +28,7 @@
           :bg-color="backgroundColor"
           :clearable="clearable"
           hide-spin-buttons
+          :readonly="readonly"
           @update:focused="acionaBlur"
           :hide-details="rules.length != 0 ? false : hideDetails"
         >
@@ -50,6 +51,7 @@
         :bg-color="backgroundColor"
         :clearable="clearable"
         hide-spin-buttons
+        :readonly="readonly"
         @update:focused="acionaBlur"
         :hide-details="rules.length != 0 ? false : hideDetails"
       >
@@ -59,6 +61,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'InputText',
     props: {
@@ -119,6 +122,10 @@ export default {
           default: true
         },
         floating: {
+          type: Boolean,
+          default: false
+        },
+        readonly: {
           type: Boolean,
           default: false
         },

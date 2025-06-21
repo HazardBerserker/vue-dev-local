@@ -277,6 +277,7 @@ export default {
             key: 'acao',
             align: 'center',
             width: '210',
+            sortable: false,
           },
           {
             title: 'ID',
@@ -393,7 +394,6 @@ export default {
       let arrayDeFiltrosGerais = []
 
       for (const chave in this.filtrosDaBuscaGeral) {
-        console.log(chave)
         if (this.busca_geral != null && this.busca_geral !== '') {
           const filtro = {
             key: [chave], value: this.busca_geral
@@ -401,8 +401,6 @@ export default {
           arrayDeFiltrosGerais.push(filtro)
         }
       }
-
-      console.log(arrayDeFiltrosGerais)
 
       //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
       for (const chave in this.filtros) {
@@ -466,14 +464,11 @@ export default {
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
-
-        console.log(query);
-
         const url = endpoints.cliente.datatable;
 
         const resposta =  await ApiService({
-            method: 'get',
-            url: `${url}/${query}`,
+          method: 'get',
+          url: `${url}/${query}`,
         })
 
         this.permissao = true

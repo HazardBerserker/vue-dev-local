@@ -143,7 +143,7 @@
 
     </div>
 
-    <v-row v-if="permissao">
+    <v-row v-show="permissao">
       <v-col cols="12" class="text-right">
         <v-card rounded="lg" elevation="3">
           <v-data-table-server
@@ -191,10 +191,37 @@
             <template #[`item.telefone`]="{ item }">
               {{ formataTelefone(item.telefone) }}
             </template>
+            <template #[`item.detalhes`]="{ item }">
+              <v-hover>
+                <template v-slot:default="{ isHovering, props }">
+                  <v-icon
+                    v-if="isHovering"
+                    size="25"
+                    v-bind="props"
+                    @click="abrirDialogDetalhesMotorista(item)"
+                    class="cursor-pointer"
+                    key="olhoAberto"
+                  >
+                    mdi-eye
+                  </v-icon>
+                  <v-icon
+                  v-else
+                    size="25"
+                    v-bind="props"
+                    @click="abrirDialogDetalhesMotorista(item)"
+                    class="cursor-pointer"
+                    key="olhoFechado"
+                  >
+                    mdi-eye-outline
+                  </v-icon>
+                </template>
+              </v-hover>
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
     </v-row>
+    <MotoristaDetalhesDialog ref="dialogMotorista"/>
   </div>
 </template>
 
@@ -203,13 +230,15 @@ import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { formataCEP, formataData, formataCPF, formataTelefone } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
-import GlobalAlertFixed from '@/components/global/GlobalAlertFixed.vue';
+import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnCreateMotorista.vue';
 import BtnAtualizaMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnAtualizaMotorista.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import MotoristaDetalhesDialog from '@/components/Cadastros/Motoristas/Embeeded/MotoristaDetalhesDialog.vue';
+
 
 export default {
   name: 'MotoristasScreen',
@@ -217,22 +246,8 @@ export default {
     GlobalAlertFixed,
     BtnCreateMotorista,
     BtnAtualizaMotorista,
-  },
-  async mounted() {
-    const loading = useLoadingStore();
-    try {
-      loading.show('Carregando Motoristas...')
-      // await this.buscaMotorista()
-      this.permissao = true
-    } catch (error) {
-      this.propriedadesDoAlertaFixo = {
-        type: 'error',
-        text: error?.response?.data?.message,
-        title: `Módulo inacessível (${error.status})`
-      }
-    } finally {
-      loading.hide();
-    }
+    MotoristaDetalhesDialog
+
   },
   data () {
     return {
@@ -294,10 +309,18 @@ export default {
 
         cabecalho: [
           {
+            title: 'Detalhes',
+            key: 'detalhes',
+            align: 'center',
+            width: '150',
+            sortable: false,
+          },
+          {
             title: 'Ação',
             key: 'acao',
             align: 'center',
             width: '210',
+            sortable: false,
           },
           {
             title: 'ID',
@@ -378,6 +401,15 @@ export default {
             align:'center',
           },
           {
+            title: 'Observações',
+            key: 'observacoes',
+            width: '250',
+            align:'start',
+            cellProps: {
+              class: 'text-start'
+            },
+          },
+          {
             title: 'Usuário Criação',
             key: 'usuario_criacao',
             width: '300',
@@ -406,12 +438,14 @@ export default {
     }
   },
   methods: {
+    abrirDialogDetalhesMotorista(motorista) {
+      this.$refs.dialogMotorista.abrir(motorista);
+    },
     gerarQuery( page, itemsPerPage, sortBy ) {
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
 
       for (const chave in this.filtrosDaBuscaGeral) {
-        console.log(chave)
         if (this.busca_geral != null && this.busca_geral !== '') {
           const filtro = {
             key: [chave], value: this.busca_geral
@@ -419,8 +453,6 @@ export default {
           arrayDeFiltrosGerais.push(filtro)
         }
       }
-
-      console.log(arrayDeFiltrosGerais)
 
       //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
       for (const chave in this.filtros) {
@@ -466,6 +498,10 @@ export default {
 
     async buscaMotorista( options = {} ) {
       this.datatable.carregando = true;
+      if(!this.permissao) {
+        const loading = useLoadingStore()
+        loading.show('Carregando Motoristas...')
+      }
       this.datatable.itensSelecionados = [];
 
       const {
@@ -480,15 +516,14 @@ export default {
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
-
-        console.log(query);
-
         const url = endpoints.motorista.datatable;
 
         const resposta =  await ApiService({
-            method: 'get',
-            url: `${url}/${query}`,
+          method: 'get',
+          url: `${url}/${query}`,
         })
+
+        this.permissao = true
 
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
@@ -498,12 +533,18 @@ export default {
       } catch (error) {
         if(this.permissao) {
           const alertStore = useAlertStore()
-          alertStore.addAlert(error.message, 'error', 3000);
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
           return
         }
-        throw error
+        this.propriedadesDoAlertaFixo = {
+          type: 'error',
+          text: error?.response?.data?.message,
+          title: `Módulo inacessível (${error.status})`
+        }
       } finally {
         this.datatable.carregando = false;
+        const loading = useLoadingStore()
+        loading.hide()
       }
     },
 
@@ -572,6 +613,12 @@ export default {
         cidade_residencia: itemCriado.cidade_residencia,
         cep_residencia: itemCriado.cep_residencia,
         ativo: itemCriado.ativo,
+        arquivo_cnh: itemCriado.arquivo_cnh,
+        arquivo_comprovante_residencia: itemCriado.arquivo_comprovante_residencia,
+        arquivo_documento_carro: itemCriado.arquivo_documento_carro,
+        arquivo_antt: itemCriado.arquivo_antt,
+        arquivo_foto_veiculo: itemCriado.arquivo_foto_veiculo,
+        observacoes: itemCriado.observacoes,
         data_criacao: formataData(itemCriado.data_criacao),
         usuario_criacao: itemCriado.usuario_criacao,
         usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
@@ -596,6 +643,7 @@ export default {
         itemQueSeraAtualizado.cidade_residencia = itemAtualizado.cidade_residencia
         itemQueSeraAtualizado.cep_residencia = itemAtualizado.cep_residencia
         itemQueSeraAtualizado.ativo = itemAtualizado.ativo
+        itemQueSeraAtualizado.observacoes = itemAtualizado.observacoes
         itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
@@ -629,6 +677,7 @@ export default {
       { header: 'UF Residência', key: 'uf_residencia', width: 10 },
       { header: 'Cidade Residência', key: 'cidade_residencia', width: 30 },
       { header: 'CEP Residência', key: 'cep_residencia', width: 30 },
+      { header: 'Observações', key: 'observacoes', width: 30 },
       { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
       { header: 'Data Criação', key: 'data_criacao', width: 25 },
       { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },

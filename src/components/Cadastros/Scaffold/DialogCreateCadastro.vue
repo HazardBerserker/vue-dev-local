@@ -19,7 +19,7 @@
 
         <v-divider class="mb-4"></v-divider>
 
-        <v-card-text>
+        <v-card-text style="overflow-y: auto;">
             <div class="text-medium-emphasis mb-12 d-flex justify-space-between align-top">
               <slot name="subtitle">
 

@@ -7,7 +7,6 @@ import vuetify from '@/plugins/vuetify';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import {mask} from 'vue-the-mask'
 import { VueMaskFilter } from 'v-mask';
-import { VFileUpload } from 'vuetify/labs/VFileUpload'
 
 // GERENCIAMENTO DO ESTADO
 const pinia = createPinia()
@@ -21,7 +20,6 @@ app.config.globalProperties.$VMask = (value, pattern) => {
   return VueMaskFilter(value, pattern);
 };
 
-app.component('v-file-upload', VFileUpload)
 // plugins
 app.use(router)
 app.use(pinia)
