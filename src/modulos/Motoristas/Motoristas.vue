@@ -533,7 +533,7 @@ export default {
       } catch (error) {
         if(this.permissao) {
           const alertStore = useAlertStore()
-          alertStore.addAlert(error.message, 'error', 3000);
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
           return
         }
         this.propriedadesDoAlertaFixo = {

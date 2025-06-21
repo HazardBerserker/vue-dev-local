@@ -103,7 +103,7 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Nova Cotação',
-                caminho: '',
+                caminho: '/cotacoes/nova-cotacao',
                 icone: 'mdi-clipboard-plus-outline'
             },
             {
