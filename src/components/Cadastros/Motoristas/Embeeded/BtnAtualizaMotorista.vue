@@ -255,7 +255,6 @@ export default {
     openDialog() {
       this.$refs.dialogAtualiza.onOpenDialog();
 
-      console.log(this.item);
       this.nome_completo = this.item.nome_completo
       this.cpf = this.item.cpf
       this.telefone = this.item.telefone
@@ -314,7 +313,7 @@ export default {
       formData.append('placa_carreta', this.placa_carreta);
       formData.append('tipo_veiculo', this.tipo_veiculo);
       formData.append('pix', this.pix);
-      formData.append('uf_residencia', this.uf_residencia);
+      formData.append('uf_residencia', this.uf_residencia.toUpperCase());
       formData.append('cidade_residencia', this.cidade_residencia);
       formData.append('cep_residencia', this.cep_residencia);
       formData.append('ativo', this.ativo);
