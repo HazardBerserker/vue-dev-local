@@ -313,12 +313,14 @@ export default {
             key: 'detalhes',
             align: 'center',
             width: '150',
+            sortable: false,
           },
           {
             title: 'Ação',
             key: 'acao',
             align: 'center',
             width: '210',
+            sortable: false,
           },
           {
             title: 'ID',
@@ -598,8 +600,6 @@ export default {
     // },
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
-      console.log(itemCriado);
-
       const novoItem = {
         id_motorista: itemCriado.id_motorista,
         nome_completo: itemCriado.nome_completo,
@@ -643,6 +643,7 @@ export default {
         itemQueSeraAtualizado.cidade_residencia = itemAtualizado.cidade_residencia
         itemQueSeraAtualizado.cep_residencia = itemAtualizado.cep_residencia
         itemQueSeraAtualizado.ativo = itemAtualizado.ativo
+        itemQueSeraAtualizado.observacoes = itemAtualizado.observacoes
         itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
@@ -676,6 +677,7 @@ export default {
       { header: 'UF Residência', key: 'uf_residencia', width: 10 },
       { header: 'Cidade Residência', key: 'cidade_residencia', width: 30 },
       { header: 'CEP Residência', key: 'cep_residencia', width: 30 },
+      { header: 'Observações', key: 'observacoes', width: 30 },
       { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
       { header: 'Data Criação', key: 'data_criacao', width: 25 },
       { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },

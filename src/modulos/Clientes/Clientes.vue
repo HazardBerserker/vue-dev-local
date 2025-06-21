@@ -277,6 +277,7 @@ export default {
             key: 'acao',
             align: 'center',
             width: '210',
+            sortable: false,
           },
           {
             title: 'ID',
