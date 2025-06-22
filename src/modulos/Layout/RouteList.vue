@@ -103,12 +103,12 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Nova Cotação',
-                caminho: '/cotacoes/nova-cotacao',
+                caminho: '/comercial/nova-cotacao',
                 icone: 'mdi-clipboard-plus-outline'
             },
             {
                 nome: 'Fretes/Cotações',
-                caminho: '',
+                caminho: '/comercial/fretes-cotacoes',
                 icone: 'mdi-clipboard-text-multiple'
             }
           ],

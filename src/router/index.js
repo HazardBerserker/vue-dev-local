@@ -5,6 +5,7 @@ import AuthLayout from '@/modulos/Layout/AuthLayout.vue'
 import Clientes from '@/modulos/Clientes/Clientes.vue'
 import Motoristas from '@/modulos/Motoristas/Motoristas.vue'
 import NovaCotacao from '@/modulos/Cotacao/NovaCotacao.vue'
+import FretesCotacoes from '@/modulos/Cotacao/FretesCotacoes.vue'
 
 AuthLayout
 
@@ -30,9 +31,14 @@ const routes = [
         component: Motoristas
       },
       {
-        path: 'cotacoes/nova-cotacao',
+        path: 'comercial/nova-cotacao',
         name: 'Nova Cotação',
         component: NovaCotacao
+      },
+      {
+        path: 'comercial/fretes-cotacoes',
+        name: 'Fretes Cotações',
+        component: FretesCotacoes
       },
       // {
       //   path: '/about',

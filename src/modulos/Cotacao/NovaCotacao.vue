@@ -1,6 +1,6 @@
 <template>
   <div class="pb-8 bg-white">
-    <v-breadcrumbs :items="['Cotação', 'Nova Cotação']" class="mb-6"></v-breadcrumbs>
+    <v-breadcrumbs :items="['Comercial', 'Nova Cotação']" class="mb-6"></v-breadcrumbs>
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
@@ -128,7 +128,7 @@
 
         <v-row>
           <v-col cols="4">
-            <v-text-field v-model="prazo" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
+            <v-text-field v-model="prazo_entrega" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
           </v-col>
         </v-row>
 
@@ -309,7 +309,7 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
 // import { useAlertStore } from '@/stores/alertStore'
-import GlobalAlertFixed from '@/components/Global/GlobalAlertFixed.vue';
+import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { endpoints } from '@/utils/apiEndpoints';
 import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
@@ -327,6 +327,7 @@ export default {
     return {
       formataCNPJ,
       formataCEP,
+      propriedadesDoAlertaFixo: null,
       comboBoxRemetenteLoading: false,
       listaDeClientes: [],
       // Cabeçalho

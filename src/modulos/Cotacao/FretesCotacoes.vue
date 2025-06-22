@@ -1,53 +1,193 @@
 <template>
    <div>
-    <v-breadcrumbs :items="['Cadastros', 'Motoristas']" class="mb-6"></v-breadcrumbs>
+    <v-breadcrumbs :items="['Comercial', 'Fretes e Cotações']" class="mb-6"></v-breadcrumbs>
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
     <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao">
       <div class="d-flex flex-column w-100">
         <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 ps-1">Filtros:</h5>
-        <div class="d-flex my-auto ga-2">
-          <v-text-field
-            v-model="busca_geral"
-            hide-details
-            label="Busca Geral..."
-            width="500"
-            variant="solo-filled"
-            density="compact"
-            bg-color="white"
-            clearable
-            flat
-            rounded
-          ></v-text-field>
-          <v-select
-            v-model="filtros.ativo"
-            hide-details
-            label="Busca pelo Status de Ativo"
-            width="300"
-            variant="solo-filled"
-            density="compact"
-            :items="opcoesAtivo"
-            item-value="value"
-            item-title="label"
-            bg-color="white"
-            clearable
-            flat
-            rounded
-          ></v-select>
-          <v-btn
-            color="blue-darken-3"
-            variant="flat"
-            class="text-white fill-height"
-            @click="buscaMotorista"
-            rounded="pill"
-          >
-            <v-icon>
-              mdi-magnify
-            </v-icon>
-          </v-btn>
-        </div>
-        <span class="text-caption text-grey-darken-1 ps-2 pt-2">Remova todos os acentos e sinais para buscar os dados corretamente</span>
+
+
+      <v-card class="rounded-xl mt-2" width="700">
+        <v-tabs
+          v-model="tab"
+          bg-color="primary"
+        >
+          <v-tab value="one">Item One</v-tab>
+          <v-tab value="two">Item Two</v-tab>
+          <v-tab value="three">Item Three</v-tab>
+        </v-tabs>
+
+        <v-card-text color="white">
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one" class="bg-white pa-2">
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="busca_geral"
+                    hide-details
+                    label="Busca Geral..."
+                    variant="outlined"
+                    density="compact"
+                    class="bg-white"
+                    clearable
+                    flat
+                    rounded
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="busca_geral"
+                    hide-details
+                    label="Busca Geral..."
+                    variant="outlined"
+                    density="compact"
+                    class="bg-white"
+                    clearable
+                    flat
+                    rounded
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="busca_geral"
+                    hide-details
+                    label="Busca Geral..."
+                    variant="outlined"
+                    density="compact"
+                    class="bg-white"
+                    clearable
+                    flat
+                    rounded
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="busca_geral"
+                    hide-details
+                    label="Busca Geral..."
+                    variant="outlined"
+                    density="compact"
+                    class="bg-white"
+                    clearable
+                    flat
+                    rounded
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+                <!-- <v-btn
+                  color="blue-darken-3"
+                  variant="flat"
+                  class="text-white fill-height"
+                  @click="buscaMotorista"
+                  rounded="pill"
+                >
+                  <v-icon>
+                    mdi-magnify
+                  </v-icon>
+                </v-btn> -->
+              </v-tabs-window-item>
+
+              <v-tabs-window-item value="two" class="pa-2">
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="busca_geral"
+                      hide-details
+                      label="Busca Geral..."
+                      variant="outlined"
+                      density="compact"
+                      class="bg-white"
+                      clearable
+                      flat
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="busca_geral"
+                      hide-details
+                      label="Busca Geral..."
+                      variant="outlined"
+                      density="compact"
+                      class="bg-white"
+                      clearable
+                      flat
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="busca_geral"
+                      hide-details
+                      label="Busca Geral..."
+                      variant="outlined"
+                      density="compact"
+                      class="bg-white"
+                      clearable
+                      flat
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="busca_geral"
+                      hide-details
+                      label="Busca Geral..."
+                      variant="outlined"
+                      density="compact"
+                      class="bg-white"
+                      clearable
+                      flat
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-tabs-window-item>
+
+              <v-tabs-window-item value="three" class="pa-2">
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="busca_geral"
+                      hide-details
+                      label="Busca Geral..."
+                      variant="outlined"
+                      density="compact"
+                      class="bg-white"
+                      clearable
+                      flat
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="busca_geral"
+                      hide-details
+                      label="Busca Geral..."
+                      variant="outlined"
+                      density="compact"
+                      class="bg-white"
+                      clearable
+                      flat
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-tabs-window-item>
+            </v-tabs-window>
+          </v-card-text>
+        </v-card>
+
+
       </div>
 
       <v-divider></v-divider>
@@ -57,53 +197,78 @@
         <!-- Motoristas Ativos -->
         <v-card
           width="250"
-          class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-          color="blue-darken-4"
+          height="140"
+          class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between"
+          color="blue-lighten-4"
         >
-            <v-avatar size="40" class="me-4 bg-white text-blue-darken-4">
+          <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+            <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white text-start">
                 <v-icon>mdi-account</v-icon>
             </v-avatar>
-            <div class="d-flex flex-column">
-                <span class="text-body-2 text-white">Motoristas Ativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
-                    <v-fade-transition mode="out-in">
-                        <span v-if="!datatable.carregando">
-                        <strong :key="'inativos'">
-                          {{ numeroDeMotoristasAtivos() }}
-                        </strong>
-                      </span>
-                        <span v-else>
-                          <v-progress-circular indeterminate color="primary" size="15"></v-progress-circular>
-                        </span>
-                    </v-fade-transition>
-                </v-chip>
-            </div>
+            <span class="text-body-2 text-start font-weight-bold text-blue-darken-2 w-100 ps-3">Em Aberto</span>
+          </div>
+          <v-card class="h-100 rounded-xl align-center justify-center d-flex bg-blue-darken-2 w-100 text-white text-h5 mt-3" variant="flat">
+            <v-fade-transition mode="out-in">
+                <span v-if="!datatable.carregando">
+                <strong :key="'inativos'">
+                {{ numeroDeMotoristasAtivos() }}
+                </strong>
+              </span>
+                <span v-else>
+                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                </span>
+              </v-fade-transition>
+          </v-card>
         </v-card>
 
-        <!-- Motoristas Inativos -->
-        <v-card
-            width="250"
-            class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-            color="red-darken-4"
+       <v-card
+          width="250"
+          class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between"
+          color="green-lighten-4"
         >
-            <v-avatar size="40" class="me-4 bg-white text-red-darken-4">
-                <v-icon>mdi-account-off</v-icon>
+          <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+            <v-avatar size="40" class="me-4 bg-green-darken-2 text-white text-start">
+                <v-icon>mdi-account</v-icon>
             </v-avatar>
-            <div class="d-flex flex-column justify-center">
-              <span class="text-body-2 text-white">Motoristas Inativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4" loading="true">
-                    <v-fade-transition mode="out-in">
-                      <span v-if="!datatable.carregando">
-                        <strong :key="'inativos'">
-                          {{ numeroDeMotoristasInativos() }}
-                        </strong>
-                      </span>
-                      <span v-else>
-                        <v-progress-circular indeterminate color="red" size="15"></v-progress-circular>
-                      </span>
-                    </v-fade-transition>
-                </v-chip>
-            </div>
+            <span class="text-body-2 text-start font-weight-bold text-green-darken-2 w-100 ps-3">Aceitas</span>
+          </div>
+          <v-card class="h-100 rounded-xl align-center justify-center d-flex bg-green-darken-2 w-100 text-white text-h5 mt-3" variant="flat">
+            <v-fade-transition mode="out-in">
+                <span v-if="!datatable.carregando">
+                <strong :key="'inativos'">
+                {{ numeroDeMotoristasAtivos() }}
+                </strong>
+              </span>
+                <span v-else>
+                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                </span>
+              </v-fade-transition>
+          </v-card>
+        </v-card>
+
+        <v-card
+          width="250"
+          class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between"
+          color="red-lighten-4"
+        >
+          <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+            <v-avatar size="40" class="me-4 bg-red-darken-2 text-white text-start">
+                <v-icon>mdi-account</v-icon>
+            </v-avatar>
+            <span class="text-body-2 text-start font-weight-bold text-red-darken-2 w-100 ps-3">Rejeitadas</span>
+          </div>
+          <v-card class="h-100 rounded-xl align-center justify-center d-flex bg-red-darken-2 w-100 text-white text-h5 mt-3" variant="flat">
+            <v-fade-transition mode="out-in">
+                <span v-if="!datatable.carregando">
+                <strong :key="'inativos'">
+                {{ numeroDeMotoristasAtivos() }}
+                </strong>
+              </span>
+                <span v-else>
+                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                </span>
+              </v-fade-transition>
+          </v-card>
         </v-card>
       </div>
 
@@ -241,7 +406,7 @@ import MotoristaDetalhesDialog from '@/components/Cadastros/Motoristas/Embeeded/
 
 
 export default {
-  name: 'MotoristasScreen',
+  name: 'FretesCotacoes',
   components: {
     GlobalAlertFixed,
     BtnCreateMotorista,
@@ -254,6 +419,7 @@ export default {
       formataCEP,
       formataCPF,
       formataTelefone,
+      tab: null,
       SimENaoEnumDescricao,
       SimENaoEnum,
       permissao: false,
@@ -547,57 +713,6 @@ export default {
         loading.hide()
       }
     },
-
-    // async desativaMotorista() {
-    //   const mensagem = this.datatable.itensSelecionados.length === 1
-    //     ? `Deseja realmente desativar o Motorista de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
-    //     : `Deseja realmente desativar os <strong>${this.itensSelecionados.length}</strong> Motoristas selecionados ?`
-
-    //   const confirmado = await this.$refs.dialogRef.open({
-    //     title: `Desativar motorista(s)`,
-    //     message: mensagem,
-    //     titleColor: 'error'
-    //   })
-
-    //   if(!confirmado) {
-    //     return
-    //   }
-
-    //   const alertStore = useAlertStore()
-
-    //   const requisicoesDeletar = this.itensSelecionados.map(async idSelecionado => {
-    //     const item = this.items.find(item => item.id_motorista == idSelecionado);
-
-    //     if (!item) {
-    //       alertStore.addAlert(`ID ${idSelecionado} não encontrado para excluir`, 'error');
-    //       return Promise.resolve(); // Evita que o Promise.all falhe com esse
-    //     }
-
-    //     const url = `${endpoints.motorista.apaga}/${this.item.id_motorista}`;
-
-    //     const resposta = await ApiService({
-    //       method: 'delete',
-    //       url: url,
-    //     });
-
-    //     return resposta;
-    //   });
-
-    //   try {
-    //       await Promise.all(requisicoesDeletar);
-
-    //       alertStore.addAlert(
-    //           `${this.itensSelecionados.length} Motorista(s) desativado(s) com sucesso.`,
-    //           'success'
-    //       );
-
-    //       this.apagarDadosDoArrayLocalmente();
-    //       this.itensSelecionados = [];
-
-    //   } catch (error) {
-    //       alertStore.addAlert(`Erro ao desativar Motorista(s): ${error?.response?.data?.message}`, 'error');
-    //   }
-    // },
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {
