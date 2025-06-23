@@ -302,18 +302,26 @@
             <template #[`item.acao`]="{ item }">
               <BtnAtualizaFreteCotacoes :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
+            <template #[`item.valor_motorista_efetivo`]="{ item }">
+              {{ formataMoeda(item.valor_motorista_efetivo) }}
+            </template>
+            <template #[`item.valor_cobrado_efetivo`]="{ item }">
+              {{ formataMoeda(item.valor_cobrado_efetivo) }}
+            </template>
+            <template #[`item.valor_notafiscal`]="{ item }">
+              {{ formataMoeda(item.valor_notafiscal) }}
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
     </v-row>
-    <FreteDetalhesDialog ref="dialogFrete"/>
   </div>
 </template>
 
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataData, formataDataSomenteData } from '@/utils/masks';
+import { formataData, formataDataSomenteData, formataMoeda } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
@@ -334,6 +342,7 @@ export default {
     return {
       formataData,
       formataDataSomenteData,
+      formataMoeda,
       mostrarFiltros: false,
       tab: null,
       SimENaoEnumDescricao,
@@ -553,6 +562,7 @@ export default {
 
     async buscaFrete( options = {} ) {
       this.datatable.carregando = true;
+
       if(!this.permissao) {
         const loading = useLoadingStore()
         // loading.show('Carregando Fretes...')
@@ -571,7 +581,7 @@ export default {
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
-        const url = endpoints.frete.datatable;
+        const url = endpoints.freteCotacao.datatable;
 
         const resposta =  await ApiService({
           method: 'get',

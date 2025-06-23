@@ -32,3 +32,13 @@ export function formataData(data) {
 export function formataDataSomenteData(data) {
   return dayjs(data).format('DD/MM/YYYY');
 }
+
+export function formataMoeda(valor) {
+  if (valor == null || isNaN(valor)) return '';
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(valor);
+}

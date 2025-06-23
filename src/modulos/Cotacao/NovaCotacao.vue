@@ -101,7 +101,7 @@
               <InputText label="CEP" v-model="cep_destinatario" mask="#####-###" :clearable="false"  counter="9" density="compact" class="bg-white"/>
             </v-col>
             <v-col cols="8">
-              <v-text-field v-model="endereco_destinatario" :rules="regraEnderecoDestinatario" density="compact" variant="outlined" label="Endereço" bg-color="white" placeholder="Digite o endereço"></v-text-field>
+              <v-text-field v-model="endereco_destinatario" density="compact" variant="outlined" label="Endereço" bg-color="white" placeholder="Digite o endereço"></v-text-field>
             </v-col>
           </v-row>
           <v-row class="mt-2">
@@ -109,7 +109,7 @@
               <v-text-field v-model="numero_destinatario" density="compact" variant="outlined" label="Número" bg-color="white" placeholder="Digite o Número"></v-text-field>
             </v-col>
             <v-col cols="5">
-              <v-text-field v-model="cidade_destinatario" density="compact" variant="outlined" label="Cidade"  bg-color="white" placeholder="Digite a cidade"></v-text-field>
+              <v-text-field v-model="cidade_destinatario" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Cidade"  bg-color="white" placeholder="Digite a cidade"></v-text-field>
             </v-col>
             <v-col cols="4">
               <InputText label="UF" v-model="uf_destinatario" :rules="regraUFDestinatario" :clearable="false"  counter="2" density="compact" bg-color="white"/>
@@ -133,7 +133,7 @@
               <v-text-field v-model="valor_notafiscal" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Valor da NF (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
             </v-col>
             <v-col cols="4">
-              <v-text-field v-model="coeficiente_margem" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Coeficiente de Margem (%)" bg-color="white" placeholder="Gerado automaticamente" readonly></v-text-field>
+              <v-text-field v-model="coeficiente_margem" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Coeficiente de Margem (%)" bg-color="white" placeholder="Gerado automaticamente" ></v-text-field>
             </v-col>
           </v-row>
           <v-btn block class="mb-10" variant="flat" color="blue" :disabled="!coeficiente_margem || !valor_notafiscal || !valor_motorista" @click="calculaFrete">
