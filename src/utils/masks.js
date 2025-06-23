@@ -28,3 +28,7 @@ export function formataTelefone(telefone) {
 export function formataData(data) {
   return dayjs(data).format('DD/MM/YYYY HH:mm:ss');
 }
+
+export function formataDataSomenteData(data) {
+  return dayjs(data).format('DD/MM/YYYY');
+}

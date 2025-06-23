@@ -114,6 +114,19 @@
 
           <BtnCreateCliente @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
+          <v-btn
+            color="blue-darken-3"
+            prepend-icon="mdi-reload"
+            variant="tonal"
+            density="comfortable"
+            class="text-white"
+            rounded="pill"
+            :disabled="datatable.carregando"
+            @click="buscaCliente"
+          >
+            Atualizar
+          </v-btn>
+
           <!-- <v-btn
               color="red-darken-3"
               prepend-icon="mdi-delete"
@@ -147,7 +160,6 @@
       <v-col cols="12" class="text-right">
         <v-card rounded="lg" elevation="3">
           <v-data-table-server
-            show-select
             fixed-header
             v-model="datatable.itensSelecionados"
             v-model:sort-by="datatable.ordenarPor"
@@ -165,7 +177,7 @@
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
             @update:options="buscaCliente"
-            height="56vh"
+            height="54vh"
             density="comfortable"
             no-data-text="Nenhum Cliente encontrado, tente alterar o(s) filtro(s)"
           >

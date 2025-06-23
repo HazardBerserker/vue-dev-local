@@ -4,293 +4,260 @@
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
-    <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao">
-      <div class="d-flex flex-column w-100">
-        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 ps-1">Filtros:</h5>
+    <!-- <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao"> -->
+  <v-card class="pa-4 rounded-xl elevation-2 bg-grey-lighten-5 d-flex flex-column" width="100%">
 
+    <!-- Título -->
+    <div class="d-flex justify-space-between">
+      <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
+      <!-- Botão Mostrar/Ocultar -->
+      <v-btn
+        variant="tonal"
+        color="primary"
+        @click="mostrarFiltros = !mostrarFiltros"
+        class="mb-3 align-self-start"
+        rounded
+      >
+        <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
+        {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+      </v-btn>
+    </div>
 
-      <v-card class="rounded-xl mt-2" width="700">
-        <v-tabs
-          v-model="tab"
-          bg-color="primary"
+    <!-- Área dos Filtros -->
+    <v-expand-transition>
+  <div v-show="mostrarFiltros">
+    <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
+      <v-card-text>
+
+        <v-row dense>
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="id_frete"
+              label="ID Frete/Cotação"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="data_cotacao"
+              label="Data Criação"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+              placeholder="Ex: 21/06/2025"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="3">
+            <v-text-field
+              v-model="remetente"
+              label="Remetente"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="3">
+            <v-text-field
+              v-model="cidade_destinatario"
+              label="Cidade Destinatário"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="uf_destinatario"
+              label="UF Destinatário"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
+        <v-row dense>
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="valor_frete_efetivo"
+              label="R$ Frete"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="3">
+            <v-text-field
+              v-model="valor_notafiscal"
+              label="R$ NF"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="3">
+            <v-text-field
+              v-model="valor_cobrado_efetivo"
+              label="R$ Valor Cobrado"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="status"
+              label="Status"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="cte_vinculado"
+              label="CTE Vinculado"
+              variant="outlined"
+              density="compact"
+              clearable
+              rounded
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
+      </v-card-text>
+
+      <!-- Botão Buscar -->
+      <v-card-actions>
+        <v-btn
+          color="blue-darken-3"
+          variant="flat"
+          class="text-white"
+          @click="buscaFrete"
+          rounded="pill"
+          prepend-icon="mdi-magnify"
         >
-          <v-tab value="one">Item One</v-tab>
-          <v-tab value="two">Item Two</v-tab>
-          <v-tab value="three">Item Three</v-tab>
-        </v-tabs>
-
-        <v-card-text color="white">
-          <v-tabs-window v-model="tab">
-            <v-tabs-window-item value="one" class="bg-white pa-2">
-              <v-row>
-                <v-col>
-                  <v-text-field
-                    v-model="busca_geral"
-                    hide-details
-                    label="Busca Geral..."
-                    variant="outlined"
-                    density="compact"
-                    class="bg-white"
-                    clearable
-                    flat
-                    rounded
-                  ></v-text-field>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="busca_geral"
-                    hide-details
-                    label="Busca Geral..."
-                    variant="outlined"
-                    density="compact"
-                    class="bg-white"
-                    clearable
-                    flat
-                    rounded
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col>
-                  <v-text-field
-                    v-model="busca_geral"
-                    hide-details
-                    label="Busca Geral..."
-                    variant="outlined"
-                    density="compact"
-                    class="bg-white"
-                    clearable
-                    flat
-                    rounded
-                  ></v-text-field>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="busca_geral"
-                    hide-details
-                    label="Busca Geral..."
-                    variant="outlined"
-                    density="compact"
-                    class="bg-white"
-                    clearable
-                    flat
-                    rounded
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-                <!-- <v-btn
-                  color="blue-darken-3"
-                  variant="flat"
-                  class="text-white fill-height"
-                  @click="buscaMotorista"
-                  rounded="pill"
-                >
-                  <v-icon>
-                    mdi-magnify
-                  </v-icon>
-                </v-btn> -->
-              </v-tabs-window-item>
-
-              <v-tabs-window-item value="two" class="pa-2">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="busca_geral"
-                      hide-details
-                      label="Busca Geral..."
-                      variant="outlined"
-                      density="compact"
-                      class="bg-white"
-                      clearable
-                      flat
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="busca_geral"
-                      hide-details
-                      label="Busca Geral..."
-                      variant="outlined"
-                      density="compact"
-                      class="bg-white"
-                      clearable
-                      flat
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="busca_geral"
-                      hide-details
-                      label="Busca Geral..."
-                      variant="outlined"
-                      density="compact"
-                      class="bg-white"
-                      clearable
-                      flat
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="busca_geral"
-                      hide-details
-                      label="Busca Geral..."
-                      variant="outlined"
-                      density="compact"
-                      class="bg-white"
-                      clearable
-                      flat
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-tabs-window-item>
-
-              <v-tabs-window-item value="three" class="pa-2">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="busca_geral"
-                      hide-details
-                      label="Busca Geral..."
-                      variant="outlined"
-                      density="compact"
-                      class="bg-white"
-                      clearable
-                      flat
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="busca_geral"
-                      hide-details
-                      label="Busca Geral..."
-                      variant="outlined"
-                      density="compact"
-                      class="bg-white"
-                      clearable
-                      flat
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-tabs-window-item>
-            </v-tabs-window>
-          </v-card-text>
-        </v-card>
-
-
-      </div>
-
-      <v-divider></v-divider>
-
-      <!-- KPIs -->
-      <div class="d-flex ga-2 my-auto">
-        <!-- Motoristas Ativos -->
-        <v-card
-          width="250"
-          height="140"
-          class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between"
-          color="blue-lighten-4"
-        >
-          <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
-            <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white text-start">
-                <v-icon>mdi-account</v-icon>
-            </v-avatar>
-            <span class="text-body-2 text-start font-weight-bold text-blue-darken-2 w-100 ps-3">Em Aberto</span>
-          </div>
-          <v-card class="h-100 rounded-xl align-center justify-center d-flex bg-blue-darken-2 w-100 text-white text-h5 mt-3" variant="flat">
-            <v-fade-transition mode="out-in">
-                <span v-if="!datatable.carregando">
-                <strong :key="'inativos'">
-                {{ numeroDeMotoristasAtivos() }}
-                </strong>
-              </span>
-                <span v-else>
-                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
-                </span>
-              </v-fade-transition>
-          </v-card>
-        </v-card>
-
-       <v-card
-          width="250"
-          class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between"
-          color="green-lighten-4"
-        >
-          <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
-            <v-avatar size="40" class="me-4 bg-green-darken-2 text-white text-start">
-                <v-icon>mdi-account</v-icon>
-            </v-avatar>
-            <span class="text-body-2 text-start font-weight-bold text-green-darken-2 w-100 ps-3">Aceitas</span>
-          </div>
-          <v-card class="h-100 rounded-xl align-center justify-center d-flex bg-green-darken-2 w-100 text-white text-h5 mt-3" variant="flat">
-            <v-fade-transition mode="out-in">
-                <span v-if="!datatable.carregando">
-                <strong :key="'inativos'">
-                {{ numeroDeMotoristasAtivos() }}
-                </strong>
-              </span>
-                <span v-else>
-                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
-                </span>
-              </v-fade-transition>
-          </v-card>
-        </v-card>
-
-        <v-card
-          width="250"
-          class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between"
-          color="red-lighten-4"
-        >
-          <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
-            <v-avatar size="40" class="me-4 bg-red-darken-2 text-white text-start">
-                <v-icon>mdi-account</v-icon>
-            </v-avatar>
-            <span class="text-body-2 text-start font-weight-bold text-red-darken-2 w-100 ps-3">Rejeitadas</span>
-          </div>
-          <v-card class="h-100 rounded-xl align-center justify-center d-flex bg-red-darken-2 w-100 text-white text-h5 mt-3" variant="flat">
-            <v-fade-transition mode="out-in">
-                <span v-if="!datatable.carregando">
-                <strong :key="'inativos'">
-                {{ numeroDeMotoristasAtivos() }}
-                </strong>
-              </span>
-                <span v-else>
-                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
-                </span>
-              </v-fade-transition>
-          </v-card>
-        </v-card>
-      </div>
-
+          Buscar
+        </v-btn>
+      </v-card-actions>
     </v-card>
+  </div>
+</v-expand-transition>
+
+    <v-divider></v-divider>
+
+    <!-- KPIs / Status -->
+    <div class="d-flex flex-column ga-2 mt-4">
+      <v-row dense>
+        <!-- Em Aberto -->
+        <v-col cols="12" md="4">
+          <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="blue-lighten-4">
+            <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+              <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white">
+                <v-icon>mdi-truck</v-icon>
+              </v-avatar>
+              <span class="text-body-2 font-weight-bold text-blue-darken-2">Em Aberto</span>
+            </div>
+            <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
+              <v-fade-transition mode="out-in">
+                <span v-if="!datatable.carregando">
+                  <!-- <strong>{{ numeroDeFretesAtivos() }}</strong> -->
+                  123
+                </span>
+                <span v-else>
+                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                </span>
+              </v-fade-transition>
+            </v-card>
+          </v-card>
+        </v-col>
+
+        <!-- Aceitas -->
+        <v-col cols="12" md="4">
+          <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="green-lighten-4">
+            <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+              <v-avatar size="40" class="me-4 bg-green-darken-2 text-white">
+                <v-icon>mdi-check-circle</v-icon>
+              </v-avatar>
+              <span class="text-body-2 font-weight-bold text-green-darken-2">Aceitas</span>
+            </div>
+            <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
+              <v-fade-transition mode="out-in">
+                <span v-if="!datatable.carregando">
+                  <!-- <strong>{{ numeroDeFretesAceitos() }}</strong> -->
+                  123
+                </span>
+                <span v-else>
+                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                </span>
+              </v-fade-transition>
+            </v-card>
+          </v-card>
+        </v-col>
+
+        <!-- Rejeitadas -->
+        <v-col cols="12" md="4">
+          <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="red-lighten-4">
+            <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+              <v-avatar size="40" class="me-4 bg-red-darken-2 text-white">
+                <v-icon>mdi-close-circle</v-icon>
+              </v-avatar>
+              <span class="text-body-2 font-weight-bold text-red-darken-2">Rejeitadas</span>
+            </div>
+            <v-card class="mt-3 h-100 rounded-xl bg-red-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
+              <v-fade-transition mode="out-in">
+                <span v-if="!datatable.carregando">
+                  <!-- <strong>{{ numeroDeFretesRejeitados() }}</strong> -->
+                  123
+                </span>
+                <span v-else>
+                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                </span>
+              </v-fade-transition>
+            </v-card>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+
+  </v-card>
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
 
-          <BtnCreateMotorista @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
+          <!-- <BtnCreateFrete @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/> -->
 
-          <!-- <v-btn
-              color="red-darken-3"
-              prepend-icon="mdi-delete"
-              variant="tonal"
-              density="comfortable"
-              class="text-white"
-              rounded="pill"
-              :disabled="desativaInput()"
-              @click="desativaMotorista"
+          <v-btn
+            color="blue-darken-3"
+            prepend-icon="mdi-reload"
+            variant="tonal"
+            density="comfortable"
+            class="text-white"
+            rounded="pill"
+            :disabled="datatable.carregando"
+            @click="buscaFrete"
           >
-              Excluir
-          </v-btn> -->
+            Atualizar
+          </v-btn>
 
           <v-btn
             color="teal-darken-2"
@@ -302,17 +269,15 @@
             :disabled="datatable.carregando"
             @click="exportarExcel"
           >
-              Exportar
+            Exportar
           </v-btn>
         </div>
-
     </div>
 
     <v-row v-show="permissao">
       <v-col cols="12" class="text-right">
         <v-card rounded="lg" elevation="3">
           <v-data-table-server
-            show-select
             fixed-header
             v-model="datatable.itensSelecionados"
             v-model:sort-by="datatable.ordenarPor"
@@ -329,10 +294,10 @@
             multi-sort
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
-            @update:options="buscaMotorista"
-            height="56vh"
+            @update:options="buscaFrete"
+            height="45vh"
             density="comfortable"
-            no-data-text="Nenhum Motorista encontrado, tente alterar o(s) filtro(s)"
+            no-data-text="Nenhum Frete encontrado, tente alterar o(s) filtro(s)"
           >
             <template #[`item.ativo`]="{ item }">
               <v-chip
@@ -345,80 +310,42 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaMotorista :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
-            </template>
-            <template #[`item.cep_residencia`]="{ item }">
-              {{ formataCEP(item.cep_residencia) }}
-            </template>
-            <template #[`item.cpf`]="{ item }">
-              {{ formataCPF(item.cpf) }}
-            </template>
-            <template #[`item.telefone`]="{ item }">
-              {{ formataTelefone(item.telefone) }}
-            </template>
-            <template #[`item.detalhes`]="{ item }">
-              <v-hover>
-                <template v-slot:default="{ isHovering, props }">
-                  <v-icon
-                    v-if="isHovering"
-                    size="25"
-                    v-bind="props"
-                    @click="abrirDialogDetalhesMotorista(item)"
-                    class="cursor-pointer"
-                    key="olhoAberto"
-                  >
-                    mdi-eye
-                  </v-icon>
-                  <v-icon
-                  v-else
-                    size="25"
-                    v-bind="props"
-                    @click="abrirDialogDetalhesMotorista(item)"
-                    class="cursor-pointer"
-                    key="olhoFechado"
-                  >
-                    mdi-eye-outline
-                  </v-icon>
-                </template>
-              </v-hover>
+              <!-- <BtnAtualizaFrete :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/> -->
             </template>
           </v-data-table-server>
         </v-card>
       </v-col>
     </v-row>
-    <MotoristaDetalhesDialog ref="dialogMotorista"/>
+    <FreteDetalhesDialog ref="dialogFrete"/>
   </div>
 </template>
 
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData, formataCPF, formataTelefone } from '@/utils/masks';
+import { formataData, formataDataSomenteData } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-import BtnCreateMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnCreateMotorista.vue';
-import BtnAtualizaMotorista from '@/components/Cadastros/Motoristas/Embeeded/BtnAtualizaMotorista.vue';
+// import BtnCreateFrete from '@/components/Cadastros/Fretes/Embeeded/BtnCreateFrete.vue';
+// import BtnAtualizaFrete from '@/components/Cadastros/Fretes/Embeeded/BtnAtualizaFrete.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import MotoristaDetalhesDialog from '@/components/Cadastros/Motoristas/Embeeded/MotoristaDetalhesDialog.vue';
 
 
 export default {
   name: 'FretesCotacoes',
   components: {
     GlobalAlertFixed,
-    BtnCreateMotorista,
-    BtnAtualizaMotorista,
-    MotoristaDetalhesDialog
-
+    // BtnCreateFrete,
+    // BtnAtualizaFrete,
   },
   data () {
     return {
-      formataCEP,
-      formataCPF,
-      formataTelefone,
+      formataData,
+      formataDataSomenteData,
+      mostrarFiltros: false,
       tab: null,
       SimENaoEnumDescricao,
       SimENaoEnum,
@@ -429,7 +356,7 @@ export default {
       },
       busca_geral: null,
       filtrosDaBuscaGeral: {
-        id_motorista: null,
+        id_frete: null,
         nome_completo: null,
         cpf: null,
         telefone: null,
@@ -457,7 +384,7 @@ export default {
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
-        chave_primaria: 'id_motorista',
+        chave_primaria: 'id_frete',
         itens: [],
         itens_por_pagina: [
             {value: 50, title: '50'},
@@ -469,18 +396,11 @@ export default {
         ultima_pagina: 0,
         pagina_atual: 1,
         por_pagina: 50,
-        ordenarPor: [{key: 'id_motorista', order: 'desc'}],
+        ordenarPor: [{key: 'id_frete', order: 'desc'}],
         ordenarDirecao: true,
         opcoes: {},
 
         cabecalho: [
-          {
-            title: 'Detalhes',
-            key: 'detalhes',
-            align: 'center',
-            width: '150',
-            sortable: false,
-          },
           {
             title: 'Ação',
             key: 'acao',
@@ -489,20 +409,27 @@ export default {
             sortable: false,
           },
           {
+            title: 'Status',
+            key: 'status',
+            align: 'center',
+            width: '210',
+            sortable: false,
+          },
+          {
             title: 'ID',
-            key: 'id_motorista',
+            key: 'id_frete',
             align: 'center',
             width: '150',
           },
           {
-            title: 'Ativo',
-            key: 'ativo',
+            title: 'Criação',
+            key: 'data_cotacao',
             align: 'center',
-            width: '150',
+            width: '250',
           },
           {
-            title: 'Nome Completo',
-            key: 'nome_completo',
+            title: 'Remetente',
+            key: 'remetente',
             align:'start',
             cellProps: {
               class: 'text-start'
@@ -510,70 +437,43 @@ export default {
             width: '350',
           },
           {
-            title: 'CPF',
-            key: 'cpf',
+            title: 'Cidade',
+            key: 'cidade_destinatario',
             width: '300',
-            align:'center',
-          },
-          {
-            title: 'Telefone',
-            key: 'telefone',
-            align: 'center',
-            width: '150'
-          },
-          {
-            title: 'Placa Carro',
-            key: 'placa_carro',
-            align: 'center',
-            width: '300'
-          },
-          {
-            title: 'Placa Carreta',
-            key: 'placa_carreta',
-            align: 'center',
-            width: '300'
-          },
-          {
-            title: 'Tipo Veículo',
-            key: 'tipo_veiculo',
-            align: 'start',
-            cellProps: {
-              class: 'text-start'
-            },
-            width: '300'
-          },
-          {
-            title: 'Pix',
-            key: 'pix',
-            align: 'center',
-            width: '300'
-          },
-          {
-            title: 'UF Residência',
-            key: 'uf_residencia',
-            width: '250',
-            align: 'center'
-          },
-          {
-            title: 'Cidade Residência',
-            key: 'cidade_residencia',
-            width: '250',
-            align: 'center'
-          },
-          {
-            title: 'CEP Residência',
-            key: 'cep_residencia',
-            width: '250',
-            align:'center',
-          },
-          {
-            title: 'Observações',
-            key: 'observacoes',
-            width: '250',
             align:'start',
             cellProps: {
               class: 'text-start'
             },
+          },
+          {
+            title: 'UF',
+            key: 'uf_destinatario',
+            align: 'center',
+            width: '150'
+          },
+          {
+            title: 'R$ Motorista',
+            key: 'valor_motorista_efetivo',
+            align: 'center',
+            width: '250'
+          },
+          {
+            title: 'R$ Nota Fiscal',
+            key: 'valor_notafiscal',
+            align: 'center',
+            width: '250'
+          },
+          {
+            title: 'Valor Cobrado',
+            key: 'valor_cobrado_efetivo',
+            align: 'center',
+            width: '250'
+          },
+          {
+            title: 'CTE vinculado',
+            key: 'cte_vinculado',
+            align: 'center',
+            width: '300'
           },
           {
             title: 'Usuário Criação',
@@ -604,8 +504,8 @@ export default {
     }
   },
   methods: {
-    abrirDialogDetalhesMotorista(motorista) {
-      this.$refs.dialogMotorista.abrir(motorista);
+    abrirDialogDetalhesFrete(frete) {
+      this.$refs.dialogFrete.abrir(frete);
     },
     gerarQuery( page, itemsPerPage, sortBy ) {
       let arrayDeFiltros = []
@@ -648,32 +548,32 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeMotoristasInativos() {
+    numeroDeFretesInativos() {
       const itensAtivos = this.datatable.itens.filter(item => {
         return item.ativo == SimENaoEnumDescricao.NAO
       })
       return itensAtivos.length
     },
 
-    numeroDeMotoristasAtivos() {
+    numeroDeFretesAtivos() {
       const itensAtivos = this.datatable.itens.filter(item => {
         return item.ativo == SimENaoEnumDescricao.SIM
       })
       return itensAtivos.length
     },
 
-    async buscaMotorista( options = {} ) {
+    async buscaFrete( options = {} ) {
       this.datatable.carregando = true;
       if(!this.permissao) {
         const loading = useLoadingStore()
-        loading.show('Carregando Motoristas...')
+        // loading.show('Carregando Fretes...')
       }
       this.datatable.itensSelecionados = [];
 
       const {
           page = this.page || 1,
           itemsPerPage = this.itemsPerPage || 50,
-          sortBy = this.sortBy || [{ key: 'id_motorista', order: 'desc' }]
+          sortBy = this.sortBy || [{ key: 'id_frete', order: 'desc' }]
       } = options;
 
       this.page = page;
@@ -682,7 +582,7 @@ export default {
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
-        const url = endpoints.motorista.datatable;
+        const url = endpoints.frete.datatable;
 
         const resposta =  await ApiService({
           method: 'get',
@@ -716,52 +616,95 @@ export default {
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {
-        id_motorista: itemCriado.id_motorista,
-        nome_completo: itemCriado.nome_completo,
-        cpf: itemCriado.cpf,
-        telefone: itemCriado.telefone,
-        placa_carro: itemCriado.placa_carro,
-        placa_carreta: itemCriado.placa_carreta,
-        tipo_veiculo: itemCriado.tipo_veiculo,
-        pix: itemCriado.pix,
-        uf_residencia: itemCriado.uf_residencia,
-        cidade_residencia: itemCriado.cidade_residencia,
-        cep_residencia: itemCriado.cep_residencia,
-        ativo: itemCriado.ativo,
-        arquivo_cnh: itemCriado.arquivo_cnh,
-        arquivo_comprovante_residencia: itemCriado.arquivo_comprovante_residencia,
-        arquivo_documento_carro: itemCriado.arquivo_documento_carro,
-        arquivo_antt: itemCriado.arquivo_antt,
-        arquivo_foto_veiculo: itemCriado.arquivo_foto_veiculo,
+        id_frete: itemCriado.id_frete,
+        data_cotacao: formataDataSomenteData(itemCriado.data_cotacao),
+        id_usuario_responsavel: itemCriado.id_usuario_responsavel,
+        nome_usuario_responsavel: itemCriado.nome_usuario_responsavel,
+        id_remetente: itemCriado.id_remetente,
+        remetente: itemCriado.remetente,
+        cnpj_destinatario: itemCriado.cnpj_destinatario,
+        nome_destinatario: itemCriado.nome_destinatario,
+        cep_destinatario: itemCriado.cep_destinatario,
+        endereco_destinatario: itemCriado.endereco_destinatario,
+        numero_destinatario: itemCriado.numero_destinatario,
+        cidade_destinatario: itemCriado.cidade_destinatario,
+        uf_destinatario: itemCriado.uf_destinatario,
         observacoes: itemCriado.observacoes,
-        data_criacao: formataData(itemCriado.data_criacao),
+        valor_motorista: itemCriado.valor_motorista,
+        valor_motorista_efetivo: itemCriado.valor_motorista_efetivo,
+        valor_notafiscal: itemCriado.valor_notafiscal,
+        coeficiente_margem: itemCriado.coeficiente_margem,
+        advalorem: itemCriado.advalorem,
+        imposto_considerado: itemCriado.imposto_considerado,
+        valor_cobrado_efetivo: itemCriado.valor_cobrado_efetivo,
+        valor_cobrado: itemCriado.valor_cobrado,
+        status: itemCriado.status,
+        forma_pagamento: itemCriado.forma_pagamento,
+        motivo: itemCriado.motivo,
+        obs_financeiro: itemCriado.obs_financeiro,
+        cpf_motorista: itemCriado.cpf_motorista,
+        prazo: itemCriado.prazo,
+        cte_vinculado: itemCriado.cte_vinculado,
+        adiantamento: itemCriado.adiantamento,
+        saldo: itemCriado.saldo,
+        integral: itemCriado.integral,
+        status_pagamento: itemCriado.status_pagamento,
+        coleta_efetiva: itemCriado.coleta_efetiva,
+        entrega_efetiva: itemCriado.entrega_efetiva,
         usuario_criacao: itemCriado.usuario_criacao,
         usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
+        id_usuario_criacao: itemCriado.id_usuario_criacao,
+        data_criacao: formataData(itemCriado.data_criacao),
+        id_usuario_ultima_alteracao: itemCriado.id_usuario_ultima_alteracao,
         data_ultima_alteracao: formataData(itemCriado.data_ultima_alteracao)
       }
       this.datatable.itens.unshift(novoItem)
     },
 
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
-      const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_motorista == itemAtualizado.id_motorista);
+      const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_frete == itemAtualizado.id_frete);
 
       if (itemQueSeraAtualizado) {
-        itemQueSeraAtualizado.id_motorista = itemAtualizado.id_motorista
-        itemQueSeraAtualizado.nome_completo = itemAtualizado.nome_completo
-        itemQueSeraAtualizado.cpf = itemAtualizado.cpf
-        itemQueSeraAtualizado.telefone = itemAtualizado.telefone
-        itemQueSeraAtualizado.placa_carro = itemAtualizado.placa_carro
-        itemQueSeraAtualizado.placa_carreta = itemAtualizado.placa_carreta
-        itemQueSeraAtualizado.tipo_veiculo = itemAtualizado.tipo_veiculo
-        itemQueSeraAtualizado.pix = itemAtualizado.pix
-        itemQueSeraAtualizado.uf_residencia = itemAtualizado.uf_residencia
-        itemQueSeraAtualizado.cidade_residencia = itemAtualizado.cidade_residencia
-        itemQueSeraAtualizado.cep_residencia = itemAtualizado.cep_residencia
-        itemQueSeraAtualizado.ativo = itemAtualizado.ativo
+        itemQueSeraAtualizado.id_frete = itemAtualizado.id_frete
+        itemQueSeraAtualizado.data_cotacao = formataDataSomenteData(itemAtualizado.data_cotacao)
+        itemQueSeraAtualizado.id_usuario_responsavel = itemAtualizado.id_usuario_responsavel
+        itemQueSeraAtualizado.nome_usuario_responsavel = itemAtualizado.nome_usuario_responsavel
+        itemQueSeraAtualizado.id_remetente = itemAtualizado.id_remetente
+        itemQueSeraAtualizado.remetente = itemAtualizado.remetente
+        itemQueSeraAtualizado.cnpj_destinatario = itemAtualizado.cnpj_destinatario
+        itemQueSeraAtualizado.nome_destinatario = itemAtualizado.nome_destinatario
+        itemQueSeraAtualizado.cep_destinatario = itemAtualizado.cep_destinatario
+        itemQueSeraAtualizado.endereco_destinatario = itemAtualizado.endereco_destinatario
+        itemQueSeraAtualizado.numero_destinatario = itemAtualizado.numero_destinatario
+        itemQueSeraAtualizado.cidade_destinatario = itemAtualizado.cidade_destinatario
+        itemQueSeraAtualizado.uf_destinatario = itemAtualizado.uf_destinatario
         itemQueSeraAtualizado.observacoes = itemAtualizado.observacoes
-        itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
+        itemQueSeraAtualizado.valor_motorista = itemAtualizado.valor_motorista
+        itemQueSeraAtualizado.valor_motorista_efetivo = itemAtualizado.valor_motorista_efetivo
+        itemQueSeraAtualizado.valor_notafiscal = itemAtualizado.valor_notafiscal
+        itemQueSeraAtualizado.coeficiente_margem = itemAtualizado.coeficiente_margem
+        itemQueSeraAtualizado.advalorem = itemAtualizado.advalorem
+        itemQueSeraAtualizado.imposto_considerado = itemAtualizado.imposto_considerado
+        itemQueSeraAtualizado.valor_cobrado_efetivo = itemAtualizado.valor_cobrado_efetivo
+        itemQueSeraAtualizado.valor_cobrado = itemAtualizado.valor_cobrado
+        itemQueSeraAtualizado.status = itemAtualizado.status
+        itemQueSeraAtualizado.forma_pagamento = itemAtualizado.forma_pagamento
+        itemQueSeraAtualizado.motivo = itemAtualizado.motivo
+        itemQueSeraAtualizado.obs_financeiro = itemAtualizado.obs_financeiro
+        itemQueSeraAtualizado.cpf_motorista = itemAtualizado.cpf_motorista
+        itemQueSeraAtualizado.prazo = itemAtualizado.prazo
+        itemQueSeraAtualizado.cte_vinculado = itemAtualizado.cte_vinculado
+        itemQueSeraAtualizado.adiantamento = itemAtualizado.adiantamento
+        itemQueSeraAtualizado.saldo = itemAtualizado.saldo
+        itemQueSeraAtualizado.integral = itemAtualizado.integral
+        itemQueSeraAtualizado.status_pagamento = itemAtualizado.status_pagamento
+        itemQueSeraAtualizado.coleta_efetiva = itemAtualizado.coleta_efetiva
+        itemQueSeraAtualizado.entrega_efetiva = itemAtualizado.entrega_efetiva
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
+        itemQueSeraAtualizado.id_usuario_criacao = itemAtualizado.id_usuario_criacao
+        itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
+        itemQueSeraAtualizado.id_usuario_ultima_alteracao = itemAtualizado.id_usuario_ultima_alteracao
         itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
       }
     },
@@ -769,35 +712,58 @@ export default {
     async exportarExcel() {
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Motoristas');
+      const worksheet = workbook.addWorksheet('Fretes');
 
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,
-        ativo: SimENaoEnum[item.ativo]
+        ativo: SimENaoEnum[item.ativo],
+        // falta o Status
       }));
 
       // Adicionando cabeçalhos
       worksheet.columns = [
-      { header: 'ID', key: 'id_motorista', width: 15 },
-      { header: 'Ativo', key: 'ativo', width: 15 },
-      { header: 'Nome Completo', key: 'nome_completo', width: 15 },
-      { header: 'cpf', key: 'cpf', width: 40 },
-      { header: 'telefone', key: 'telefone', width: 40 },
-      { header: 'Placa Carro', key: 'placa_carro', width: 40 },
-      { header: 'Placa Carreta', key: 'placa_carreta', width: 30 },
-      { header: 'Tipo Veiculo', key: 'tipo_veiculo', width: 25 },
-      { header: 'Pix', key: 'pix', width: 30 },
-      { header: 'Número', key: 'numero', width: 25 },
-      { header: 'País', key: 'pais', width: 30 },
-      { header: 'UF Residência', key: 'uf_residencia', width: 10 },
-      { header: 'Cidade Residência', key: 'cidade_residencia', width: 30 },
-      { header: 'CEP Residência', key: 'cep_residencia', width: 30 },
-      { header: 'Observações', key: 'observacoes', width: 30 },
-      { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
-      { header: 'Data Criação', key: 'data_criacao', width: 25 },
-      { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
-      { header: 'Data Última Alteração', key: 'data_ultima_alteracao', width: 25 }
-    ];
+        { header: 'ID Frete', key: 'id_frete', width: 15 },
+        { header: 'Data Cotação', key: 'data_cotacao', width: 20 },
+        { header: 'ID Resp.', key: 'id_usuario_responsavel', width: 15 },
+        { header: 'Usuário Responsável', key: 'nome_usuario_responsavel', width: 25 },
+        { header: 'ID Remetente', key: 'id_remetente', width: 15 },
+        { header: 'Remetente', key: 'remetente', width: 25 },
+        { header: 'CNPJ Destinatário', key: 'cnpj_destinatario', width: 25 },
+        { header: 'Nome Destinatário', key: 'nome_destinatario', width: 25 },
+        { header: 'CEP Destinatário', key: 'cep_destinatario', width: 15 },
+        { header: 'Endereço Destinatário', key: 'endereco_destinatario', width: 30 },
+        { header: 'Número Destinatário', key: 'numero_destinatario', width: 15 },
+        { header: 'Cidade Destinatário', key: 'cidade_destinatario', width: 25 },
+        { header: 'UF Destinatário', key: 'uf_destinatario', width: 10 },
+        { header: 'Observações', key: 'observacoes', width: 30 },
+        { header: 'Valor Motorista', key: 'valor_motorista', width: 20 },
+        { header: 'Valor Motorista Efetivo', key: 'valor_motorista_efetivo', width: 25 },
+        { header: 'Valor Nota Fiscal', key: 'valor_notafiscal', width: 20 },
+        { header: 'Coef. Margem', key: 'coeficiente_margem', width: 15 },
+        { header: 'AdValorem', key: 'advalorem', width: 15 },
+        { header: 'Imposto Considerado', key: 'imposto_considerado', width: 20 },
+        { header: 'Valor Cobrado Efetivo', key: 'valor_cobrado_efetivo', width: 25 },
+        { header: 'Valor Cobrado', key: 'valor_cobrado', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
+        { header: 'Forma Pagamento', key: 'forma_pagamento', width: 20 },
+        { header: 'Motivo', key: 'motivo', width: 30 },
+        { header: 'Obs Financeiro', key: 'obs_financeiro', width: 25 },
+        { header: 'CPF Motorista', key: 'cpf_motorista', width: 20 },
+        { header: 'Prazo', key: 'prazo', width: 15 },
+        { header: 'CTE Vinculado', key: 'cte_vinculado', width: 20 },
+        { header: 'Adiantamento', key: 'adiantamento', width: 15 },
+        { header: 'Saldo', key: 'saldo', width: 15 },
+        { header: 'Integral', key: 'integral', width: 15 },
+        { header: 'Status Pagamento', key: 'status_pagamento', width: 20 },
+        { header: 'Coleta Efetiva', key: 'coleta_efetiva', width: 20 },
+        { header: 'Entrega Efetiva', key: 'entrega_efetiva', width: 20 },
+        { header: 'Usuário Criação', key: 'usuario_criacao', width: 25 },
+        { header: 'Usuário Últ. Alteração', key: 'usuario_ultima_alteracao', width: 25 },
+        { header: 'ID Usuário Criação', key: 'id_usuario_criacao', width: 20 },
+        { header: 'Data Criação', key: 'data_criacao', width: 25 },
+        { header: 'ID Usuário Últ. Alteração', key: 'id_usuario_ultima_alteracao', width: 25 },
+        { header: 'Data Últ. Alteração', key: 'data_ultima_alteracao', width: 25 }
+      ];
 
       // Adicionando os dados
       itensFormatados.forEach(item => worksheet.addRow(item));
@@ -806,12 +772,12 @@ export default {
       const buffer = await workbook.xlsx.writeBuffer();
 
       // Salvando
-      saveAs(new Blob([buffer]), 'motoristas.xlsx');
+      saveAs(new Blob([buffer]), 'fretes.xlsx');
     },
 
     // apagarDadosDoArrayLocalmente() {
     //   const arrayFiltrado = this.items.filter(item => {
-    //       return !this.datatable.itensSelecionados.includes(item.id_motorista);
+    //       return !this.datatable.itensSelecionados.includes(item.id_frete);
     //   })
     //   this.datatable.itens = arrayFiltrado
     // },

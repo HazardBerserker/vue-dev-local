@@ -15,4 +15,10 @@ export const endpoints = {
     atualiza: `${URL_BASE}/motoristas`,
     apaga: `${URL_BASE}/motoristas`,
   },
+  frete: {
+    datatable: `${URL_BASE}/fretes/datatable`,
+    novo: `${URL_BASE}/fretes`,
+    atualiza: `${URL_BASE}/fretes`,
+    apaga: `${URL_BASE}/fretes`,
+  },
 };
