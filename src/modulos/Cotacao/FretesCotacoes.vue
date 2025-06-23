@@ -300,7 +300,7 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <!-- <BtnAtualizaFrete :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/> -->
+              <BtnAtualizaFreteCotacoes :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
           </v-data-table-server>
         </v-card>
@@ -319,7 +319,7 @@ import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 // import BtnCreateFrete from '@/components/Cadastros/Fretes/Embeeded/BtnCreateFrete.vue';
-// import BtnAtualizaFrete from '@/components/Cadastros/Fretes/Embeeded/BtnAtualizaFrete.vue';
+import BtnAtualizaFreteCotacoes from '@/components/Comercial/FreteCotacoes/Embeeded/BtnAtualizaFreteCotacoes.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -328,8 +328,7 @@ export default {
   name: 'FretesCotacoes',
   components: {
     GlobalAlertFixed,
-    // BtnCreateFrete,
-    // BtnAtualizaFrete,
+    BtnAtualizaFreteCotacoes,
   },
   data () {
     return {

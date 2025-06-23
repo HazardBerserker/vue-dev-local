@@ -56,31 +56,32 @@
               :items="listaDeClientes"
               item-title="razao_social"
               item-value="id_cliente"
+              :rules="regraGeralCampoObrigatorio"
             ></v-combobox>
           </v-col>
           <v-col>
-            <InputText label="CNPJ" v-model="coleta_cnpj" mask="##.###.###/####-##" density="compact" class="bg-white" readonly :clearable="false"/>
+            <InputText label="CNPJ" v-model="coleta_cnpj" :rules="regraGeralCampoObrigatorio" mask="##.###.###/####-##" density="compact" bg-color="white" readonly :clearable="false"/>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col cols="4">
-            <InputText label="CEP" v-model="coleta_cep" mask="#####-###" density="compact" class="bg-white" readonly :clearable="false"/>
+            <InputText label="CEP" v-model="coleta_cep" :rules="regraGeralCampoObrigatorio" mask="#####-###" density="compact" bg-color="white" readonly :clearable="false"/>
           </v-col>
           <v-col cols="8">
-            <v-text-field v-model="coleta_endereco" density="compact" variant="outlined" label="Endereço" readonly bg-color="white" placeholder="Digite o Endereço"></v-text-field>
+            <v-text-field v-model="coleta_endereco" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Endereço" readonly bg-color="white" placeholder="Digite o Endereço"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col cols="3">
-            <v-text-field v-model="coleta_numero" density="compact" variant="outlined" label="Número" readonly bg-color="white" placeholder="Digite o Número"></v-text-field>
+            <v-text-field v-model="coleta_numero" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Número" readonly bg-color="white" placeholder="Digite o Número"></v-text-field>
           </v-col>
           <v-col cols="5">
-            <v-text-field v-model="coleta_cidade" density="compact" variant="outlined" label="Cidade" readonly bg-color="white" placeholder="Digite a cidade"></v-text-field>
+            <v-text-field v-model="coleta_cidade" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Cidade" readonly bg-color="white" placeholder="Digite a cidade"></v-text-field>
           </v-col>
           <v-col cols="4">
-            <v-text-field v-model="coleta_uf" density="compact" variant="outlined" label="UF" readonly bg-color="white" placeholder="Digite o UF"></v-text-field>
+            <v-text-field v-model="coleta_uf" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="UF" readonly bg-color="white" placeholder="Digite o UF"></v-text-field>
           </v-col>
         </v-row>
       </v-card>
@@ -97,7 +98,7 @@
 
         <v-row class="mt-2">
           <v-col>
-            <InputText label="CNPJ" v-model="cnpj_destinatario" mask="##.###.###/####-##" density="compact" class="bg-white" counter="18"/>
+            <InputText label="CNPJ" v-model="cnpj_destinatario" mask="##.###.###/####-##" :clearable="false" density="compact" class="bg-white" counter="18"/>
           </v-col>
 
           <v-col>
@@ -107,10 +108,10 @@
 
         <v-row>
           <v-col cols="4">
-            <InputText label="CEP" v-model="cep_destinatario" mask="#####-###"  counter="9" density="compact" class="bg-white"/>
+            <InputText label="CEP" v-model="cep_destinatario" mask="#####-###" :clearable="false"  counter="9" density="compact" class="bg-white"/>
           </v-col>
           <v-col cols="8">
-            <v-text-field v-model="endereco_destinatario" density="compact" variant="outlined" label="Endereço" bg-color="white" placeholder="Digite o endereço"></v-text-field>
+            <v-text-field v-model="endereco_destinatario" :rules="regraEnderecoDestinatario" density="compact" variant="outlined" label="Endereço" bg-color="white" placeholder="Digite o endereço"></v-text-field>
           </v-col>
         </v-row>
 
@@ -122,13 +123,13 @@
             <v-text-field v-model="cidade_destinatario" density="compact" variant="outlined" label="Cidade"  bg-color="white" placeholder="Digite a cidade"></v-text-field>
           </v-col>
           <v-col cols="4">
-            <v-text-field v-model="uf_destinatario" density="compact" variant="outlined" label="UF" bg-color="white" placeholder="Digite o UF"></v-text-field>
+            <InputText label="UF" v-model="uf_destinatario" :rules="regraUFDestinatario" :clearable="false"  counter="2" density="compact" bg-color="white"/>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col cols="4">
-            <v-text-field v-model="prazo_entrega" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
+            <v-text-field v-model="prazo_entrega" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
           </v-col>
         </v-row>
 
@@ -140,42 +141,66 @@
 
         <v-row class="mt-2">
           <v-col cols="4">
-            <v-text-field v-model="valor_motorista" type="number" density="compact" variant="outlined" label="Valor do Motorista (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
+            <v-text-field v-model="valor_motorista" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Valor do Motorista (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
           </v-col>
           <v-col cols="4">
-            <v-text-field v-model="valor_notafiscal" type="number" density="compact" variant="outlined" label="Valor da NF (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
+            <v-text-field v-model="valor_notafiscal" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Valor da NF (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
           </v-col>
           <v-col cols="4">
-            <v-text-field v-model="coeficiente_margem" type="number" density="compact" variant="outlined" label="Coeficiente de Margem (%)" bg-color="white" placeholder="Gerado automaticamente" readonly></v-text-field>
+            <v-text-field v-model="coeficiente_margem" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Coeficiente de Margem (%)" bg-color="white" placeholder="Gerado automaticamente" readonly></v-text-field>
           </v-col>
         </v-row>
 
+        <v-btn block class="mb-10" variant="flat" color="blue" :disabled="!coeficiente_margem || !valor_notafiscal || !valor_motorista" @click="calculaFrete">
+          Calcular Frete
+        </v-btn>
+
         <div class="d-flex justify-space-between mt-4 ga-2">
-          <v-card class="fill-height pa-2 w-100" title="Valor do frete" color="blue-darken-4" variant="tonal">
+          <v-card class="fill-height pa-2 w-100" color="blue-darken-4" variant="tonal">
+            <template #title>
+              <div class="text-center">
+                Valor do frete
+              </div>
+            </template>
             <template #text>
-              <div class="text-h6">
-                R$ 2300.38
+              <div class="text-h6 text-center">
+                {{ valor_cobrado_efetivo ? `R$ ${valor_cobrado_efetivo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null }}
               </div>
             </template>
           </v-card>
-          <v-card class="fill-height pa-2 w-100" title="Motorista" color="red-darken-4" variant="tonal">
+          <v-card class="fill-height pa-2 w-100" color="red-darken-4" variant="tonal">
+            <template #title>
+              <div class="text-center">
+                Motorista
+              </div>
+            </template>
             <template #text>
-              <div class="text-h6">
-                R$ 2300.38
+              <div class="text-h6 text-center">
+                {{ valor_motorista_efetivo ? `-R$ ${valor_motorista_efetivo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null }}
               </div>
             </template>
           </v-card>
-          <v-card class="fill-height pa-2 w-100" title="Ad-Valorem" color="purple-darken-4" variant="tonal">
+          <v-card class="fill-height pa-2 w-100" color="purple-darken-4" variant="tonal">
+            <template #title>
+              <div class="text-center">
+                Ad-Valorem
+              </div>
+            </template>
             <template #text>
-              <div class="text-h6">
-                R$ 2300.38
+              <div class="text-h6 text-center">
+                {{  advalorem ? `-R$ ${advalorem.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null }}
               </div>
             </template>
           </v-card>
-          <v-card class="fill-height pa-2 w-100" title="Lucro Bruto" color="green-darken-4" variant="tonal">
+          <v-card class="fill-height pa-2 w-100" color="green-darken-4" variant="tonal">
+            <template #title>
+              <div class="text-center">
+                Lucro Bruto
+              </div>
+            </template>
             <template #text>
-              <div class="text-h6">
-                R$ 2300.38
+              <div class="text-h6 text-center">
+                  {{ lucro_bruto ? `R$ ${lucro_bruto.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null}}
               </div>
             </template>
           </v-card>
@@ -249,16 +274,16 @@
             <template #title>
               <span class="text-body-1 font-weight-bold">Destinatário</span>
             </template>
-            <div class="bg-grey-lighten-5 ps-4 py-2">{{nome_destinatario}}</div>
-            <v-divider></v-divider>
-            <div class="bg-grey-lighten-5 ps-4 py-2">{{formataCNPJ(cnpj_destinatario)}}</div>
-            <v-divider></v-divider>
-            <div class="bg-grey-lighten-5 ps-4 py-2">{{endereco_destinatario}}</div>
+            <div class="bg-grey-lighten-5 ps-4 py-2" v-if="nome_destinatario">{{nome_destinatario}}</div>
+            <v-divider v-if="nome_destinatario"></v-divider>
+            <div class="bg-grey-lighten-5 ps-4 py-2" v-if="cnpj_destinatario">{{formataCNPJ(cnpj_destinatario)}}</div>
+            <v-divider v-if="cnpj_destinatario"></v-divider>
+            <div class="bg-grey-lighten-5 ps-4 py-2">{{endereco_destinatario && numero_destinatario ? `${endereco_destinatario}, ${numero_destinatario}` : null}}</div>
             <v-divider></v-divider>
             <div class="bg-grey-lighten-5 ps-4 py-2">
               <v-row>
-                <v-col cols="3">{{formataCEP(cep_destinatario)}}</v-col>
-                <v-divider vertical inset></v-divider>
+                <v-col cols="3" v-if="cidade_destinatario">{{formataCEP(cep_destinatario)}}</v-col>
+                <v-divider vertical inset v-if="cidade_destinatario"></v-divider>
                 <v-col cols="7">{{cidade_destinatario}}</v-col>
                 <v-divider vertical inset></v-divider>
                 <v-col cols="2">{{uf_destinatario}}</v-col>
@@ -276,22 +301,22 @@
             </div>
             <div class="bg-grey-lighten-5 ps-4 py-2">
               <v-row>
-                <v-col>awd</v-col>
+                <v-col>Frete</v-col>
                 <v-divider vertical inset></v-divider>
-                <v-col>awd</v-col>
+                <v-col>{{ valor_cobrado_efetivo ? `R$ ${valor_cobrado_efetivo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null }}</v-col>
               </v-row>
             </div>
             <v-divider></v-divider>
              <div class="bg-grey-lighten-5 ps-4 py-2">
               <v-row>
-                <v-col>awd</v-col>
+                <v-col>Prazo de Entrega</v-col>
                 <v-divider vertical inset></v-divider>
-                <v-col>awd</v-col>
+                <v-col>{{ prazo_entrega ? `${prazo_entrega} Dias` : null }}</v-col>
               </v-row>
             </div>
           </v-card>
         </div>
-        <div class="mt-6 w-100 text-end font-weight-bold text-green-darken-4">Total do Frete: R$2.000,08</div>
+        <div class="mt-6 w-100 text-end font-weight-bold text-green-darken-3 text-h5">Total do Frete {{ valor_cobrado_efetivo ? `R$ ${valor_cobrado_efetivo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null }}</div>
         <div class="mt-6 w-100 text-center text-body-2 text-grey-darken-1">Este orçamento é válido por 7 dias a partir da data de emissão</div>
       </div>
 
@@ -323,6 +348,9 @@ export default {
     GlobalAlertFixed,
     InputText
   },
+  async mounted() {
+    await this.buscaCotacaoCriterios()
+  },
   data() {
     return {
       formataCNPJ,
@@ -330,6 +358,7 @@ export default {
       propriedadesDoAlertaFixo: null,
       comboBoxRemetenteLoading: false,
       listaDeClientes: [],
+      cotacaoCriterios: [],
       // Cabeçalho
       id_cotacao: '',
 
@@ -357,9 +386,34 @@ export default {
       observacoes: '',
 
       // Valores
-      valor_motorista: '',
-      valor_notafiscal: '',
-      coeficiente_margem: ''
+      valor_motorista: null,
+      valor_motorista_efetivo: null,
+      valor_notafiscal: null,
+      valor_cobrado: null,
+      valor_cobrado_efetivo: null,
+      coeficiente_margem: null,
+      lucro_bruto: null,
+      advalorem: null,
+
+      // regras
+      opcaoAtivo:[
+          { valor: 1, descricao: 'Sim' },
+          { valor: 0, descricao: 'Não' }
+        ],
+
+      // regras destinatario
+      regraEnderecoDestinatario: [
+        (v) => !!v || 'O Endereço é obrigatório',
+      ],
+      regraUFDestinatario: [
+        (v) => !!v || 'A UF do Destinatário é obrigatória',
+        (v) => (v && v.length === 2) || 'O UF deve ter 2 caracteres',
+      ],
+
+      // regras coleta
+      regraGeralCampoObrigatorio: [
+        (v) => !!v || 'Este campo é obrigatório',
+      ]
     }
   },
   watch: {
@@ -372,9 +426,77 @@ export default {
       if(newValue.length == 14) {
         this.buscarDestinatario();
       }
-    }
+    },
+    valor_motorista(newValue) {
+      if(!newValue) {
+        this.coeficiente_margem = null
+        return
+      }
+
+      this.coeficiente_margem = this.obterCoeficienteValorMotorista(newValue, this.cotacaoCriterios)
+    },
   },
   methods: {
+
+    async buscaCotacaoCriterios() {
+      try {
+        const endpoint = endpoints.cotacaoCriterios.lista
+
+        const resposta = await ApiService({
+          method: 'get',
+          url: endpoint,
+        })
+
+        this.cotacaoCriterios = resposta.data.data
+
+      } catch (error) {
+        const alertStore = useAlertStore()
+        alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
+        return
+      }
+    },
+
+    obterCoeficienteValorMotorista(valorMotorista, criterios) {
+      const criteriosMotorista = criterios
+        .filter(c => c.criterio === 'valor_motorista')
+        .sort((a, b) => a.valor - b.valor);
+
+      if (criteriosMotorista.length === 0) {
+        return null; // Se não houver nenhum critério, retorna null
+      }
+
+      let coeficienteAplicado = criteriosMotorista[0].coeficiente;
+
+      for (const criterio of criteriosMotorista) {
+        if (valorMotorista >= criterio.valor) {
+          coeficienteAplicado = criterio.coeficiente;
+        }
+      }
+      return coeficienteAplicado;
+    },
+
+    calculaFrete() {
+      const margemMarkup = 1.0738;
+      let coeficienteAdvalorem = null
+      // let imposto = null
+      this.cotacaoCriterios.map(cotacaoCriterio => {
+        // if(cotacaoCriterio.criterio === 'imposto') {
+        //   imposto = cotacaoCriterio.coeficiente
+        // }
+        if(cotacaoCriterio.criterio === 'advalorem') {
+          coeficienteAdvalorem = cotacaoCriterio.coeficiente
+        }
+      })
+
+      this.advalorem = coeficienteAdvalorem * margemMarkup * this.valor_notafiscal
+
+      this.valor_cobrado = (this.valor_motorista * this.coeficiente_margem) + this.advalorem
+      this.valor_cobrado_efetivo = this.valor_cobrado
+      // this.imposto = imposto * this.valor_cobrado_efetivo
+      this.valor_motorista_efetivo = parseFloat(this.valor_motorista)
+      this.lucro_bruto = this.valor_cobrado_efetivo - this.advalorem - this.valor_motorista_efetivo
+    },
+
     format(date) {
       return formatDate(date, 'dd/MM/yy')
     },

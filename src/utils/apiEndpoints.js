@@ -21,4 +21,11 @@ export const endpoints = {
     atualiza: `${URL_BASE}/fretes`,
     apaga: `${URL_BASE}/fretes`,
   },
+  cotacaoCriterios: {
+    datatable: `${URL_BASE}/cotacao-criterios/datatable`,
+    lista: `${URL_BASE}/cotacao-criterios/lista`,
+    novo: `${URL_BASE}/cotacao-criterios`,
+    atualiza: `${URL_BASE}/cotacao-criterios`,
+    apaga: `${URL_BASE}/cotacao-criterios`,
+  },
 };

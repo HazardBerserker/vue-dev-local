@@ -23,9 +23,9 @@
           :disabled="disabled"
           :type="type"
           :maxLength="counter"
-          :append-icon="iconeAppend"
-          :prepend-icon="iconePrepend"
-          :bg-color="backgroundColor"
+          :append-icon="appendIcon"
+          :prepend-icon="prependIcon"
+          :bg-color="bgColor"
           :clearable="clearable"
           hide-spin-buttons
           :readonly="readonly"
@@ -46,9 +46,9 @@
         :disabled="disabled"
         :type="type"
         :maxLength="counter"
-        :append-icon="iconeAppend"
-        :prepend-icon="iconePrepend"
-        :bg-color="backgroundColor"
+        :append-icon="appendIcon"
+        :prepend-icon="prependIcon"
+        :bg-color="bgColor"
         :clearable="clearable"
         hide-spin-buttons
         :readonly="readonly"
@@ -93,11 +93,11 @@ export default {
           type: String,
           default: 'text'
         },
-        iconeAppend: {
+        appendIcon: {
           type: String,
           default: ''
         },
-        iconePrepend: {
+        prependIcon: {
           type: String,
           default: ''
         },
@@ -109,7 +109,7 @@ export default {
           type: Function,
           default: () => null
         },
-        backgroundColor: {
+        bgColor: {
           type: String,
           default: null
         },
@@ -180,13 +180,13 @@ export default {
     },
 
     methods: {
-        acionaBlur() {
-            this.$emit('onBlur')
-        },
+      acionaBlur() {
+          this.$emit('onBlur')
+      },
 
-        estilo(estiloDefinido) {
-            return this.estiloCampo === estiloDefinido;
-        }
-    }
+      estilo(estiloDefinido) {
+          return this.estiloCampo === estiloDefinido;
+      }
+  }
 };
 </script>
