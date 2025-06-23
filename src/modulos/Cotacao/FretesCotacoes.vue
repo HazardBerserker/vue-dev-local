@@ -37,7 +37,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -48,7 +47,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
               placeholder="Ex: 21/06/2025"
             ></v-text-field>
           </v-col>
@@ -60,7 +58,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -71,7 +68,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -82,7 +78,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
         </v-row>
@@ -95,7 +90,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -106,7 +100,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -117,7 +110,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -128,7 +120,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
 
@@ -139,7 +130,6 @@
               variant="outlined"
               density="compact"
               clearable
-              rounded
             ></v-text-field>
           </v-col>
         </v-row>
@@ -184,7 +174,7 @@
                   123
                 </span>
                 <span v-else>
-                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                  <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
                 </span>
               </v-fade-transition>
             </v-card>
@@ -207,7 +197,7 @@
                   123
                 </span>
                 <span v-else>
-                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                  <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
                 </span>
               </v-fade-transition>
             </v-card>
@@ -230,7 +220,7 @@
                   123
                 </span>
                 <span v-else>
-                  <v-progress-circular indeterminate color="white" size="30"></v-progress-circular>
+                  <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
                 </span>
               </v-fade-transition>
             </v-card>
