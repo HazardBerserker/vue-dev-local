@@ -113,7 +113,7 @@
           </v-row>
           <v-row>
             <v-col cols="4">
-              <v-text-field v-model="prazo_entrega" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
+              <v-text-field v-model="prazo_entrega" :rules="regraGeralCampoObrigatorio" min="1" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -123,13 +123,17 @@
           </v-row>
           <v-row class="my-2">
             <v-col cols="4">
-              <v-text-field v-model="valor_motorista" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Valor do Motorista (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
+              <InputTextMoeda v-model="valor_motorista" prefix="R$" label="Valor do Motorista:" :rules="regraGeralCampoObrigatorio" bg-color="white"/>
             </v-col>
             <v-col cols="4">
-              <v-text-field v-model="valor_notafiscal" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Valor da NF (R$)" bg-color="white" placeholder="Digite o valor"></v-text-field>
+              <InputTextMoeda v-model="valor_notafiscal" prefix="R$" label="Valor da NF:" :rules="regraGeralCampoObrigatorio" bg-color="white"/>
             </v-col>
             <v-col cols="4">
-              <v-text-field v-model="coeficiente_margem" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Coeficiente de Margem (%)" bg-color="white" placeholder="Gerado automaticamente" ></v-text-field>
+              <v-text-field v-model="coeficiente_margem" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Coeficiente de Margem:" bg-color="white" placeholder="Gerado automaticamente" min="0">
+                <template #append-inner>
+                  %
+                </template>
+              </v-text-field>
             </v-col>
           </v-row>
           <v-btn block class="mb-10" variant="flat" color="blue" :disabled="!coeficiente_margem || !valor_notafiscal || !valor_motorista" @click="calculaFrete">
@@ -322,17 +326,19 @@ import { useAlertStore } from '@/stores/alertStore';
 import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { formataCNPJ, formataCEP } from '@/utils/masks';
+import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 // import { endpoints } from '@/utils/apiEndpoints';
 
 export default {
   components: {
     GlobalAlertFixed,
-    InputText
+    InputText,
+    InputTextMoeda
   },
   async mounted() {
     const loading = useLoadingStore()
     try {
-      loading.show('Carregando...')
+      loading.show('Carregando Formulário...')
       await this.buscaCotacaoCriterios()
       this.permissao = true;
     } catch (error) {
