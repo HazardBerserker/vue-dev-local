@@ -656,6 +656,11 @@ export default {
         itemQueSeraAtualizado.cep_residencia = itemAtualizado.cep_residencia
         itemQueSeraAtualizado.ativo = itemAtualizado.ativo
         itemQueSeraAtualizado.observacoes = itemAtualizado.observacoes
+        itemQueSeraAtualizado.arquivo_comprovante_residencia = itemAtualizado.arquivo_comprovante_residencia
+        itemQueSeraAtualizado.arquivo_cnh = itemAtualizado.arquivo_cnh
+        itemQueSeraAtualizado.arquivo_documento_carro = itemAtualizado.arquivo_documento_carro
+        itemQueSeraAtualizado.arquivo_antt = itemAtualizado.arquivo_antt
+        itemQueSeraAtualizado.arquivo_foto_veiculo = itemAtualizado.arquivo_foto_veiculo
         itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
