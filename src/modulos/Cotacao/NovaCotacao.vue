@@ -349,6 +349,7 @@ export default {
     return {
       formataCNPJ,
       formataCEP,
+      permissao: false,
       propriedadesDoAlertaFixo: null,
       comboBoxRemetenteLoading: false,
       listaDeClientes: [],
@@ -628,7 +629,7 @@ export default {
       }
       try {
 
-        const endpoint = endpoints.cliente.buscaPorRazaoSocial;
+        const endpoint = endpoints.cliente.listaPorRazaoSocial;
         const url =  `${endpoint}/${this.coleta_remetente}`
 
         this.comboBoxRemetenteLoading = true

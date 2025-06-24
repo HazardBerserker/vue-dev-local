@@ -32,7 +32,7 @@
         <v-row dense>
           <v-col cols="12" md="2">
             <v-text-field
-              v-model="id_frete"
+              v-model="filtros.id_frete"
               label="ID Frete/Cotação"
               variant="outlined"
               density="compact"
@@ -42,7 +42,7 @@
 
           <v-col cols="12" md="2">
             <v-text-field
-              v-model="data_cotacao"
+              v-model="filtros.data_cotacao"
               label="Data Criação"
               variant="outlined"
               density="compact"
@@ -53,7 +53,7 @@
 
           <v-col cols="12" md="3">
             <v-text-field
-              v-model="remetente"
+              v-model="filtros.remetente"
               label="Remetente"
               variant="outlined"
               density="compact"
@@ -63,7 +63,7 @@
 
           <v-col cols="12" md="3">
             <v-text-field
-              v-model="cidade_destinatario"
+              v-model="filtros.cidade_destinatario"
               label="Cidade Destinatário"
               variant="outlined"
               density="compact"
@@ -73,7 +73,7 @@
 
           <v-col cols="12" md="2">
             <v-text-field
-              v-model="uf_destinatario"
+              v-model="filtros.uf_destinatario"
               label="UF Destinatário"
               variant="outlined"
               density="compact"
@@ -85,7 +85,7 @@
         <v-row dense>
           <v-col cols="12" md="2">
             <v-text-field
-              v-model="valor_frete_efetivo"
+              v-model="filtros.valor_frete_efetivo"
               label="R$ Frete"
               variant="outlined"
               density="compact"
@@ -95,7 +95,7 @@
 
           <v-col cols="12" md="3">
             <v-text-field
-              v-model="valor_notafiscal"
+              v-model="filtros.valor_notafiscal"
               label="R$ NF"
               variant="outlined"
               density="compact"
@@ -105,7 +105,7 @@
 
           <v-col cols="12" md="3">
             <v-text-field
-              v-model="valor_cobrado_efetivo"
+              v-model="filtros.valor_cobrado_efetivo"
               label="R$ Valor Cobrado"
               variant="outlined"
               density="compact"
@@ -115,7 +115,7 @@
 
           <v-col cols="12" md="2">
             <v-text-field
-              v-model="status"
+              v-model="filtros.status"
               label="Status"
               variant="outlined"
               density="compact"
@@ -125,7 +125,7 @@
 
           <v-col cols="12" md="2">
             <v-text-field
-              v-model="cte_vinculado"
+              v-model="filtros.cte_vinculado"
               label="CTE Vinculado"
               variant="outlined"
               density="compact"
@@ -364,7 +364,6 @@ export default {
       permissao: false,
       propriedadesDoAlertaFixo: null,
       filtros: {
-        ativo: null
       },
       busca_geral: null,
       filtrosDaBuscaGeral: {

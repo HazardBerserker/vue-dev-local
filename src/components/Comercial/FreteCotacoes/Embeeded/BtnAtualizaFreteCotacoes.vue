@@ -55,7 +55,7 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 mb-2">
-                  <InputText density="compact" label="Valor Motorista:" v-model="valor_motorista" prepend-inner-icon="R$" class="w-100" :rules="[s]"/>
+                  <InputText density="compact" label="Valor Motorista:" v-model="valor_motorista" prepend-inner-icon="R$" class="w-100"/>
                   <InputText density="compact" label="Valor NF:" v-model="valor_notafiscal" prepend-inner-icon="R$" class="w-100"/>
                 </div>
                 <div class="d-flex ga-4 text-start">
@@ -76,13 +76,39 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 mb-2">
-                  <v-text-field density="compact" variant="outlined" label="CTE Vinculado:"></v-text-field>
-                  <v-select density="compact" variant="outlined" label="Forma de Pagamento:" :items="opcoesFormaPagamento" v-model="forma_pagamento" itemTitle="descricao" itemValue="valor"></v-select>
+                  <v-combobox
+                    :loading="comboBoxCteLoading"
+                    @keyup="buscaCte"
+                    v-model="cte"
+                    density="compact"
+                    variant="outlined"
+                    label="CTE Vinculado:"
+                    bg-color="white"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeCtes"
+                    item-title="Id_CTe"
+                    class="w-100"
+                  >
+                  </v-combobox>
+                  <v-select density="compact" class="w-100" variant="outlined" label="Forma de Pagamento:" :items="opcoesFormaPagamento" v-model="forma_pagamento" itemTitle="descricao" itemValue="valor"></v-select>
                   <!-- <div class="w-100"><strong>Data:</strong> 18/06/2025</div> -->
                 </div>
                 <div class="d-flex ga-4 text-start">
-                  <v-text-field density="compact" variant="outlined" label="Escolha um Motorista:"></v-text-field>
-                  <v-select density="compact" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" v-model="status" itemTitle="descricao" itemValue="valor"></v-select>
+                  <v-combobox
+                    :loading="comboBoxMotoristaLoading"
+                    @keyup="buscaMotorista"
+                    v-model="motorista"
+                    density="compact"
+                    variant="outlined"
+                    label="Escolha um Motorista:"
+                    bg-color="white"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeMotoristas"
+                    item-title="nome_completo"
+                    class="w-100"
+                  >
+                  </v-combobox>
+                  <v-select density="compact" class="w-100" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" v-model="status" itemTitle="descricao" itemValue="valor"></v-select>
                   <!-- <v-text-field density="compact" variant="outlined" label="Motivo da Rejeição:"></v-text-field> -->
                 </div>
               </div>
@@ -98,8 +124,8 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4">
-                  <v-textarea density="compact" variant="outlined" label="Observações Cotação:" rows="2"></v-textarea>
-                  <v-textarea density="compact" variant="outlined" label="Observações Financeiro:" rows="2"></v-textarea>
+                  <v-textarea v-model="observacoes" density="compact" variant="outlined" label="Observações Cotação:" rows="2"></v-textarea>
+                  <v-textarea v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2"></v-textarea>
                 </div>
               </div>
             </v-card>
@@ -131,8 +157,18 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 text-start">
-                  <v-text-field density="compact" variant="outlined" label="Entrega Efetiva:"></v-text-field>
-                  <v-text-field density="compact" variant="outlined" label="Selecionar Comprovantes:"></v-text-field>
+                  <v-date-input
+                    v-model="entrega_efetiva"
+                    label="Entrega Efetiva:"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    :display-format="format"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                  ></v-date-input>
+                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="regraArquivo" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined"></v-file-input>
                 </div>
               </div>
             </v-card>
@@ -211,6 +247,7 @@ import { endpoints } from '@/utils/apiEndpoints';
 import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { formataDataSomenteData } from '@/utils/masks';
+import { format as formatDate } from 'date-fns'
 // import { useAlertStore } from '@/stores/alertStore'
 // import ApiService from '@/services/ApiService.js';
 
@@ -255,6 +292,15 @@ export default {
         adiantamento: null,
         saldo: null,
         integral: null,
+        obs_financeiro: null,
+
+
+        entrega_efetiva: null,
+        arquivo_comprovante: null,
+
+        motorista: null,
+        cte: null,
+
         opcoesFormaPagamento:[
           { valor: 0, descricao: 'Adiantamento Saldo' },
           { valor: 1, descricao: 'Integral' }
@@ -267,6 +313,10 @@ export default {
         opcoesSImENao: [
           { valor: 0, descricao: 'Não' },
           { valor: 1, descricao: 'Sim' },
+        ],
+
+        campoObrigatorio: [
+          (v) => !!v || 'Este campo é obrigatório',
         ],
         regraRazaoSocial: [
           (v) => !!v || 'A Razão social é obrigatória',
@@ -301,96 +351,165 @@ export default {
         regraAtivo: [
           (v) => v !== null && v !== undefined || 'O Campo Ativo é obrigatório',
         ],
+        regraArquivo: [
+          (v) => v !== null && v !== undefined || 'O Arquivo é obrigatório',
+        ],
+
+        // Combobox do motorista
+        comboBoxMotoristaLoading: false,
+        listaDeMotoristas: [],
+
+        // Combobox do motorista
+        comboBoxCteLoading: false,
+        listaDeCtes: [],
       }
     },
     methods: {
-        closeDialog() {
-          this.$refs.dialogAtualiza.onCloseDialog();
-        },
-        openDialog() {
-          this.$refs.dialogAtualiza.onOpenDialog();
+      closeDialog() {
+        this.$refs.dialogAtualiza.onCloseDialog();
+      },
+      openDialog() {
+        this.$refs.dialogAtualiza.onOpenDialog();
 
-          this.id_frete = this.item.id_frete
-          this.data_cotacao = this.item.data_cotacao
-          this.id_remetente = this.item.id_remetente
-          this.remetente = this.item.remetente
-          this.cnpj_remetente = this.item.cnpj_remetente
-          this.nome_destinatario = this.item.nome_destinatario
-          this.cidade_destinatario = this.item.cidade_destinatario
-          this.uf_destinatario = this.item.uf_destinatario
-          this.valor_motorista = this.item.valor_motorista
-          this.cnpj_destinatario = this.item.cnpj_destinatario
-          this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
-          this.cep_destinatario = this.item.cep_destinatario
-          this.endereco_destinatario = this.item.endereco_destinatario
-          this.numero_destinatario = this.item.numero_destinatario
-          this.observacoes = this.item.observacoes
-          this.valor_notafiscal = this.item.valor_notafiscal
-          this.coeficiente_margem = this.item.coeficiente_margem
-          this.advalorem = this.item.advalorem
-          this.status = this.item.status
-          this.forma_pagamento = this.item.forma_pagamento
-          this.adiantamento = this.item.adiantamento
-          this.saldo = this.item.saldo
-          this.integral = this.item.integral
-          // this.imposto_considerado = null
-          this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
-          this.valor_cobrado = this.item.valor_cobrado
-          this.prazo = this.item.prazo
-        },
-        validateForm() {
-          return this.$refs.form.validate();
-        },
-        formataDadosParaEnvio() {
-          const dadosParaEnvio = {
-            razao_social: this.razao_social,
-            cnpj: this.cnpj,
-            endereco: this.endereco,
-            cep: this.cep,
-            cidade: this.cidade,
-            bairro: this.bairro,
-            pais: this.pais,
-            uf: this.uf,
-            numero: this.numero,
-            ativo: this.ativo
-          }
-          return dadosParaEnvio
-        },
-        async atualizaFreteCotacao() {
-
-          const alertStore = useAlertStore()
-          const loading = useLoadingStore()
-
-          const formValidado = await this.validateForm();
-
-          if(!formValidado.valid) {
-            return;
-          }
-
-          const dadosParaEnvio = this.formataDadosParaEnvio();
-          const url = `${endpoints.frete.atualiza}/${this.item.id_frete}`;
-
-          try {
-            loading.show('Atualizando Frete/Cotação...')
-            const resposta =  await ApiService({
-              method: 'put',
-              url: url,
-              data: dadosParaEnvio
-            });
-
-            alertStore.addAlert(resposta?.data.message, 'success')
-
-            this.limpaCampos()
-            this.closeDialog()
-
-            const itemAtualizado = resposta?.data?.data
-            this.$emit('atualizaODadoNoArrayLocalmente', itemAtualizado)
-          } catch (erro) {
-            alertStore.addAlert(erro.response?.data?.message, 'error')
-          } finally {
-            loading.hide()
-          }
+        this.id_frete = this.item.id_frete
+        this.data_cotacao = this.item.data_cotacao
+        this.id_remetente = this.item.id_remetente
+        this.remetente = this.item.remetente
+        this.cnpj_remetente = this.item.cnpj_remetente
+        this.nome_destinatario = this.item.nome_destinatario
+        this.cidade_destinatario = this.item.cidade_destinatario
+        this.uf_destinatario = this.item.uf_destinatario
+        this.valor_motorista = this.item.valor_motorista
+        this.cnpj_destinatario = this.item.cnpj_destinatario
+        this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
+        this.cep_destinatario = this.item.cep_destinatario
+        this.endereco_destinatario = this.item.endereco_destinatario
+        this.numero_destinatario = this.item.numero_destinatario
+        this.observacoes = this.item.observacoes
+        this.valor_notafiscal = this.item.valor_notafiscal
+        this.coeficiente_margem = this.item.coeficiente_margem
+        this.advalorem = this.item.advalorem
+        this.status = this.item.status
+        this.forma_pagamento = this.item.forma_pagamento
+        this.adiantamento = this.item.adiantamento
+        this.saldo = this.item.saldo
+        this.integral = this.item.integral
+        // this.imposto_considerado = null
+        this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
+        this.valor_cobrado = this.item.valor_cobrado
+        this.prazo = this.item.prazo
+      },
+      validateForm() {
+        return this.$refs.form.validate();
+      },
+      formataDadosParaEnvio() {
+        const dadosParaEnvio = {
+          razao_social: this.razao_social,
+          cnpj: this.cnpj,
+          endereco: this.endereco,
+          cep: this.cep,
+          cidade: this.cidade,
+          bairro: this.bairro,
+          pais: this.pais,
+          uf: this.uf,
+          numero: this.numero,
+          ativo: this.ativo
         }
+        return dadosParaEnvio
+      },
+      async atualizaFreteCotacao() {
+
+        const alertStore = useAlertStore()
+        const loading = useLoadingStore()
+
+        const formValidado = await this.validateForm();
+
+        if(!formValidado.valid) {
+          return;
+        }
+
+        const dadosParaEnvio = this.formataDadosParaEnvio();
+        const url = `${endpoints.frete.atualiza}/${this.item.id_frete}`;
+
+        try {
+          loading.show('Atualizando Frete/Cotação...')
+          const resposta =  await ApiService({
+            method: 'put',
+            url: url,
+            data: dadosParaEnvio
+          });
+
+          alertStore.addAlert(resposta?.data.message, 'success')
+
+          this.limpaCampos()
+          this.closeDialog()
+
+          const itemAtualizado = resposta?.data?.data
+          this.$emit('atualizaODadoNoArrayLocalmente', itemAtualizado)
+        } catch (erro) {
+          alertStore.addAlert(erro.response?.data?.message, 'error')
+        } finally {
+          loading.hide()
+        }
+      },
+
+      async buscaMotorista() {
+        if(this.comboBoxMotoristaLoading) {
+          return;
+        }
+        try {
+
+          const endpoint = endpoints.motorista.listaPorRazaoSocial;
+          const url =  `${endpoint}/${this.motorista}`
+
+          this.comboBoxMotoristaLoading = true
+
+          const resposta =  await ApiService({
+            method: 'get',
+            url: url,
+          })
+
+          this.listaDeMotoristas = resposta.data.data
+
+        } catch (error) {
+          const alertStore = useAlertStore()
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
+          return
+        } finally {
+          this.comboBoxMotoristaLoading = false
+        }
+      },
+
+      async buscaCte() {
+        if(this.comboBoxCteLoading) {
+          return;
+        }
+        try {
+
+          const endpoint = endpoints.cte.listaPorId;
+          const url =  `${endpoint}/${this.cte}`
+
+          this.comboBoxCteLoading = true
+
+          const resposta =  await ApiService({
+            method: 'get',
+            url: url,
+          })
+
+          this.listaDeCtes = resposta.data.data
+
+        } catch (error) {
+          const alertStore = useAlertStore()
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
+          return
+        } finally {
+          this.comboBoxCteLoading = false
+        }
+      },
+
+      format(date) {
+        return formatDate(date, 'dd/MM/yy')
+      },
 
     }
 }

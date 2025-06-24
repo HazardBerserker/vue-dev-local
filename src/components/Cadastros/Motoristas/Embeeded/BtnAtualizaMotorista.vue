@@ -125,23 +125,23 @@
             <v-form ref="formArquivos">
               <v-row>
                 <v-col>
-                  <v-file-input v-model="arquivo_cnh"  density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar CNH" variant="outlined"></v-file-input>
+                  <v-file-input v-model="arquivo_cnh" accept="image/*" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar CNH" variant="outlined"></v-file-input>
                 </v-col>
                 <v-col>
-                  <v-file-input v-model="arquivo_comprovante_residencia"  density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar Comprovante de Residência" variant="outlined"></v-file-input>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <v-file-input v-model="arquivo_documento_carro" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Documento do Carro" variant="outlined"></v-file-input>
-                </v-col>
-                <v-col>
-                  <v-file-input v-model="arquivo_antt" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar ANTT" variant="outlined"></v-file-input>
+                  <v-file-input v-model="arquivo_comprovante_residencia" accept="image/*" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar Comprovante de Residência" variant="outlined"></v-file-input>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-file-input v-model="arquivo_foto_veiculo"  density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Foto do Veículo" variant="outlined"></v-file-input>
+                  <v-file-input v-model="arquivo_documento_carro" accept="image/*" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Documento do Carro" variant="outlined"></v-file-input>
+                </v-col>
+                <v-col>
+                  <v-file-input v-model="arquivo_antt" accept="image/*" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar ANTT" variant="outlined"></v-file-input>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-file-input v-model="arquivo_foto_veiculo" accept="image/*" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Foto do Veículo" variant="outlined"></v-file-input>
                 </v-col>
               </v-row>
             </v-form>
