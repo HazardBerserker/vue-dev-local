@@ -311,6 +311,19 @@
             <template #[`item.valor_notafiscal`]="{ item }">
               {{ formataMoeda(item.valor_notafiscal) }}
             </template>
+            <template #[`item.status`]="{ item }">
+              <v-btn
+                :color="selecionaCorDoStatus(item.status)"
+                density="comfortable"
+                variant="flat"
+                rounded="pill"
+                :disabled="datatable.carregando"
+                @click="exportarExcel"
+                readonly
+              >
+                {{ StatusFreteCotacaoEnum[item.status] }}
+              </v-btn>
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
@@ -330,7 +343,7 @@ import { endpoints } from '@/utils/apiEndpoints';
 import BtnAtualizaFreteCotacoes from '@/components/Comercial/FreteCotacoes/Embeeded/BtnAtualizaFreteCotacoes.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-
+import { StatusFreteCotacaoEnum } from '@/Enums/Comercial/StatusFreteCotacaoEnum';
 
 export default {
   name: 'FretesCotacoes',
@@ -343,6 +356,7 @@ export default {
       formataData,
       formataDataSomenteData,
       formataMoeda,
+      StatusFreteCotacaoEnum,
       mostrarFiltros: false,
       tab: null,
       SimENaoEnumDescricao,
@@ -502,6 +516,18 @@ export default {
     }
   },
   methods: {
+
+    selecionaCorDoStatus(status) {
+      switch (status) {
+        case 0:
+          return 'red-darken-2'
+        case 1:
+          return 'blue-darken-2'
+        case 2:
+          return 'green-darken-2'
+      }
+    },
+
     abrirDialogDetalhesFrete(frete) {
       this.$refs.dialogFrete.abrir(frete);
     },

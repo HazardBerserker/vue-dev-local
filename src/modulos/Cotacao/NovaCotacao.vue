@@ -4,17 +4,13 @@
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
-    <v-form ref="formCotacao">
+    <v-form ref="formCotacao" v-if="permissao">
       <v-card class="px-6 pb-6 elevation-3 mx-auto" max-width="1100">
         <template #title>
           <span class="font-weight-bold justify-center d-flex">Cotação de Frete</span>
         </template>
         <v-divider></v-divider>
         <v-row class="mt-4">
-          <!-- <v-col>
-            <v-text-field v-model="id_cotacao" density="compact" variant="outlined" label="ID Cotação" readonly
-              bg-color="grey-lighten-4"></v-text-field>
-          </v-col> -->
           <v-col>
             <v-date-input
               v-model="data_cotacao"
@@ -193,7 +189,7 @@
       </v-card>
     </v-form>
 
-    <v-card class="mx-auto mt-6 pa-6 elevation-3" max-width="1100">
+    <v-card class="mx-auto mt-6 pa-6 elevation-3" max-width="1100" v-if="permissao">
       <div ref="conteudoPdf" style="padding: 20px">
         <v-row>
           <v-col>
@@ -334,7 +330,20 @@ export default {
     InputText
   },
   async mounted() {
-    await this.buscaCotacaoCriterios()
+    const loading = useLoadingStore()
+    try {
+      loading.show('Carregando...')
+      await this.buscaCotacaoCriterios()
+      this.permissao = true;
+    } catch (error) {
+      this.propriedadesDoAlertaFixo = {
+        type: 'error',
+        text: error?.response?.data?.message,
+        title: `Módulo inacessível (${error.status})`
+      }
+    } finally {
+      loading.hide()
+    }
   },
   data() {
     return {
@@ -552,9 +561,12 @@ export default {
         this.cotacaoCriterios = resposta.data.data
 
       } catch (error) {
-        const alertStore = useAlertStore()
-        alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
-        return
+        if(this.permissao) {
+          const alertStore = useAlertStore()
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
+          return
+        }
+        throw error
       }
     },
 

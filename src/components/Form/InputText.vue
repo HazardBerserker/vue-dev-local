@@ -32,6 +32,9 @@
           @update:focused="acionaBlur"
           :hide-details="rules.length != 0 ? false : hideDetails"
         >
+          <template #prepend-inner>
+            {{ prependInnerIcon }}
+          </template>
         </v-text-field>
       </v-badge>
 
@@ -55,6 +58,9 @@
         @update:focused="acionaBlur"
         :hide-details="rules.length != 0 ? false : hideDetails"
       >
+        <template #prepend-inner>
+          {{ prependInnerIcon }}
+        </template>
       </v-text-field>
     </div>
 
@@ -100,6 +106,10 @@ export default {
         prependIcon: {
           type: String,
           default: ''
+        },
+        prependInnerIcon: {
+          type: String,
+          default: null
         },
         estiloCampo: {
           type: String,
