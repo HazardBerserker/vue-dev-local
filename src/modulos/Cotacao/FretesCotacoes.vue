@@ -4,232 +4,226 @@
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
-    <!-- <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao"> -->
-  <v-card class="pa-4 rounded-xl elevation-2 bg-grey-lighten-5 d-flex flex-column" width="100%">
+    <v-card class="pa-4 rounded-xl elevation-2 bg-grey-lighten-5 d-flex flex-column" width="100%" v-if="permissao">
 
-    <!-- Título -->
-    <div class="d-flex justify-space-between">
-      <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
-      <!-- Botão Mostrar/Ocultar -->
-      <v-btn
-        variant="tonal"
-        color="primary"
-        @click="mostrarFiltros = !mostrarFiltros"
-        class="mb-3 align-self-start"
-        rounded
-      >
-        <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
-        {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
-      </v-btn>
-    </div>
+      <!-- Título -->
+      <div class="d-flex justify-space-between">
+        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
+        <!-- Botão Mostrar/Ocultar -->
+        <div>
+          <v-btn
+            variant="tonal"
+            color="red"
+            @click="limpaFiltros"
+            class="mb-3 me-2 align-self-start"
+            rounded
+          >
+            <v-icon start>mdi-filter-off</v-icon>
+            Limpar Filtros
+          </v-btn>
 
-    <!-- Área dos Filtros -->
-    <v-expand-transition>
-  <div v-show="mostrarFiltros">
-    <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
-      <v-card-text>
+          <v-btn
+            variant="tonal"
+            color="primary"
+            @click="mostrarFiltros = !mostrarFiltros"
+            class="mb-3 align-self-start"
+            rounded
+          >
+            <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
+            {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+          </v-btn>
+        </div>
+      </div>
 
+      <!-- Área dos Filtros -->
+      <v-expand-transition>
+        <div v-show="mostrarFiltros">
+          <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
+            <v-card-text>
+
+              <v-row dense>
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.id_frete"
+                    label="ID Frete/Cotação"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-date-input
+                    v-model="filtros.data_cotacao"
+                    label="Data Criação"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    :display-format="format"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-text-field
+                    v-model="filtros.remetente"
+                    label="Remetente"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-text-field
+                    v-model="filtros.cidade_destinatario"
+                    label="Cidade Destinatário"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.uf_destinatario"
+                    label="UF Destinatário"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row dense>
+                <v-col cols="12" md="2">
+                  <InputTextMoeda v-model="filtros.valor_frete_efetivo" prefix="R$" label="Frete:"/>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <InputTextMoeda v-model="filtros.valor_notafiscal" prefix="R$" label="NF:"/>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:"/>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.status"
+                    label="Status"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.cte_vinculado"
+                    label="CTE Vinculado"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+            </v-card-text>
+
+            <!-- Botão Buscar -->
+            <v-card-actions>
+              <v-btn
+                color="blue-darken-3"
+                variant="flat"
+                class="text-white"
+                @click="buscaFrete"
+                rounded="pill"
+                prepend-icon="mdi-magnify"
+              >
+                Buscar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
+      </v-expand-transition>
+
+      <v-divider></v-divider>
+
+      <!-- KPIs / Status -->
+      <div class="d-flex flex-column ga-2 mt-4">
         <v-row dense>
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="filtros.id_frete"
-              label="ID Frete/Cotação"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
+          <!-- Em Aberto -->
+          <v-col cols="12" md="4">
+            <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="blue-lighten-4">
+              <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+                <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white">
+                  <v-icon>mdi-truck</v-icon>
+                </v-avatar>
+                <span class="text-body-2 font-weight-bold text-blue-darken-2">Em Aberto</span>
+              </div>
+              <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
+                <v-fade-transition mode="out-in">
+                  <span v-if="!datatable.carregando">
+                    {{ numeroDeCotacoesFreteEmAberto() }}
+                  </span>
+                  <span v-else>
+                    <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
+                  </span>
+                </v-fade-transition>
+              </v-card>
+            </v-card>
           </v-col>
 
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="filtros.data_cotacao"
-              label="Data Criação"
-              variant="outlined"
-              density="compact"
-              clearable
-              placeholder="Ex: 21/06/2025"
-            ></v-text-field>
+          <!-- Aceitas -->
+          <v-col cols="12" md="4">
+            <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="green-lighten-4">
+              <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+                <v-avatar size="40" class="me-4 bg-green-darken-2 text-white">
+                  <v-icon>mdi-check-circle</v-icon>
+                </v-avatar>
+                <span class="text-body-2 font-weight-bold text-green-darken-2">Aceitas</span>
+              </div>
+              <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
+                <v-fade-transition mode="out-in">
+                  <span v-if="!datatable.carregando">
+                    {{ numeroDeCotacoesFreteAceitas() }}
+                  </span>
+                  <span v-else>
+                    <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
+                  </span>
+                </v-fade-transition>
+              </v-card>
+            </v-card>
           </v-col>
 
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filtros.remetente"
-              label="Remetente"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filtros.cidade_destinatario"
-              label="Cidade Destinatário"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="filtros.uf_destinatario"
-              label="UF Destinatário"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
+          <!-- Rejeitadas -->
+          <v-col cols="12" md="4">
+            <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="red-lighten-4">
+              <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
+                <v-avatar size="40" class="me-4 bg-red-darken-2 text-white">
+                  <v-icon>mdi-close-circle</v-icon>
+                </v-avatar>
+                <span class="text-body-2 font-weight-bold text-red-darken-2">Rejeitadas</span>
+              </div>
+              <v-card class="mt-3 h-100 rounded-xl bg-red-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
+                <v-fade-transition mode="out-in">
+                  <span v-if="!datatable.carregando">
+                    {{ numeroDeCotacoesFreteRejeitadas() }}
+                  </span>
+                  <span v-else>
+                    <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
+                  </span>
+                </v-fade-transition>
+              </v-card>
+            </v-card>
           </v-col>
         </v-row>
+      </div>
 
-        <v-row dense>
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="filtros.valor_frete_efetivo"
-              label="R$ Frete"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filtros.valor_notafiscal"
-              label="R$ NF"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filtros.valor_cobrado_efetivo"
-              label="R$ Valor Cobrado"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="filtros.status"
-              label="Status"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="filtros.cte_vinculado"
-              label="CTE Vinculado"
-              variant="outlined"
-              density="compact"
-              clearable
-            ></v-text-field>
-          </v-col>
-        </v-row>
-
-      </v-card-text>
-
-      <!-- Botão Buscar -->
-      <v-card-actions>
-        <v-btn
-          color="blue-darken-3"
-          variant="flat"
-          class="text-white"
-          @click="buscaFrete"
-          rounded="pill"
-          prepend-icon="mdi-magnify"
-        >
-          Buscar
-        </v-btn>
-      </v-card-actions>
     </v-card>
-  </div>
-</v-expand-transition>
-
-    <v-divider></v-divider>
-
-    <!-- KPIs / Status -->
-    <div class="d-flex flex-column ga-2 mt-4">
-      <v-row dense>
-        <!-- Em Aberto -->
-        <v-col cols="12" md="4">
-          <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="blue-lighten-4">
-            <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
-              <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white">
-                <v-icon>mdi-truck</v-icon>
-              </v-avatar>
-              <span class="text-body-2 font-weight-bold text-blue-darken-2">Em Aberto</span>
-            </div>
-            <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
-              <v-fade-transition mode="out-in">
-                <span v-if="!datatable.carregando">
-                  <!-- <strong>{{ numeroDeFretesAtivos() }}</strong> -->
-                  123
-                </span>
-                <span v-else>
-                  <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
-                </span>
-              </v-fade-transition>
-            </v-card>
-          </v-card>
-        </v-col>
-
-        <!-- Aceitas -->
-        <v-col cols="12" md="4">
-          <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="green-lighten-4">
-            <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
-              <v-avatar size="40" class="me-4 bg-green-darken-2 text-white">
-                <v-icon>mdi-check-circle</v-icon>
-              </v-avatar>
-              <span class="text-body-2 font-weight-bold text-green-darken-2">Aceitas</span>
-            </div>
-            <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
-              <v-fade-transition mode="out-in">
-                <span v-if="!datatable.carregando">
-                  <!-- <strong>{{ numeroDeFretesAceitos() }}</strong> -->
-                  123
-                </span>
-                <span v-else>
-                  <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
-                </span>
-              </v-fade-transition>
-            </v-card>
-          </v-card>
-        </v-col>
-
-        <!-- Rejeitadas -->
-        <v-col cols="12" md="4">
-          <v-card class="pa-3 rounded-xl elevation-2 d-flex flex-column align-center justify-space-between" color="red-lighten-4">
-            <div class="d-flex ga-4 justify-space-between text-start align-center w-100">
-              <v-avatar size="40" class="me-4 bg-red-darken-2 text-white">
-                <v-icon>mdi-close-circle</v-icon>
-              </v-avatar>
-              <span class="text-body-2 font-weight-bold text-red-darken-2">Rejeitadas</span>
-            </div>
-            <v-card class="mt-3 h-100 rounded-xl bg-red-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
-              <v-fade-transition mode="out-in">
-                <span v-if="!datatable.carregando">
-                  <!-- <strong>{{ numeroDeFretesRejeitados() }}</strong> -->
-                  123
-                </span>
-                <span v-else>
-                  <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
-                </span>
-              </v-fade-transition>
-            </v-card>
-          </v-card>
-        </v-col>
-      </v-row>
-    </div>
-
-  </v-card>
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
@@ -337,17 +331,19 @@ import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-// import BtnCreateFrete from '@/components/Cadastros/Fretes/Embeeded/BtnCreateFrete.vue';
 import BtnAtualizaFreteCotacoes from '@/components/Comercial/FreteCotacoes/Embeeded/BtnAtualizaFreteCotacoes.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { StatusFreteCotacaoEnum } from '@/Enums/Comercial/StatusFreteCotacaoEnum';
+import { StatusFreteCotacaoEnum, StatusFreteCotacaoEnumDescricao } from '@/Enums/Comercial/StatusFreteCotacaoEnum';
+import { format as formatDate } from 'date-fns'
+import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 
 export default {
   name: 'FretesCotacoes',
   components: {
     GlobalAlertFixed,
     BtnAtualizaFreteCotacoes,
+    InputTextMoeda
   },
   data () {
     return {
@@ -396,15 +392,16 @@ export default {
         chave_primaria: 'id_frete',
         itens: [],
         itens_por_pagina: [
-            {value: 50, title: '50'},
+            {value: 20, title: '20'},
             {value: 100, title: '100'},
+            {value: 400, title: '400'},
             {value: -1, title: 'Todos'},
             // {value: -1, title: 'Todos'}
         ],
         totalRegistros: 0,
         ultima_pagina: 0,
         pagina_atual: 1,
-        por_pagina: 50,
+        por_pagina: 20,
         ordenarPor: [{key: 'id_frete', order: 'desc'}],
         ordenarDirecao: true,
         opcoes: {},
@@ -513,6 +510,29 @@ export default {
     }
   },
   methods: {
+    format(date) {
+      return formatDate(date, 'dd/MM/yyyy');
+    },
+
+    numeroDeCotacoesFreteEmAberto() {
+      const itensAtivos = this.datatable.itens.filter(item => {
+        return item.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO
+      })
+      return itensAtivos.length
+    },
+    numeroDeCotacoesFreteRejeitadas() {
+      const itensAtivos = this.datatable.itens.filter(item => {
+        return item.status == StatusFreteCotacaoEnumDescricao.REJEITADA
+      })
+      return itensAtivos.length
+    },
+    numeroDeCotacoesFreteAceitas() {
+      const itensAtivos = this.datatable.itens.filter(item => {
+        return item.status == StatusFreteCotacaoEnumDescricao.ACEITA
+      })
+      return itensAtivos.length
+    },
+
 
     selecionaCorDoStatus(status) {
       switch (status) {
@@ -528,9 +548,19 @@ export default {
     abrirDialogDetalhesFrete(frete) {
       this.$refs.dialogFrete.abrir(frete);
     },
+
+    limpaFiltros() {
+      this.filtros = []
+    },
+
     gerarQuery( page, itemsPerPage, sortBy ) {
+      const camposQueADataPrecisaSerConvertida = [
+        'data_cotacao'
+      ]
+
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
+      const filtrosInternos = this.filtros
 
       for (const chave in this.filtrosDaBuscaGeral) {
         if (this.busca_geral != null && this.busca_geral !== '') {
@@ -542,9 +572,12 @@ export default {
       }
 
       //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
-      for (const chave in this.filtros) {
-        if (this.filtros[chave] != null && this.filtros[chave] !== '') {
-          const filtro = { key: [chave], value: this.filtros[chave] };
+      for (const chave in filtrosInternos) {
+        if (filtrosInternos[chave] != null && filtrosInternos[chave] !== '') {
+          if(camposQueADataPrecisaSerConvertida.includes(chave)) {
+            filtrosInternos[chave] = formatDate(filtrosInternos[chave], 'yyyy-MM-dd')
+          }
+          const filtro = { key: [chave], value: filtrosInternos[chave] };
           arrayDeFiltros.push(filtro)
         }
       }
@@ -569,32 +602,18 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeFretesInativos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.NAO
-      })
-      return itensAtivos.length
-    },
-
-    numeroDeFretesAtivos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.SIM
-      })
-      return itensAtivos.length
-    },
-
     async buscaFrete( options = {} ) {
       this.datatable.carregando = true;
 
       if(!this.permissao) {
         const loading = useLoadingStore()
-        // loading.show('Carregando Fretes...')
+        loading.show('Carregando Tabela...')
       }
       this.datatable.itensSelecionados = [];
 
       const {
           page = this.page || 1,
-          itemsPerPage = this.itemsPerPage || 50,
+          itemsPerPage = this.itemsPerPage || 20,
           sortBy = this.sortBy || [{ key: 'id_frete', order: 'desc' }]
       } = options;
 
@@ -757,9 +776,9 @@ export default {
     // },
 
     regraPintaLinha(item) {
-        return {
-            class: item.index % 2 === 0 ? 'linhaPar' : 'linhaImpar', // Alterna classes com base no ID
-        };
+      return {
+        class: item.index % 2 === 0 ? 'linhaPar' : 'linhaImpar', // Alterna classes com base no ID
+      };
     },
 
     desativaInput() {
@@ -774,7 +793,7 @@ export default {
 </script>
 
 <style>
-    .class-on-data-table table {
-        table-layout: fixed;
-    }
+.class-on-data-table table {
+    table-layout: fixed;
+}
 </style>

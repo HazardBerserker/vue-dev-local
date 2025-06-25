@@ -211,20 +211,16 @@ import DialogCreateCadastro from '@/components/Cadastros/Scaffold/DialogCreateCa
 import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
-// import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { formataDataSomenteData } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-// import { useAlertStore } from '@/stores/alertStore'
-// import ApiService from '@/services/ApiService.js';
 
 export default {
     name: 'BtnAtualizaFreteCotacoes',
     components: {
       DialogCreateCadastro,
-      // InputText,
       InputTextMoeda
     },
     props: {
