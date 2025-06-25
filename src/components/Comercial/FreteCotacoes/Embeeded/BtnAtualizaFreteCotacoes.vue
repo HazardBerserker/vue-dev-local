@@ -55,13 +55,18 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 mb-2">
-                  <InputText density="compact" label="Valor Motorista:" v-model="valor_motorista" prepend-inner-icon="R$" class="w-100"/>
-                  <InputText density="compact" label="Valor NF:" v-model="valor_notafiscal" prepend-inner-icon="R$" class="w-100"/>
+                  <!-- <v-text-field density="compact" variant="outlined" v-money3="money" label="Valor Motorista:" v-model="valor_motorista" class="w-100"></v-text-field> -->
+                  <InputTextMoeda v-model="valor_motorista_efetivo" prefix="R$" label="Valor Motorista:" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"/>
+                  <InputTextMoeda v-model="valor_notafiscal" prefix="R$" label="Valor NF:" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"/>
                 </div>
                 <div class="d-flex ga-4 text-start">
-                  <InputText density="compact" label="Valor Cobrado:" v-model="valor_cobrado_efetivo" prepend-inner-icon="R$" class="w-100"/>
-                  <v-text-field density="compact" variant="outlined" label="Coeficiente:" v-model="coeficiente_margem" class="w-100"></v-text-field>
-                  <v-text-field density="compact" variant="outlined" label="Prazo de Entrega:" v-model="prazo" class="w-100"></v-text-field>
+                  <InputTextMoeda v-model="valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"/>
+                  <v-text-field density="compact" variant="outlined" label="Coeficiente:" v-model="coeficiente_margem" class="w-100" min="0" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()">
+                    <template #append-inner>
+                      %
+                    </template>
+                  </v-text-field>
+                  <v-text-field density="compact" variant="outlined" label="Prazo de Entrega (em dias):" v-model="prazo" class="w-100" min="0" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"></v-text-field>
                 </div>
               </div>
             </v-card>
@@ -88,9 +93,10 @@
                     :items="listaDeCtes"
                     item-title="Id_CTe"
                     class="w-100"
+                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
                   >
                   </v-combobox>
-                  <v-select density="compact" class="w-100" variant="outlined" label="Forma de Pagamento:" :items="opcoesFormaPagamento" v-model="forma_pagamento" itemTitle="descricao" itemValue="valor"></v-select>
+                  <v-select density="compact" class="w-100" variant="outlined" label="Forma de Pagamento:" :items="opcoesFormaPagamento" v-model="forma_pagamento" itemTitle="descricao" itemValue="valor" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"></v-select>
                   <!-- <div class="w-100"><strong>Data:</strong> 18/06/2025</div> -->
                 </div>
                 <div class="d-flex ga-4 text-start">
@@ -106,9 +112,10 @@
                     :items="listaDeMotoristas"
                     item-title="nome_completo"
                     class="w-100"
+                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
                   >
                   </v-combobox>
-                  <v-select density="compact" class="w-100" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" v-model="status" itemTitle="descricao" itemValue="valor"></v-select>
+                  <v-select density="compact" class="w-100" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" :rules="campoObrigatorio" v-model="status" itemTitle="descricao" itemValue="valor" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"></v-select>
                   <!-- <v-text-field density="compact" variant="outlined" label="Motivo da Rejeição:"></v-text-field> -->
                 </div>
               </div>
@@ -124,8 +131,8 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4">
-                  <v-textarea v-model="observacoes" density="compact" variant="outlined" label="Observações Cotação:" rows="2"></v-textarea>
-                  <v-textarea v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2"></v-textarea>
+                  <v-textarea v-model="observacoes" density="compact" variant="outlined" label="Observações Cotação:" rows="2" :disabled="!modoEdicao"></v-textarea>
+                  <v-textarea v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2" disabled></v-textarea>
                 </div>
               </div>
             </v-card>
@@ -140,9 +147,9 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 text-start">
-                  <v-select v-model="adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor"></v-select>
-                  <v-select v-model="saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor"></v-select>
-                  <v-select v-model="integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor"></v-select>
+                  <v-select v-model="adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" disabled></v-select>
+                  <v-select v-model="saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" disabled></v-select>
+                  <v-select v-model="integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" disabled></v-select>
                 </div>
               </div>
             </v-card>
@@ -167,72 +174,32 @@
                     placeholder="dd/mm/yy"
                     clearable
                     variant="outlined"
+                    :disabled="!modoEdicao"
                   ></v-date-input>
-                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="regraArquivo" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined"></v-file-input>
+                  <v-date-input
+                    v-model="coleta_efetiva"
+                    label="Coleta Efetiva:"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    :display-format="format"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                  ></v-date-input>
+                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="entrega_efetiva ? regraArquivo : []" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" :disabled="!modoEdicao"></v-file-input>
                 </div>
               </div>
             </v-card>
           </v-col>
 
         </v-row>
-        <!-- <v-row>
-          <v-col>
-            <v-row class="mb-3">
-              <v-col cols="6" class="py-0">
-                <v-text-field  variant="outlined" label="Razão Social" density="comfortable" v-model="razao_social" :rules="regraRazaoSocial" clearable/>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <InputText label="CNPJ" v-model="cnpj" mask="##.###.###/####-##" :rules="regraCNPJ" counter="18"/>
-              </v-col>
-            </v-row>
-            <v-row class="mb-3">
-              <v-col cols="6" class="py-0">
-                <v-text-field  variant="outlined" label="Endereço" density="comfortable" v-model="endereco" :rules="regraEndereco" clearable/>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <InputText label="CEP" v-model="cep" mask="#####-###" :rules="regraCEP" counter="9"/>
-              </v-col>
-            </v-row>
-            <v-row class="mb-3">
-              <v-col cols="6" class="py-0">
-                <v-text-field  variant="outlined" label="Cidade" density="comfortable" v-model="cidade" :rules="regraCidade" clearable/>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <v-text-field variant="outlined" label="Bairro" density="comfortable" v-model="bairro" :rules="regraBairro" clearable/>
-              </v-col>
-            </v-row>
-            <v-row class="mb-3">
-              <v-col cols="6" class="py-0">
-                <v-text-field  variant="outlined" label="País" density="comfortable" v-model="pais" :rules="regraPais" clearable/>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <InputText label="UF" v-model="uf" :rules="regraUF" counter="2"/>
-              </v-col>
-            </v-row>
-            <v-row class="mb-3">
-              <v-col cols="6" class="py-0">
-                <InputText label="Número" v-model="numero" :rules="regraNumero" type="number"/>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <v-select
-                  v-model="ativo"
-                  variant="outlined"
-                  density="comfortable"
-                  :items="opcaoAtivo"
-                  label="Ativo"
-                  item-value="valor"
-                  item-title="descricao"
-                  :rules="regraAtivo"
-                  clearable>
-                </v-select>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row> -->
       </v-form>
 
       <template #action-button>
-        <v-btn variant="flat" color="blue-darken-3" rounded="pill" @click="atualizaFreteCotacao">Atualizar</v-btn>
+        <v-btn v-if="modoEdicao" variant="flat" color="yellow-darken-4" rounded="pill" @click="desativaModoEdicao">Descartar Edições</v-btn>
+        <v-btn variant="flat" color="blue-darken-3" rounded="pill" @click="modoEdicao ? atualizaFreteCotacao() : modoEdicao = true">{{modoEdicao ? 'Atualizar' : 'Editar'}}</v-btn>
       </template>
     </DialogCreateCadastro>
   </div>
@@ -244,10 +211,12 @@ import DialogCreateCadastro from '@/components/Cadastros/Scaffold/DialogCreateCa
 import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
-import InputText from '@/components/Form/InputText.vue';
+// import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { formataDataSomenteData } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
+import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
+import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 // import { useAlertStore } from '@/stores/alertStore'
 // import ApiService from '@/services/ApiService.js';
 
@@ -255,7 +224,8 @@ export default {
     name: 'BtnAtualizaFreteCotacoes',
     components: {
       DialogCreateCadastro,
-      InputText
+      // InputText,
+      InputTextMoeda
     },
     props: {
       item: {
@@ -263,6 +233,8 @@ export default {
         required: true
       },
     },
+
+
     data() {
       return {
         formataDataSomenteData,
@@ -274,7 +246,7 @@ export default {
         nome_destinatario: null,
         cidade_destinatario: null,
         uf_destinatario: null,
-        valor_motorista: null,
+        valor_motorista: 0,
         cnpj_destinatario: null,
         valor_motorista_efetivo: null,
         cep_destinatario: null,
@@ -293,8 +265,10 @@ export default {
         saldo: null,
         integral: null,
         obs_financeiro: null,
+        status_pagamento: null,
+        imposto_considerado: null,
 
-
+        coleta_efetiva: null,
         entrega_efetiva: null,
         arquivo_comprovante: null,
 
@@ -351,8 +325,9 @@ export default {
         regraAtivo: [
           (v) => v !== null && v !== undefined || 'O Campo Ativo é obrigatório',
         ],
+
         regraArquivo: [
-          (v) => v !== null && v !== undefined || 'O Arquivo é obrigatório',
+          (v) => v !== null && v !== undefined || 'O Arquivo é obrigatório quando a Entrega Efetiva esta preenchida',
         ],
 
         // Combobox do motorista
@@ -362,15 +337,19 @@ export default {
         // Combobox do motorista
         comboBoxCteLoading: false,
         listaDeCtes: [],
+
+        money: {
+          prefix: 'R$ ',
+          thousands: '.',
+          decimal: ',',
+          precision: 2
+        },
+
+        modoEdicao: false
       }
     },
     methods: {
-      closeDialog() {
-        this.$refs.dialogAtualiza.onCloseDialog();
-      },
-      openDialog() {
-        this.$refs.dialogAtualiza.onOpenDialog();
-
+      limpaCampos() {
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
         this.id_remetente = this.item.id_remetente
@@ -379,7 +358,7 @@ export default {
         this.nome_destinatario = this.item.nome_destinatario
         this.cidade_destinatario = this.item.cidade_destinatario
         this.uf_destinatario = this.item.uf_destinatario
-        this.valor_motorista = this.item.valor_motorista
+        this.valor_motorista = Number(this.item.valor_motorista)
         this.cnpj_destinatario = this.item.cnpj_destinatario
         this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
         this.cep_destinatario = this.item.cep_destinatario
@@ -394,6 +373,58 @@ export default {
         this.adiantamento = this.item.adiantamento
         this.saldo = this.item.saldo
         this.integral = this.item.integral
+        this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
+        this.valor_cobrado = this.item.valor_cobrado
+        this.prazo = this.item.prazo
+        this.coleta_efetiva = null
+        this.adiantamento = null
+        this.saldo = null
+        this.integral = null
+        this.obs_financeiro = null
+        this.arquivo_comprovante = null
+        this.entrega_efetiva = null
+        this.motorista = null
+        this.cte = null
+        this.status_pagamento = null
+        this.imposto_considerado = null
+      },
+
+      desativaModoEdicao() {
+        this.limpaCampos();
+        this.modoEdicao = false
+      },
+
+      closeDialog() {
+        this.$refs.dialogAtualiza.onCloseDialog();
+      },
+      openDialog() {
+        this.$refs.dialogAtualiza.onOpenDialog();
+
+        this.id_frete = this.item.id_frete
+        this.data_cotacao = this.item.data_cotacao
+        this.id_remetente = this.item.id_remetente
+        this.remetente = this.item.remetente
+        this.cnpj_remetente = this.item.cnpj_remetente
+        this.nome_destinatario = this.item.nome_destinatario
+        this.cidade_destinatario = this.item.cidade_destinatario
+        this.uf_destinatario = this.item.uf_destinatario
+        this.valor_motorista = Number(this.item.valor_motorista)
+        this.cnpj_destinatario = this.item.cnpj_destinatario
+        this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
+        this.cep_destinatario = this.item.cep_destinatario
+        this.endereco_destinatario = this.item.endereco_destinatario
+        this.numero_destinatario = this.item.numero_destinatario
+        this.observacoes = this.item.observacoes
+        this.valor_notafiscal = this.item.valor_notafiscal
+        this.coeficiente_margem = this.item.coeficiente_margem
+        this.advalorem = this.item.advalorem
+        this.status = this.item.status
+        this.forma_pagamento = this.item.forma_pagamento
+        this.adiantamento = this.item.adiantamento
+        this.saldo = this.item.saldo
+        this.integral = this.item.integral
+        this.status_pagamento = this.item.status_pagamento
+        this.imposto_considerado = this.item.imposto_considerado
         // this.imposto_considerado = null
         this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
         this.valor_cobrado = this.item.valor_cobrado
@@ -403,20 +434,59 @@ export default {
         return this.$refs.form.validate();
       },
       formataDadosParaEnvio() {
-        const dadosParaEnvio = {
-          razao_social: this.razao_social,
-          cnpj: this.cnpj,
-          endereco: this.endereco,
-          cep: this.cep,
-          cidade: this.cidade,
-          bairro: this.bairro,
-          pais: this.pais,
-          uf: this.uf,
-          numero: this.numero,
-          ativo: this.ativo
+        const formData = new FormData();
+
+        const appendIfValid = (key, value) => {
+          if (value !== undefined && value !== null && value !== 'undefined' && value !== 'null') {
+            formData.append(key, value);
+          }
+        };
+
+        appendIfValid('id_frete', this.id_frete);
+        appendIfValid('data_cotacao', this.formatarParaISO(this.data_cotacao));
+        appendIfValid('id_remetente', this.id_remetente);
+        appendIfValid('remetente', this.remetente);
+        appendIfValid('cnpj_remetente', this.cnpj_remetente);
+        appendIfValid('nome_destinatario', this.nome_destinatario);
+        appendIfValid('cidade_destinatario', this.cidade_destinatario);
+        appendIfValid('uf_destinatario', this.uf_destinatario?.toUpperCase());
+        appendIfValid('cep_destinatario', this.cep_destinatario);
+        appendIfValid('endereco_destinatario', this.endereco_destinatario);
+        appendIfValid('numero_destinatario', this.numero_destinatario);
+        appendIfValid('observacoes', this.observacoes);
+        appendIfValid('valor_notafiscal', this.valor_notafiscal);
+        appendIfValid('coeficiente_margem', this.coeficiente_margem);
+        appendIfValid('advalorem', this.advalorem);
+        appendIfValid('status', this.status);
+        appendIfValid('forma_pagamento', this.forma_pagamento);
+        appendIfValid('valor_motorista', this.valor_motorista);
+        appendIfValid('valor_motorista_efetivo', this.valor_motorista_efetivo);
+        appendIfValid('valor_cobrado', this.valor_cobrado);
+        appendIfValid('valor_cobrado_efetivo', this.valor_cobrado_efetivo);
+        appendIfValid('prazo', this.prazo);
+        appendIfValid('status_pagamento', this.status_pagamento);
+        appendIfValid('imposto_considerado', this.imposto_considerado);
+
+        appendIfValid('coleta_efetiva', this.coleta_efetiva ? formatDate(this.coleta_efetiva, 'yyyy-MM-dd') : null);
+        appendIfValid('adiantamento', this.adiantamento);
+        appendIfValid('saldo', this.saldo);
+        appendIfValid('integral', this.integral);
+        appendIfValid('obs_financeiro', this.obs_financeiro);
+        appendIfValid('cpf_motorista', this.motorista?.cpf);
+        appendIfValid('cte_vinculado', this.cte?.Id_CTe);
+
+        if (this.arquivo_comprovante instanceof File) {
+          formData.append('arquivo_comprovante', this.arquivo_comprovante);
         }
-        return dadosParaEnvio
+
+        appendIfValid('entrega_efetiva', this.entrega_efetiva ? formatDate(this.entrega_efetiva, 'yyyy-MM-dd') : null);
+
+        // Método PUT, se necessário
+        formData.append('_method', 'PUT');
+
+        return formData;
       },
+
       async atualizaFreteCotacao() {
 
         const alertStore = useAlertStore()
@@ -429,14 +499,14 @@ export default {
         }
 
         const dadosParaEnvio = this.formataDadosParaEnvio();
-        const url = `${endpoints.frete.atualiza}/${this.item.id_frete}`;
+        const url = `${endpoints.freteCotacao.atualiza}/${this.item.id_frete}`;
 
         try {
-          loading.show('Atualizando Frete/Cotação...')
+          loading.show('Atualizando...')
           const resposta =  await ApiService({
-            method: 'put',
+            method: 'post',
             url: url,
-            data: dadosParaEnvio
+            data: dadosParaEnvio,
           });
 
           alertStore.addAlert(resposta?.data.message, 'success')
@@ -511,6 +581,20 @@ export default {
         return formatDate(date, 'dd/MM/yy')
       },
 
+      formatarParaISO(dataBr) {
+        const [dia, mes, ano] = dataBr.split('/');
+        return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+      },
+
+      desabilitaCampoSeHouverPagamento() {
+        const sim = SimENaoEnumDescricao.SIM
+
+        if(this.integral == sim || this.saldo == sim || this.adiantamento == sim) {
+          return true
+        }
+
+        return false
+      }
     }
 }
 </script>

@@ -234,8 +234,6 @@
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
 
-          <!-- <BtnCreateFrete @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/> -->
-
           <v-btn
             color="blue-darken-3"
             prepend-icon="mdi-reload"
@@ -638,53 +636,6 @@ export default {
       }
     },
 
-    onAcrescentaODadoNoArrayLocalmente(itemCriado) {
-      const novoItem = {
-        id_frete: itemCriado.id_frete,
-        data_cotacao: formataDataSomenteData(itemCriado.data_cotacao),
-        id_usuario_responsavel: itemCriado.id_usuario_responsavel,
-        nome_usuario_responsavel: itemCriado.nome_usuario_responsavel,
-        id_remetente: itemCriado.id_remetente,
-        remetente: itemCriado.remetente,
-        cnpj_destinatario: itemCriado.cnpj_destinatario,
-        nome_destinatario: itemCriado.nome_destinatario,
-        cep_destinatario: itemCriado.cep_destinatario,
-        endereco_destinatario: itemCriado.endereco_destinatario,
-        numero_destinatario: itemCriado.numero_destinatario,
-        cidade_destinatario: itemCriado.cidade_destinatario,
-        uf_destinatario: itemCriado.uf_destinatario,
-        observacoes: itemCriado.observacoes,
-        valor_motorista: itemCriado.valor_motorista,
-        valor_motorista_efetivo: itemCriado.valor_motorista_efetivo,
-        valor_notafiscal: itemCriado.valor_notafiscal,
-        coeficiente_margem: itemCriado.coeficiente_margem,
-        advalorem: itemCriado.advalorem,
-        imposto_considerado: itemCriado.imposto_considerado,
-        valor_cobrado_efetivo: itemCriado.valor_cobrado_efetivo,
-        valor_cobrado: itemCriado.valor_cobrado,
-        status: itemCriado.status,
-        forma_pagamento: itemCriado.forma_pagamento,
-        motivo: itemCriado.motivo,
-        obs_financeiro: itemCriado.obs_financeiro,
-        cpf_motorista: itemCriado.cpf_motorista,
-        prazo: itemCriado.prazo,
-        cte_vinculado: itemCriado.cte_vinculado,
-        adiantamento: itemCriado.adiantamento,
-        saldo: itemCriado.saldo,
-        integral: itemCriado.integral,
-        status_pagamento: itemCriado.status_pagamento,
-        coleta_efetiva: itemCriado.coleta_efetiva,
-        entrega_efetiva: itemCriado.entrega_efetiva,
-        usuario_criacao: itemCriado.usuario_criacao,
-        usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
-        id_usuario_criacao: itemCriado.id_usuario_criacao,
-        data_criacao: formataData(itemCriado.data_criacao),
-        id_usuario_ultima_alteracao: itemCriado.id_usuario_ultima_alteracao,
-        data_ultima_alteracao: formataData(itemCriado.data_ultima_alteracao)
-      }
-      this.datatable.itens.unshift(novoItem)
-    },
-
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
       const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_frete == itemAtualizado.id_frete);
 
@@ -694,7 +645,6 @@ export default {
         itemQueSeraAtualizado.id_usuario_responsavel = itemAtualizado.id_usuario_responsavel
         itemQueSeraAtualizado.nome_usuario_responsavel = itemAtualizado.nome_usuario_responsavel
         itemQueSeraAtualizado.id_remetente = itemAtualizado.id_remetente
-        itemQueSeraAtualizado.remetente = itemAtualizado.remetente
         itemQueSeraAtualizado.cnpj_destinatario = itemAtualizado.cnpj_destinatario
         itemQueSeraAtualizado.nome_destinatario = itemAtualizado.nome_destinatario
         itemQueSeraAtualizado.cep_destinatario = itemAtualizado.cep_destinatario

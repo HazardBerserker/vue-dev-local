@@ -7,6 +7,7 @@ import vuetify from '@/plugins/vuetify';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import {mask} from 'vue-the-mask'
 import { VueMaskFilter } from 'v-mask';
+import money from 'v-money3'
 
 // GERENCIAMENTO DO ESTADO
 const pinia = createPinia()
@@ -24,5 +25,6 @@ app.config.globalProperties.$VMask = (value, pattern) => {
 app.use(router)
 app.use(pinia)
 app.use(vuetify)
+app.use(money)
 
 app.mount('#app')
