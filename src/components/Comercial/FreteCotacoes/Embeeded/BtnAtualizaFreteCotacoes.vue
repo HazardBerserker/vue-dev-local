@@ -205,20 +205,18 @@
         @click="toggleImagem"
         size="small"
       >
-        {{ imagemVisivel ? 'Ocultar' : 'Exibir' }} {{ formatLabel(arquivo_comprovante) }}
+        {{ imagemVisivel ? 'Ocultar' : 'Exibir' }} Arquivo do Comprovante
       </v-btn>
 
       <v-expand-transition>
         <div
           v-if="imagemVisivel"
-          class="image-container elevation-1 rounded-lg pa-1"
+          class="image-container elevation-1 rounded-lg pa-1 w-100 ma-auto"
         >
           <v-img
-            :src="arquivo_comprovante"
-            class="rounded-lg"
-            max-width="100%"
-            max-height="250"
-            cover
+            :src="imagem_que_sera_exibida"
+            class="rounded-lg w-50 ma-auto"
+            contain
           />
         </div>
       </v-expand-transition>
@@ -259,6 +257,7 @@ export default {
 
     data() {
       return {
+        imagem_que_sera_exibida: false,
         imagemVisivel: false,
         formataDataSomenteData,
         id_frete: null,
@@ -458,7 +457,8 @@ export default {
         this.integral = this.item.integral
         this.status_pagamento = this.item.status_pagamento
         this.imposto_considerado = this.item.imposto_considerado
-        this.arquivo_comprovante = this.item.arquivo_comprovante
+        // this.arquivo_comprovante = this.item.arquivo_comprovante
+        this.imagem_que_sera_exibida = this.item.arquivo_comprovante
         // this.imposto_considerado = null
         this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
         this.valor_cobrado = this.item.valor_cobrado
@@ -633,3 +633,12 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.image-container {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #f5f5f5;
+}
+</style>
