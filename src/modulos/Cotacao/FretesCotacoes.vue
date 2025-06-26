@@ -11,27 +11,29 @@
         <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
         <!-- Botão Mostrar/Ocultar -->
         <div>
-          <v-btn
-            variant="tonal"
-            color="red"
-            @click="limpaFiltros"
-            class="mb-3 me-2 align-self-start"
-            rounded
-          >
-            <v-icon start>mdi-filter-off</v-icon>
-            Limpar Filtros
-          </v-btn>
-
-          <v-btn
-            variant="tonal"
-            color="primary"
-            @click="mostrarFiltros = !mostrarFiltros"
-            class="mb-3 align-self-start"
-            rounded
-          >
-            <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
-            {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
-          </v-btn>
+          <v-slide-x-transition>
+            <v-btn
+              v-if="mostrarFiltros"
+              variant="tonal"
+              color="red"
+              @click="limpaFiltros"
+              class="mb-3 me-2 align-self-start"
+              rounded
+            >
+              <v-icon start>mdi-filter-off</v-icon>
+              Limpar Filtros
+            </v-btn>
+          </v-slide-x-transition>
+            <v-btn
+              variant="tonal"
+              color="primary"
+              @click="mostrarFiltros = !mostrarFiltros"
+              class="mb-3 align-self-start"
+              rounded
+            >
+              <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
+              {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+            </v-btn>
         </div>
       </div>
 
@@ -229,7 +231,7 @@
         <div class="d-flex align-center ga-2">
 
           <v-btn
-            color="blue-darken-3"
+            color="grey-darken-3"
             prepend-icon="mdi-reload"
             variant="tonal"
             density="comfortable"

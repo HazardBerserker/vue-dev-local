@@ -197,6 +197,32 @@
         </v-row>
       </v-form>
 
+      <v-btn
+        :color="imagemVisivel ? 'red-darken-1' : 'blue-darken-2'"
+        class="rounded-lg hover-scale mb-2"
+        variant="flat"
+        block
+        @click="toggleImagem"
+        size="small"
+      >
+        {{ imagemVisivel ? 'Ocultar' : 'Exibir' }} {{ formatLabel(arquivo_comprovante) }}
+      </v-btn>
+
+      <v-expand-transition>
+        <div
+          v-if="imagemVisivel"
+          class="image-container elevation-1 rounded-lg pa-1"
+        >
+          <v-img
+            :src="arquivo_comprovante"
+            class="rounded-lg"
+            max-width="100%"
+            max-height="250"
+            cover
+          />
+        </div>
+      </v-expand-transition>
+
       <template #action-button>
         <v-btn v-if="modoEdicao" variant="flat" color="yellow-darken-4" rounded="pill" @click="desativaModoEdicao">Descartar Edições</v-btn>
         <v-btn variant="flat" color="blue-darken-3" rounded="pill" @click="modoEdicao ? atualizaFreteCotacao() : modoEdicao = true">{{modoEdicao ? 'Atualizar' : 'Editar'}}</v-btn>
@@ -233,6 +259,7 @@ export default {
 
     data() {
       return {
+        imagemVisivel: false,
         formataDataSomenteData,
         id_frete: null,
         data_cotacao: null,
@@ -345,6 +372,16 @@ export default {
       }
     },
     methods: {
+      toggleImagem() {
+        this.imagemVisivel = !this.imagemVisivel;
+      },
+
+      formatLabel(campo) {
+        return campo
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+      },
+
       limpaCampos() {
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
@@ -421,6 +458,7 @@ export default {
         this.integral = this.item.integral
         this.status_pagamento = this.item.status_pagamento
         this.imposto_considerado = this.item.imposto_considerado
+        this.arquivo_comprovante = this.item.arquivo_comprovante
         // this.imposto_considerado = null
         this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
         this.valor_cobrado = this.item.valor_cobrado
@@ -471,9 +509,7 @@ export default {
         appendIfValid('cpf_motorista', this.motorista?.cpf);
         appendIfValid('cte_vinculado', this.cte?.Id_CTe);
 
-        if (this.arquivo_comprovante instanceof File) {
-          formData.append('arquivo_comprovante', this.arquivo_comprovante);
-        }
+        appendIfValid('arquivo_comprovante', this.arquivo_comprovante);
 
         appendIfValid('entrega_efetiva', this.entrega_efetiva ? formatDate(this.entrega_efetiva, 'yyyy-MM-dd') : null);
 
@@ -503,6 +539,9 @@ export default {
             method: 'post',
             url: url,
             data: dadosParaEnvio,
+            headers: {
+              'Content-Type': 'multipart/form-data' // NÃO precisa disso
+            }
           });
 
           alertStore.addAlert(resposta?.data.message, 'success')

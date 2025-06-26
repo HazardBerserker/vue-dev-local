@@ -115,7 +115,7 @@
           <BtnCreateCliente @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <v-btn
-            color="blue-darken-3"
+            color="grey-darken-3"
             prepend-icon="mdi-reload"
             variant="tonal"
             density="comfortable"
