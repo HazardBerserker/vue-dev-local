@@ -54,24 +54,10 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" md="2">
-                  <v-date-input
-                    v-model="filtros.data_cotacao"
-                    label="Data Criação"
-                    prepend-icon=""
-                    density="compact"
-                    prepend-inner-icon="$calendar"
-                    :display-format="format"
-                    placeholder="dd/mm/yy"
-                    clearable
-                    variant="outlined"
-                  ></v-date-input>
-                </v-col>
-
                 <v-col cols="12" md="3">
                   <v-text-field
-                    v-model="filtros.remetente"
-                    label="Remetente"
+                    v-model="filtros.cte_vinculado"
+                    label="CTE Vinculado"
                     variant="outlined"
                     density="compact"
                     clearable
@@ -80,8 +66,8 @@
 
                 <v-col cols="12" md="3">
                   <v-text-field
-                    v-model="filtros.cidade_destinatario"
-                    label="Cidade Destinatário"
+                    v-model="filtros.tomador"
+                    label="Tomador"
                     variant="outlined"
                     density="compact"
                     clearable
@@ -89,33 +75,23 @@
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-text-field
-                    v-model="filtros.uf_destinatario"
-                    label="UF Destinatário"
-                    variant="outlined"
-                    density="compact"
-                    clearable
-                  ></v-text-field>
+                  <v-select v-model="filtros.adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" clearable></v-select>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-select v-model="filtros.saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" clearable></v-select>
                 </v-col>
               </v-row>
 
               <v-row dense>
                 <v-col cols="12" md="2">
-                  <InputTextMoeda v-model="filtros.valor_frete_efetivo" prefix="R$" label="Frete:"/>
+                  <v-select v-model="filtros.integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" clearable></v-select>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.valor_notafiscal" prefix="R$" label="NF:"/>
-                </v-col>
-
-                <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:"/>
-                </v-col>
-
-                <v-col cols="12" md="2">
                   <v-text-field
-                    v-model="filtros.status"
-                    label="Status"
+                    v-model="filtros.nome_motorista"
+                    label="Motorista"
                     variant="outlined"
                     density="compact"
                     clearable
@@ -124,8 +100,8 @@
 
                 <v-col cols="12" md="2">
                   <v-text-field
-                    v-model="filtros.cte_vinculado"
-                    label="CTE Vinculado"
+                    v-model="filtros.pix_motorista"
+                    label="PiX Motorista"
                     variant="outlined"
                     density="compact"
                     clearable
@@ -164,12 +140,16 @@
                 <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white">
                   <v-icon>mdi-cash-clock</v-icon>
                 </v-avatar>
-                <span class="text-body-2 font-weight-bold text-blue-darken-2">Fretes a Pagar</span>
+
+                <div>
+                  <v-chip class="me-4" color="blue-darken-4" variant="flat" prepend-icon="mdi-filter-variant" @click="filtrarPorPagamentosEmAberto">Filtrar</v-chip>
+                  <span class="text-body-2 font-weight-bold text-blue-darken-2">Fretes a Pagar</span>
+                </div>
               </div>
               <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ numeroDeCotacoesFreteEmAberto() }}
+                    {{ formataMoeda(numeroDePagamentosEmAberto()) }}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -186,12 +166,16 @@
                 <v-avatar size="40" class="me-4 bg-green-darken-2 text-white">
                   <v-icon>mdi-cash-check</v-icon>
                 </v-avatar>
-                <span class="text-body-2 font-weight-bold text-green-darken-2">Fretes Pagos</span>
+
+                <div>
+                  <v-chip class="me-4" color="green-darken-4" variant="flat" prepend-icon="mdi-filter-variant" @click="filtrarPorPagamentosRealizados">Filtrar</v-chip>
+                  <span class="text-body-2 font-weight-bold text-green-darken-2">Fretes Pagos</span>
+                </div>
               </div>
               <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ numeroDeCotacoesFreteAceitas() }}
+                    {{ formataMoeda(numeroDePagamentosRealizados()) }}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -272,7 +256,7 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaFreteCotacoes :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+              <BtnAtualizaPagamentoMotoristas :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
             <template #[`item.valor_cobrado_efetivo`]="{ item }">
               {{ formataMoeda(item.valor_cobrado_efetivo) }}
@@ -286,19 +270,6 @@
             <template #[`item.integral`]="{ item }">
               <div v-html="formataIntegral(item)"></div>
             </template>
-            <!-- <template #[`item.status`]="{ item }">
-              <v-btn
-                :color="selecionaCorDoStatus(item.status)"
-                density="comfortable"
-                variant="flat"
-                rounded="pill"
-                :disabled="datatable.carregando"
-                @click="exportarExcel"
-                readonly
-              >
-                {{ StatusFreteCotacaoEnum[item.status] }}
-              </v-btn>
-            </template> -->
             <template #[`item.percentual_motorista`]="{ item }">
              {{ calculaPercentualMotorista(item)}}
             </template>
@@ -317,12 +288,11 @@ import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-import BtnAtualizaFreteCotacoes from '@/components/Comercial/FreteCotacoes/Embeeded/BtnAtualizaFreteCotacoes.vue';
+import BtnAtualizaPagamentoMotoristas from '@/components/Financeiro/PagamentoMotoristas/Embeeded/BtnAtualizaPagamentoMotoristas.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { StatusFreteCotacaoEnum, StatusFreteCotacaoEnumDescricao } from '@/Enums/Comercial/StatusFreteCotacaoEnum';
+import { StatusFreteCotacaoEnum } from '@/Enums/Comercial/StatusFreteCotacaoEnum';
 import { format as formatDate } from 'date-fns'
-import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { StatusPagamentoEnumDescricao } from '@/Enums/Financeiro/StatusPagamentoEnum';
 import { FormaPagamentoEnumDescricao } from '@/Enums/Financeiro/FormaPagamentoEnum';
 
@@ -330,11 +300,14 @@ export default {
   name: 'FretesCotacoes',
   components: {
     GlobalAlertFixed,
-    BtnAtualizaFreteCotacoes,
-    InputTextMoeda
+    BtnAtualizaPagamentoMotoristas,
   },
   data () {
     return {
+      opcoesSImENao: [
+        { valor: 0, descricao: 'Não' },
+        { valor: 1, descricao: 'Sim' },
+      ],
       formataData,
       formataDataSomenteData,
       formataMoeda,
@@ -508,6 +481,18 @@ export default {
   },
   methods: {
 
+    filtrarPorPagamentosEmAberto() {
+      if(this.datatable.carregando) return
+      this.filtros.status_pagamento = StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE
+      this.buscaFrete()
+    },
+
+    filtrarPorPagamentosRealizados() {
+      if(this.datatable.carregando) return
+      this.filtros.status_pagamento = StatusPagamentoEnumDescricao.OK
+      this.buscaFrete()
+    },
+
     formataAdiantamento(item) {
       if(item.forma_pagamento == FormaPagamentoEnumDescricao.INTEGRAL) {
         return '-'
@@ -529,6 +514,10 @@ export default {
         return 'Aguardando Entrega'
       }
 
+      if(item.arquivo_comprovante == null) {
+        return 'Aguardando Comprovante'
+      }
+
       if(item.saldo == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE) {
         return `A pagar: <strong>${formataMoeda(item.valor_motorista_efetivo * 0.30)}</strong>`
       }
@@ -543,6 +532,10 @@ export default {
 
       if(item.entrega_efetiva == null) {
         return 'Aguardando Entrega'
+      }
+
+      if(item.arquivo_comprovante == null) {
+        return 'Aguardando Comprovante'
       }
 
       if(item.integral == SimENaoEnumDescricao.NAO) {
@@ -561,35 +554,51 @@ export default {
       return formatDate(date, 'dd/MM/yyyy');
     },
 
-    numeroDeCotacoesFreteEmAberto() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO
-      })
-      return itensAtivos.length
-    },
-    numeroDeCotacoesFreteRejeitadas() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == StatusFreteCotacaoEnumDescricao.REJEITADA
-      })
-      return itensAtivos.length
-    },
-    numeroDeCotacoesFreteAceitas() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == StatusFreteCotacaoEnumDescricao.ACEITA
-      })
-      return itensAtivos.length
-    },
+    numeroDePagamentosEmAberto() {
+      const total =  this.datatable.itens.reduce((acumulador, item) => {
+        let valorAdicional = 0
 
+        if(item.adiantamento == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
+          valorAdicional += item.valor_motorista_efetivo * 0.70
+        }
 
-    selecionaCorDoStatus(status) {
-      switch (status) {
-        case 0:
-          return 'red-darken-2'
-        case 1:
-          return 'blue-darken-2'
-        case 2:
-          return 'green-darken-2'
-      }
+        if(item.saldo == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
+          valorAdicional += item.valor_motorista_efetivo * 0.30
+        }
+
+        if(item.integral == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE && item.forma_pagamento == FormaPagamentoEnumDescricao.INTEGRAL) {
+          valorAdicional += item.valor_motorista_efetivo
+        }
+
+        return acumulador + valorAdicional;
+      }, 0);
+
+      return total
+      // const itensAtivos = this.datatable.itens.filter(item => {
+      //   return item.status_pagamento == StatusFreteCotacaoEnumDescricao.EM_ABERTO
+      // })
+      // return itensAtivos.length
+    },
+    numeroDePagamentosRealizados() {
+      const total =  this.datatable.itens.reduce((acumulador, item) => {
+        let valorAdicional = 0
+
+        if(item.adiantamento == StatusPagamentoEnumDescricao.OK && FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
+          valorAdicional += item.valor_motorista_efetivo * 0.70
+        }
+
+        if(item.saldo == StatusPagamentoEnumDescricao.OK && FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
+          valorAdicional += item.valor_motorista_efetivo * 0.30
+        }
+
+        if(item.integral == StatusPagamentoEnumDescricao.OK && FormaPagamentoEnumDescricao.INTEGRAL) {
+          valorAdicional += item.valor_motorista_efetivo
+        }
+
+        return acumulador + valorAdicional;
+      }, 0);
+
+      return total
     },
 
     abrirDialogDetalhesFrete(frete) {
@@ -597,7 +606,9 @@ export default {
     },
 
     limpaFiltros() {
+      if(this.datatable.carregando) return
       this.filtros = []
+      this.buscaFrete()
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {
@@ -756,47 +767,24 @@ export default {
 
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,
-        ativo: SimENaoEnum[item.ativo],
+        adiantamento: SimENaoEnum[item.adiantamento],
+        saldo: SimENaoEnum[item.saldo],
+        integral: SimENaoEnum[item.integral],
+        status_pagamento: SimENaoEnum[item.status_pagamento],
         // falta o Status
       }));
 
       // Adicionando cabeçalhos
       worksheet.columns = [
         { header: 'ID Frete', key: 'id_frete', width: 15 },
-        { header: 'Data Cotação', key: 'data_cotacao', width: 20 },
-        { header: 'ID Resp.', key: 'id_usuario_responsavel', width: 15 },
-        { header: 'Usuário Responsável', key: 'nome_usuario_responsavel', width: 25 },
-        { header: 'ID Remetente', key: 'id_remetente', width: 15 },
-        { header: 'Remetente', key: 'remetente', width: 25 },
-        { header: 'CNPJ Destinatário', key: 'cnpj_destinatario', width: 25 },
-        { header: 'Nome Destinatário', key: 'nome_destinatario', width: 25 },
-        { header: 'CEP Destinatário', key: 'cep_destinatario', width: 15 },
-        { header: 'Endereço Destinatário', key: 'endereco_destinatario', width: 30 },
-        { header: 'Número Destinatário', key: 'numero_destinatario', width: 15 },
-        { header: 'Cidade Destinatário', key: 'cidade_destinatario', width: 25 },
-        { header: 'UF Destinatário', key: 'uf_destinatario', width: 10 },
-        { header: 'Observações', key: 'observacoes', width: 30 },
-        { header: 'Valor Motorista', key: 'valor_motorista', width: 20 },
-        { header: 'Valor Motorista Efetivo', key: 'valor_motorista_efetivo', width: 25 },
-        { header: 'Valor Nota Fiscal', key: 'valor_notafiscal', width: 20 },
-        { header: 'Coef. Margem', key: 'coeficiente_margem', width: 15 },
-        { header: 'AdValorem', key: 'advalorem', width: 15 },
-        { header: 'Imposto Considerado', key: 'imposto_considerado', width: 20 },
-        { header: 'Valor Cobrado Efetivo', key: 'valor_cobrado_efetivo', width: 25 },
-        { header: 'Valor Cobrado', key: 'valor_cobrado', width: 20 },
-        { header: 'Status', key: 'status', width: 15 },
-        { header: 'Forma Pagamento', key: 'forma_pagamento', width: 20 },
-        { header: 'Motivo', key: 'motivo', width: 30 },
-        { header: 'Obs Financeiro', key: 'obs_financeiro', width: 25 },
-        { header: 'CPF Motorista', key: 'cpf_motorista', width: 20 },
-        { header: 'Prazo', key: 'prazo', width: 15 },
-        { header: 'CTE Vinculado', key: 'cte_vinculado', width: 20 },
+        { header: 'CTE Vinculado', key: 'cte_vinculado', width: 25 },
+        { header: 'Tomador', key: 'tomador', width: 15 },
         { header: 'Adiantamento', key: 'adiantamento', width: 15 },
         { header: 'Saldo', key: 'saldo', width: 15 },
         { header: 'Integral', key: 'integral', width: 15 },
-        { header: 'Status Pagamento', key: 'status_pagamento', width: 20 },
-        { header: 'Coleta Efetiva', key: 'coleta_efetiva', width: 20 },
-        { header: 'Entrega Efetiva', key: 'entrega_efetiva', width: 20 },
+        { header: 'Status Pagamento', key: 'status_pagamento', width: 15 },
+        { header: 'Motorista', key: 'nome_motorista', width: 30 },
+        { header: 'PIX Motorista', key: 'pix_motorista', width: 30 },
         { header: 'Usuário Criação', key: 'usuario_criacao', width: 25 },
         { header: 'Usuário Últ. Alteração', key: 'usuario_ultima_alteracao', width: 25 },
         { header: 'ID Usuário Criação', key: 'id_usuario_criacao', width: 20 },
@@ -814,13 +802,6 @@ export default {
       // Salvando
       saveAs(new Blob([buffer]), 'fretes.xlsx');
     },
-
-    // apagarDadosDoArrayLocalmente() {
-    //   const arrayFiltrado = this.items.filter(item => {
-    //       return !this.datatable.itensSelecionados.includes(item.id_frete);
-    //   })
-    //   this.datatable.itens = arrayFiltrado
-    // },
 
     regraPintaLinha(item) {
       // 🔵 Azul (pendente ou incompleto)

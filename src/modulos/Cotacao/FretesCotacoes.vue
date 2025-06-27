@@ -552,7 +552,9 @@ export default {
     },
 
     limpaFiltros() {
+      if(this.datatable.carregando) return
       this.filtros = []
+      this.buscaFrete()
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {

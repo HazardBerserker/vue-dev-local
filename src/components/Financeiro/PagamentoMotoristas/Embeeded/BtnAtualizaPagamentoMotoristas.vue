@@ -18,7 +18,12 @@
       </template>
 
       <template #subtitle>
-        Todos os campos são obrigatórios
+        <div class="d-flex justify-space-between w-100">
+          <div>Todos os campos são obrigatórios</div>
+          <div v-if="!imagem_que_sera_exibida">
+            <v-alert type="warning" max-width="400">Sem Imagem do Comprovante</v-alert>
+          </div>
+        </div>
       </template>
 
       <v-form ref="form">
@@ -56,17 +61,17 @@
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 mb-2">
                   <!-- <v-text-field density="compact" variant="outlined" v-money3="money" label="Valor Motorista:" v-model="valor_motorista" class="w-100"></v-text-field> -->
-                  <InputTextMoeda v-model="valor_motorista_efetivo" prefix="R$" label="Valor Motorista:" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"/>
-                  <InputTextMoeda v-model="valor_notafiscal" prefix="R$" label="Valor NF:" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"/>
+                  <InputTextMoeda v-model="valor_motorista_efetivo" prefix="R$" label="Valor Motorista:" :rules="campoObrigatorio" disabled/>
+                  <InputTextMoeda v-model="valor_notafiscal" prefix="R$" label="Valor NF:" :rules="campoObrigatorio" disabled/>
                 </div>
                 <div class="d-flex ga-4 text-start">
-                  <InputTextMoeda v-model="valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"/>
-                  <v-text-field clearable density="compact" variant="outlined" label="Coeficiente:" v-model="coeficiente_margem" class="w-100" min="0" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()">
+                  <InputTextMoeda v-model="valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" disabled/>
+                  <v-text-field clearable density="compact" variant="outlined" label="Coeficiente:" v-model="coeficiente_margem" class="w-100" min="0" :rules="campoObrigatorio" disabled>
                     <template #append-inner>
                       %
                     </template>
                   </v-text-field>
-                  <v-text-field clearable density="compact" variant="outlined" label="Prazo de Entrega (em dias):" v-model="prazo" class="w-100" min="0" :rules="campoObrigatorio" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"></v-text-field>
+                  <v-text-field clearable density="compact" variant="outlined" label="Prazo de Entrega (em dias):" v-model="prazo" class="w-100" min="0" :rules="campoObrigatorio" disabled></v-text-field>
                 </div>
               </div>
             </v-card>
@@ -94,10 +99,10 @@
                     item-title="Id_CTe"
                     class="w-100"
                     clearable
-                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                    disabled
                   >
                   </v-combobox>
-                  <v-select density="compact" class="w-100" variant="outlined" label="Forma de Pagamento:" :items="opcoesFormaPagamento" v-model="forma_pagamento" itemTitle="descricao" itemValue="valor" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"></v-select>
+                  <v-select density="compact" class="w-100" variant="outlined" label="Forma de Pagamento:" :items="opcoesFormaPagamento" v-model="forma_pagamento" itemTitle="descricao" itemValue="valor" disabled></v-select>
                   <!-- <div class="w-100"><strong>Data:</strong> 18/06/2025</div> -->
                 </div>
                 <div class="d-flex ga-4 text-start">
@@ -114,10 +119,10 @@
                     item-title="nome_completo"
                     class="w-100"
                     clearable
-                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                    disabled
                   >
                   </v-combobox>
-                  <v-select density="compact" class="w-100" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" :rules="campoObrigatorio" v-model="status" itemTitle="descricao" itemValue="valor" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento() || !this.cte || !this.motorista"></v-select>
+                  <v-select density="compact" class="w-100" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" :rules="campoObrigatorio" v-model="status" itemTitle="descricao" itemValue="valor" disabled></v-select>
                   <!-- <v-text-field density="compact" variant="outlined" label="Motivo da Rejeição:"></v-text-field> -->
                 </div>
               </div>
@@ -133,8 +138,8 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4">
-                  <v-textarea clearable v-model="observacoes" density="compact" variant="outlined" label="Observações Cotação:" rows="2" :disabled="!modoEdicao"></v-textarea>
-                  <v-textarea clearable v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2" disabled></v-textarea>
+                  <v-textarea clearable v-model="observacoes" density="compact" variant="outlined" label="Observações Cotação:" rows="2" disabled></v-textarea>
+                  <v-textarea clearable v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2" :disabled="!modoEdicao"></v-textarea>
                 </div>
               </div>
             </v-card>
@@ -149,9 +154,9 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 text-start">
-                  <v-select v-model="adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" disabled></v-select>
-                  <v-select v-model="saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" disabled></v-select>
-                  <v-select v-model="integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" disabled></v-select>
+                  <v-select v-model="adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" :disabled="forma_pagamento != FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO || !modoEdicao"></v-select>
+                  <v-select v-model="saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" :disabled="forma_pagamento != FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO || !entrega_efetiva || !modoEdicao"></v-select>
+                  <v-select v-model="integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" :disabled="forma_pagamento != FormaPagamentoEnumDescricao.INTEGRAL || !modoEdicao"></v-select>
                 </div>
               </div>
             </v-card>
@@ -176,7 +181,7 @@
                     placeholder="dd/mm/yy"
                     clearable
                     variant="outlined"
-                    :disabled="!modoEdicao"
+                    disabled
                   ></v-date-input>
                   <v-date-input
                     v-model="coleta_efetiva"
@@ -188,9 +193,9 @@
                     placeholder="dd/mm/yy"
                     clearable
                     variant="outlined"
-                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                    disabled
                   ></v-date-input>
-                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="entrega_efetiva && !imagem_que_sera_exibida ? regraArquivo : []" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" :disabled="!modoEdicao"></v-file-input>
+                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="entrega_efetiva ? regraArquivo : []" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" disabled></v-file-input>
                 </div>
               </div>
             </v-card>
@@ -243,9 +248,10 @@ import { formataDataSomenteData } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
+import { FormaPagamentoEnumDescricao } from '@/Enums/Financeiro/FormaPagamentoEnum';
 
 export default {
-    name: 'BtnAtualizaFreteCotacoes',
+    name: 'BtnAtualizaPagamentoMotoristas',
     components: {
       DialogCreateCadastro,
       InputTextMoeda
@@ -262,6 +268,7 @@ export default {
       return {
         imagem_que_sera_exibida: false,
         imagemVisivel: false,
+        FormaPagamentoEnumDescricao,
         formataDataSomenteData,
         id_frete: null,
         data_cotacao: null,
