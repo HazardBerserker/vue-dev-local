@@ -434,19 +434,19 @@ export default {
             title: 'Adiantamento',
             key: 'adiantamento',
             align: 'center',
-            width: '240',
+            width: '300',
           },
           {
             title: 'Saldo',
             key: 'saldo',
             align: 'center',
-            width: '240',
+            width: '300',
           },
           {
             title: 'Integral',
             key: 'integral',
             align: 'center',
-            width: '240',
+            width: '300',
           },
           {
             title: 'Motorista',
