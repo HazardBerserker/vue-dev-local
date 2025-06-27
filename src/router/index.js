@@ -6,6 +6,7 @@ import Clientes from '@/modulos/Clientes/Clientes.vue'
 import Motoristas from '@/modulos/Motoristas/Motoristas.vue'
 import NovaCotacao from '@/modulos/Cotacao/NovaCotacao.vue'
 import FretesCotacoes from '@/modulos/Cotacao/FretesCotacoes.vue'
+import PagamentoMotoristas from '@/modulos/Financeiro/PagamentoMotoristas.vue'
 
 AuthLayout
 
@@ -40,12 +41,11 @@ const routes = [
         name: 'Fretes Cotações',
         component: FretesCotacoes
       },
-      // {
-      //   path: '/about',
-      //   name: 'about',
-      //   component: () => import('../views/AboutView.vue'), // lazy load
-      //   meta: { requiresAuth: true }
-      // },
+      {
+        path: 'financeiro/pagamento-motoristas',
+        name: 'Pagamento de Motoristas',
+        component: PagamentoMotoristas
+      },
     ]
   },
 

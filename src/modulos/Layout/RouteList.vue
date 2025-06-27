@@ -118,7 +118,7 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Pagamento Motoristas',
-                caminho: '',
+                caminho: '/financeiro/pagamento-motoristas',
                 icone: 'mdi-account-credit-card-outline'
             },
           ],

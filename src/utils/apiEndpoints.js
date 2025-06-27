@@ -18,6 +18,7 @@ export const endpoints = {
   },
   freteCotacao: {
     datatable: `${URL_BASE}/fretes/datatable`,
+    datatableFinanceiro: `${URL_BASE}/fretes/datatable-financeiro`,
     novo: `${URL_BASE}/fretes`,
     atualiza: `${URL_BASE}/fretes`,
     apaga: `${URL_BASE}/fretes`,

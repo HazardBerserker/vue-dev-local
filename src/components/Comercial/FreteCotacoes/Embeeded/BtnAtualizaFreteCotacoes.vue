@@ -432,6 +432,15 @@ export default {
       openDialog() {
         this.$refs.dialogAtualiza.onOpenDialog();
 
+        const objetoMotorista = {
+          cpf: this.item.cpf_motorista,
+          nome_completo: this.item.nome_motorista
+        }
+
+        const objetoCte = {
+          Id_CTe: this.item.cte_vinculado,
+        }
+
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
         this.id_remetente = this.item.id_remetente
@@ -457,6 +466,14 @@ export default {
         this.integral = this.item.integral
         this.status_pagamento = this.item.status_pagamento
         this.imposto_considerado = this.item.imposto_considerado
+        this.cte = this.item.cte_vinculado
+
+        if(this.item.cte_vinculado) {
+          this.cte = objetoCte
+        }
+        if(this.item.cpf_motorista && this.item.nome_motorista) {
+          this.motorista = objetoMotorista
+        }
         // this.arquivo_comprovante = this.item.arquivo_comprovante
         this.imagem_que_sera_exibida = this.item.arquivo_comprovante
         // this.imposto_considerado = null
@@ -507,6 +524,7 @@ export default {
         appendIfValid('integral', this.integral);
         appendIfValid('obs_financeiro', this.obs_financeiro);
         appendIfValid('cpf_motorista', this.motorista?.cpf);
+
         appendIfValid('cte_vinculado', this.cte?.Id_CTe);
 
         appendIfValid('arquivo_comprovante', this.arquivo_comprovante);
