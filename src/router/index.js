@@ -7,6 +7,7 @@ import Motoristas from '@/modulos/Motoristas/Motoristas.vue'
 import NovaCotacao from '@/modulos/Cotacao/NovaCotacao.vue'
 import FretesCotacoes from '@/modulos/Cotacao/FretesCotacoes.vue'
 import PagamentoMotoristas from '@/modulos/Financeiro/PagamentoMotoristas.vue'
+import RegistrarCte from '@/modulos/Fiscal/RegistrarCte.vue'
 
 AuthLayout
 
@@ -45,6 +46,11 @@ const routes = [
         path: 'financeiro/pagamento-motoristas',
         name: 'Pagamento de Motoristas',
         component: PagamentoMotoristas
+      },
+      {
+        path: 'fiscal/registrar-cte',
+        name: 'Registrar CTE',
+        component: RegistrarCte
       },
     ]
   },

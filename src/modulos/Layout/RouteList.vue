@@ -128,7 +128,7 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Registrar CTE',
-                caminho: '',
+                caminho: '/fiscal/registrar-cte',
                 icone: 'mdi-note-plus-outline'
             },
           ],

@@ -31,6 +31,9 @@ export const endpoints = {
     apaga: `${URL_BASE}/cotacao-criterios`,
   },
   cte: {
+    datatable: `${URL_BASE}/ctes/datatable`,
     listaPorId: `${URL_BASE}/ctes/lista-por-id`,
+    autoriza: `${URL_BASE}/ctes/autoriza`,
+    cancela: `${URL_BASE}/ctes/cancela`,
   }
 };
