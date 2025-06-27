@@ -195,7 +195,7 @@
                     variant="outlined"
                     disabled
                   ></v-date-input>
-                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="entrega_efetiva ? regraArquivo : []" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" disabled></v-file-input>
+                  <v-file-input v-model="arquivo_comprovante" accept="image/*" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" disabled></v-file-input>
                 </div>
               </div>
             </v-card>
@@ -297,7 +297,6 @@ export default {
         saldo: null,
         integral: null,
         obs_financeiro: null,
-        status_pagamento: null,
         imposto_considerado: null,
 
         coleta_efetiva: null,
@@ -427,7 +426,6 @@ export default {
         this.entrega_efetiva = null
         this.motorista = null
         this.cte = null
-        this.status_pagamento = null
         this.imposto_considerado = null
       },
 
@@ -474,7 +472,7 @@ export default {
         this.adiantamento = this.item.adiantamento
         this.saldo = this.item.saldo
         this.integral = this.item.integral
-        this.status_pagamento = this.item.status_pagamento
+        this.entrega_efetiva = this.item.entrega_efetiva
         this.imposto_considerado = this.item.imposto_considerado
         this.cte = this.item.cte_vinculado
 
@@ -525,9 +523,7 @@ export default {
         appendIfValid('valor_cobrado', this.valor_cobrado);
         appendIfValid('valor_cobrado_efetivo', this.valor_cobrado_efetivo);
         appendIfValid('prazo', this.prazo);
-        appendIfValid('status_pagamento', this.status_pagamento);
         appendIfValid('imposto_considerado', this.imposto_considerado);
-
         appendIfValid('coleta_efetiva', this.coleta_efetiva ? formatDate(this.coleta_efetiva, 'yyyy-MM-dd') : null);
         appendIfValid('adiantamento', this.adiantamento);
         appendIfValid('saldo', this.saldo);

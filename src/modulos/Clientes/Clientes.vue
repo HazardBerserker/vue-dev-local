@@ -227,6 +227,9 @@ export default {
     BtnCreateCliente,
     BtnAtualizaCliente,
   },
+  unmounted() {
+    this.propriedadesDoAlertaFixo = null
+  },
   data () {
     return {
       formataCEP,

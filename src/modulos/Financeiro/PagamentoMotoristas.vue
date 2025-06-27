@@ -302,6 +302,9 @@ export default {
     GlobalAlertFixed,
     BtnAtualizaPagamentoMotoristas,
   },
+  unmounted() {
+    this.propriedadesDoAlertaFixo = null
+  },
   data () {
     return {
       opcoesSImENao: [
@@ -319,22 +322,6 @@ export default {
       permissao: false,
       propriedadesDoAlertaFixo: null,
       filtros: {
-      },
-      busca_geral: null,
-      filtrosDaBuscaGeral: {
-        id_frete: null,
-        nome_completo: null,
-        cpf: null,
-        telefone: null,
-        placa_carro: null,
-        placa_carreta: null,
-        tipo_veiculo: null,
-        pix: null,
-        uf_residencia: null,
-        cidade_residencia: null,
-        cep_residencia: null,
-        usuario_criacao: null,
-        usuario_ultima_alteracao: null,
       },
       opcoesAtivo: [
         {
@@ -366,7 +353,6 @@ export default {
         ordenarPor: [{key: 'id_frete', order: 'desc'}],
         ordenarDirecao: true,
         opcoes: {},
-
         cabecalho: [
           {
             title: 'Ação',
@@ -375,13 +361,6 @@ export default {
             width: '210',
             sortable: false,
           },
-          // {
-          //   title: 'Status',
-          //   key: 'status',
-          //   align: 'center',
-          //   width: '210',
-          //   sortable: false,
-          // },
           {
             title: 'ID',
             key: 'id_frete',
@@ -771,7 +750,8 @@ export default {
         saldo: SimENaoEnum[item.saldo],
         integral: SimENaoEnum[item.integral],
         status_pagamento: SimENaoEnum[item.status_pagamento],
-        // falta o Status
+        percentual_motorista: this.calculaPercentualMotorista(item),
+        valor_cobrado_efetivo: formataMoeda(item.valor_cobrado_efetivo)
       }));
 
       // Adicionando cabeçalhos
@@ -785,6 +765,8 @@ export default {
         { header: 'Status Pagamento', key: 'status_pagamento', width: 15 },
         { header: 'Motorista', key: 'nome_motorista', width: 30 },
         { header: 'PIX Motorista', key: 'pix_motorista', width: 30 },
+        { header: 'Percentual Motorista', key: 'percentual_motorista', width: 30 },
+        { header: 'TOTAL', key: 'valor_cobrado_efetivo', width: 30 },
         { header: 'Usuário Criação', key: 'usuario_criacao', width: 25 },
         { header: 'Usuário Últ. Alteração', key: 'usuario_ultima_alteracao', width: 25 },
         { header: 'ID Usuário Criação', key: 'id_usuario_criacao', width: 20 },

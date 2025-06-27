@@ -347,6 +347,9 @@ export default {
     BtnAtualizaFreteCotacoes,
     InputTextMoeda
   },
+  unmounted() {
+    this.propriedadesDoAlertaFixo = null
+  },
   data () {
     return {
       formataData,

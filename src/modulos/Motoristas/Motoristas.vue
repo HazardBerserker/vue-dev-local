@@ -259,7 +259,9 @@ export default {
     BtnCreateMotorista,
     BtnAtualizaMotorista,
     MotoristaDetalhesDialog
-
+  },
+  unmounted() {
+    this.propriedadesDoAlertaFixo = null
   },
   data () {
     return {

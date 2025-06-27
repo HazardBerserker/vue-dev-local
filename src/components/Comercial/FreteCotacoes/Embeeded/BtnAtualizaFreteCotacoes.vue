@@ -134,7 +134,7 @@
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4">
                   <v-textarea clearable v-model="observacoes" density="compact" variant="outlined" label="Observações Cotação:" rows="2" :disabled="!modoEdicao"></v-textarea>
-                  <v-textarea clearable v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2" disabled></v-textarea>
+                  <v-textarea clearable v-model="obs_financeiro" density="compact" variant="outlined" label="Observações Financeiro:" rows="2" :disabled="!modoEdicao"></v-textarea>
                 </div>
               </div>
             </v-card>
@@ -290,7 +290,6 @@ export default {
         saldo: null,
         integral: null,
         obs_financeiro: null,
-        status_pagamento: null,
         imposto_considerado: null,
 
         coleta_efetiva: null,
@@ -420,7 +419,6 @@ export default {
         this.entrega_efetiva = null
         this.motorista = null
         this.cte = null
-        this.status_pagamento = null
         this.imposto_considerado = null
       },
 
@@ -467,7 +465,6 @@ export default {
         this.adiantamento = this.item.adiantamento
         this.saldo = this.item.saldo
         this.integral = this.item.integral
-        this.status_pagamento = this.item.status_pagamento
         this.imposto_considerado = this.item.imposto_considerado
         this.cte = this.item.cte_vinculado
 
@@ -518,7 +515,6 @@ export default {
         appendIfValid('valor_cobrado', this.valor_cobrado);
         appendIfValid('valor_cobrado_efetivo', this.valor_cobrado_efetivo);
         appendIfValid('prazo', this.prazo);
-        appendIfValid('status_pagamento', this.status_pagamento);
         appendIfValid('imposto_considerado', this.imposto_considerado);
 
         appendIfValid('coleta_efetiva', this.coleta_efetiva ? formatDate(this.coleta_efetiva, 'yyyy-MM-dd') : null);

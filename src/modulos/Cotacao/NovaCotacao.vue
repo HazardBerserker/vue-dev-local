@@ -351,6 +351,9 @@ export default {
       loading.hide()
     }
   },
+  unmounted() {
+    this.propriedadesDoAlertaFixo = null
+  },
   data() {
     return {
       formataCNPJ,
