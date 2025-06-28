@@ -35,5 +35,6 @@ export const endpoints = {
     listaPorId: `${URL_BASE}/ctes/lista-por-id`,
     autoriza: `${URL_BASE}/ctes/autoriza`,
     cancela: `${URL_BASE}/ctes/cancela`,
+    novo: `${URL_BASE}/ctes/cria-cte-xml`,
   }
 };

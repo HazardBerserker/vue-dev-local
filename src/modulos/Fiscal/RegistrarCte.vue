@@ -58,14 +58,14 @@
         <v-card
           width="250"
           class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-          color="blue-darken-4"
+          color="green-darken-4"
         >
-            <v-avatar size="40" class="me-4 bg-white text-blue-darken-4">
+            <v-avatar size="40" class="me-4 bg-white text-green-darken-4">
                 <v-icon>mdi-account</v-icon>
             </v-avatar>
             <div class="d-flex flex-column">
                 <span class="text-body-2 text-white">Ctes Ativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
+                <v-chip variant="flat" size="small" color="white" class="mt-1 text-green-darken-4">
                     <v-fade-transition mode="out-in">
                         <span v-if="!datatable.carregando">
                         <strong :key="'inativos'">
@@ -73,7 +73,7 @@
                         </strong>
                       </span>
                         <span v-else>
-                          <v-progress-circular indeterminate color="primary" size="15"></v-progress-circular>
+                          <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
                         </span>
                     </v-fade-transition>
                 </v-chip>
@@ -110,10 +110,7 @@
     </v-card>
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
-        <div class="d-flex align-center ga-2">
-
-          <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
-
+      <div class="d-flex align-center ga-2">
           <v-btn
             color="grey-darken-3"
             prepend-icon="mdi-reload"
@@ -127,32 +124,47 @@
             Atualizar
           </v-btn>
 
-          <!-- <v-btn
-              color="red-darken-3"
-              prepend-icon="mdi-delete"
-              variant="tonal"
-              density="comfortable"
-              class="text-white"
-              rounded="pill"
-              :disabled="desativaInput()"
-              @click="desativaCte"
-          >
-              Excluir
-          </v-btn> -->
+          <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <v-btn
-            color="teal-darken-2"
-            prepend-icon="mdi-file-export"
-            variant="tonal"
-            density="comfortable"
-            class="text-white"
-            rounded="pill"
-            :disabled="datatable.carregando"
-            @click="exportarExcel"
+          color="green-darken-3"
+          prepend-icon="mdi-check"
+          variant="tonal"
+          density="comfortable"
+          class="text-white"
+          rounded="pill"
+          :disabled="datatable.carregando || desativaInputDeAutorizar"
+          @click="autorizaCte"
           >
-              Exportar
-          </v-btn>
-        </div>
+          Autorizar
+        </v-btn>
+
+        <v-btn
+          color="red-darken-2"
+          prepend-icon="mdi-cancel"
+          variant="tonal"
+          density="comfortable"
+          class="text-white"
+          rounded="pill"
+          :disabled="datatable.carregando || desativaInputDeCancelar"
+          @click="cancelaCte"
+        >
+          Cancelar
+        </v-btn>
+
+        <v-btn
+          color="teal-darken-2"
+          prepend-icon="mdi-file-export"
+          variant="tonal"
+          density="comfortable"
+          class="text-white"
+          rounded="pill"
+          :disabled="datatable.carregando"
+          @click="exportarExcel"
+        >
+          Exportar
+        </v-btn>
+      </div>
 
     </div>
 
@@ -161,6 +173,7 @@
         <v-card rounded="lg" elevation="3">
           <v-data-table-server
             fixed-header
+            show-select
             v-model="datatable.itensSelecionados"
             v-model:sort-by="datatable.ordenarPor"
             :headers="datatable.cabecalho"
@@ -177,25 +190,30 @@
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
             @update:options="buscaCte"
-            height="54vh"
+            height="52vh"
             density="comfortable"
             no-data-text="Nenhum Cte encontrado, tente alterar o(s) filtro(s)"
           >
-            <template #[`item.ativo`]="{ item }">
+            <template #[`item.status`]="{ item }">
               <v-chip
                 prepend-icon="mdi-alert-circle-outline"
                 variant="flat"
                 size="small"
-                :color="item.ativo == SimENaoEnumDescricao.NAO ? 'red-darken-3' : 'primary'"
+                :color="item.status == StatusCteEnumDescricao.CANCELADO ? 'red-darken-3' : 'green-darken-3'"
               >
-                {{ SimENaoEnum[item.ativo] }}
+                {{ StatusCteEnum[item.status] }}
               </v-chip>
             </template>
-            <template #[`item.cep`]="{ item }">
-              {{ formataCEP(item.cep) }}
-            </template>
-            <template #[`item.cnpj`]="{ item }">
-              {{ formataCNPJ(item.cnpj) }}
+            <template #[`footer.prepend`]>
+              <div class="d-flex w-100 align-center my-auto ps-4">
+                <div
+                  class="rounded-circle"
+                  style="width: 12px; height: 12px; background-color: #a7d6ff;"
+                ></div>
+                <div class="ms-4 d-flex align-center text-caption">
+                  <span>CTEs que possuem um pagamento associado e não podem ser cancelados</span>
+                </div>
+              </div>
             </template>
           </v-data-table-server>
         </v-card>
@@ -212,45 +230,60 @@ import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-// import BtnCreateCte from '@/components/Cadastros/Ctes/Embeeded/BtnCreateCte.vue';
+import BtnCreateCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnCreateCte.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteEnum';
+import { inject } from 'vue'
 
 export default {
   name: 'CtesScreen',
   components: {
     GlobalAlertFixed,
-    // BtnCreateCte,
+    BtnCreateCte,
+  },
+  created() {
+    this.dialog = inject('dialog')
   },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
+  },
+  watch: {
+    'datatable.itensSelecionados'() {
+      this.desativaOuAtivaBotoes()
+    }
   },
   data () {
     return {
       formataCEP,
       formataCNPJ,
+      StatusCteEnum,
+      StatusCteEnumDescricao,
       SimENaoEnumDescricao,
       SimENaoEnum,
+      desativaInputDeAutorizar: false,
+      desativaInputDeCancelar: false,
+      itemSelecionado: {},
       permissao: false,
       propriedadesDoAlertaFixo: null,
       filtros: {
-        ativo: null
+        // ativo: null
       },
-      busca_geral: null,
-      filtrosDaBuscaGeral: {
-        id_cte: null,
-        razao_social: null,
-        cnpj: null,
-        endereco: null,
-        cep: null,
-        cidade: null,
-        bairro: null,
-        pais: null,
-        uf: null,
-        numero: null,
-        usuario_criacao: null,
-        usuario_ultima_alteracao: null,
-      },
+      // busca_geral: null,
+      // filtrosDaBuscaGeral: {
+      //   id_cte: null,
+      //   razao_social: null,
+      //   cnpj: null,
+      //   endereco: null,
+      //   cep: null,
+      //   cidade: null,
+      //   bairro: null,
+      //   pais: null,
+      //   uf: null,
+      //   numero: null,
+      //   usuario_criacao: null,
+      //   usuario_ultima_alteracao: null,
+      // },
       opcoesAtivo: [
         {
           label: 'Sim',
@@ -265,7 +298,7 @@ export default {
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
-        chave_primaria: 'id_cte',
+        chave_primaria: 'Id_CTe',
         itens: [],
         itens_por_pagina: [
             {value: 50, title: '50'},
@@ -277,7 +310,7 @@ export default {
         ultima_pagina: 0,
         pagina_atual: 1,
         por_pagina: 50,
-        ordenarPor: [{key: 'id_cte', order: 'desc'}],
+        ordenarPor: [{key: 'Id_CTe', order: 'desc'}],
         ordenarDirecao: true,
         opcoes: {},
 
@@ -288,6 +321,12 @@ export default {
             align: 'center',
             width: '210',
             sortable: false,
+          },
+          {
+            title: 'Status',
+            key: 'status',
+            align: 'center',
+            width: '170',
           },
           {
             title: 'Remetente',
@@ -378,6 +417,46 @@ export default {
     }
   },
   methods: {
+
+    desativaOuAtivaBotoes() {
+       if(this.datatable.itensSelecionados.length == 1) {
+
+        const alertStore = useAlertStore()
+
+        const item = this.datatable.itens.find(item => {
+          return item.Id_CTe == this.datatable.itensSelecionados
+        })
+
+        if(!item) {
+          alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
+          return;
+        }
+
+
+
+        if(item.status == StatusCteEnumDescricao.CANCELADO) {
+          this.desativaInputDeCancelar = true
+          this.desativaInputDeAutorizar = false
+        }
+
+        if(item.status == StatusCteEnumDescricao.AUTORIZADO) {
+          this.desativaInputDeAutorizar = true
+          this.desativaInputDeCancelar = false
+        }
+
+        if(item.possui_pagamento == SimENaoEnumDescricao.SIM) {
+          this.desativaInputDeCancelar = true
+        }
+
+        this.itemSelecionado = item
+
+        return
+      }
+
+      this.itemSelecionado = {}
+      this.desativaInputDeAutorizar = true
+      this.desativaInputDeCancelar = true
+    },
     gerarQuery( page, itemsPerPage, sortBy ) {
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
@@ -428,7 +507,7 @@ export default {
 
     numeroDeCtesAtivos() {
       const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.SIM
+        return item.status == SimENaoEnumDescricao.SIM
       })
       return itensAtivos.length
     },
@@ -444,7 +523,7 @@ export default {
       const {
           page = this.page || 1,
           itemsPerPage = this.itemsPerPage || 50,
-          sortBy = this.sortBy || [{ key: 'id_cte', order: 'desc' }]
+          sortBy = this.sortBy || [{ key: 'Id_CTe', order: 'desc' }]
       } = options;
 
       this.page = page;
@@ -485,56 +564,134 @@ export default {
       }
     },
 
-    // async desativaCte() {
-    //   const mensagem = this.datatable.itensSelecionados.length === 1
-    //     ? `Deseja realmente desativar o Cte de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
-    //     : `Deseja realmente desativar os <strong>${this.itensSelecionados.length}</strong> Ctes selecionados ?`
+    async cancelaCte() {
+      const alertStore = useAlertStore()
+      const loading = useLoadingStore()
 
-    //   const confirmado = await this.$refs.dialogRef.open({
-    //     title: `Desativar cte(s)`,
-    //     message: mensagem,
-    //     titleColor: 'error'
-    //   })
+      if(this.datatable.itensSelecionados.length != 1) {
+        alertStore.addAlert('Selecione um item por vez para Cancelar', 'warning');
+        return
+      }
 
-    //   if(!confirmado) {
-    //     return
-    //   }
+      if(!this.itemSelecionado) {
+        alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
+        return;
+      }
 
-    //   const alertStore = useAlertStore()
+      if(this.itemSelecionado.possui_pagamento == SimENaoEnumDescricao.SIM) {
+        alertStore.addAlert('O CTE possui um Pagamento associado e não pode ser cancelado', 'warning');
+        return
+      }
 
-    //   const requisicoesDeletar = this.itensSelecionados.map(async idSelecionado => {
-    //     const item = this.items.find(item => item.id_cte == idSelecionado);
+      const mensagem = `Deseja realmente Cancelar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
 
-    //     if (!item) {
-    //       alertStore.addAlert(`ID ${idSelecionado} não encontrado para excluir`, 'error');
-    //       return Promise.resolve(); // Evita que o Promise.all falhe com esse
-    //     }
+      const confirmado = await this.dialog.value.open({
+        title: `Cancelar CTE`,
+        message: mensagem,
+        titleColor: 'error'
+      })
 
-    //     const url = `${endpoints.cte.apaga}/${this.item.id_cte}`;
+      if(!confirmado) {
+        return
+      }
 
-    //     const resposta = await ApiService({
-    //       method: 'delete',
-    //       url: url,
-    //     });
+      loading.show('Cancelando CTE...')
+      const url = `${endpoints.cte.cancela}/${this.datatable.itensSelecionados[0]}`;
 
-    //     return resposta;
-    //   });
+      try {
+        const resposta =  await ApiService({
+          method: 'delete',
+          url: `${url}`,
+        })
 
-    //   try {
-    //       await Promise.all(requisicoesDeletar);
+        alertStore.addAlert(
+          `${resposta?.data?.message}`,
+          'success'
+        );
 
-    //       alertStore.addAlert(
-    //           `${this.itensSelecionados.length} Cte(s) desativado(s) com sucesso.`,
-    //           'success'
-    //       );
+        this.itemSelecionado.status = StatusCteEnumDescricao.CANCELADO
 
-    //       this.apagarDadosDoArrayLocalmente();
-    //       this.itensSelecionados = [];
+        this.datatable.itensSelecionados = [];
+        this.itemSelecionado = {};
 
-    //   } catch (error) {
-    //       alertStore.addAlert(`Erro ao desativar Cte(s): ${error?.response?.data?.message}`, 'error');
-    //   }
-    // },
+      } catch (error) {
+        alertStore.addAlert(`Erro ao Cancelar CTE: ${error?.response?.data?.message}`, 'error');
+      } finally {
+        loading.hide()
+      }
+    },
+
+    async autorizaCte() {
+      const alertStore = useAlertStore()
+      const loading = useLoadingStore()
+
+      if(this.datatable.itensSelecionados.length != 1) {
+        alertStore.addAlert('Selecione um item por vez para Autorizar', 'warning');
+        return
+      }
+
+      if(!this.itemSelecionado) {
+        alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
+        return;
+      }
+
+      const mensagem = `Deseja realmente Autorizar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
+
+      const confirmado = await this.dialog.value.open({
+        title: `Desativar CTE`,
+        message: mensagem,
+        titleColor: 'success'
+      })
+
+      if(!confirmado) {
+        return
+      }
+
+      loading.show('Autorizando CTE...')
+      const url = `${endpoints.cte.autoriza}/${this.itemSelecionado.Id_CTe}`;
+
+      try {
+        const resposta =  await ApiService({
+          method: 'post',
+          url: `${url}`,
+        })
+
+        alertStore.addAlert(
+          `${resposta?.data?.message}`,
+          'success'
+        );
+
+        this.itemSelecionado.status = StatusCteEnumDescricao.AUTORIZADO
+
+        this.datatable.itensSelecionados = [];
+        this.itemSelecionado = {};
+
+      } catch (error) {
+        alertStore.addAlert(`Erro ao Autorizar CTE: ${error?.response?.data?.message}`, 'error');
+      } finally {
+        loading.hide()
+      }
+    },
+
+    onAcrescentaODadoNoArrayLocalmente(itemCriado) {
+      const novoItem = {
+        Id_CTe: itemCriado.Id_CTe,
+        rem_xNome: itemCriado.rem_xNome,
+        dest_xNome: itemCriado.dest_xNome,
+        dest_xMun: itemCriado.dest_xMun,
+        dest_UF: itemCriado.dest_UF,
+        dhEmi: itemCriado.dhEmi,
+        vCarga: itemCriado.vCarga,
+        vTPrest: itemCriado.vTPrest,
+        status: itemCriado.status,
+        possui_pagamento: itemCriado.possui_pagamento,
+        data_criacao: formataData(itemCriado.data_criacao),
+        usuario_criacao: itemCriado.usuario_criacao,
+        usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
+        data_ultima_alteracao: formataData(itemCriado.data_ultima_alteracao)
+      }
+      this.datatable.itens.unshift(novoItem)
+    },
 
     async exportarExcel() {
 
@@ -548,7 +705,7 @@ export default {
 
       // Adicionando cabeçalhos
       worksheet.columns = [
-      { header: 'ID', key: 'id_cte', width: 15 },
+      { header: 'ID', key: 'Id_CTe', width: 15 },
       { header: 'Ativo', key: 'ativo', width: 15 },
       { header: 'Razão Social', key: 'razao_social', width: 40 },
       { header: 'CNPJ', key: 'cnpj', width: 40 },
@@ -583,17 +740,18 @@ export default {
     // },
 
     regraPintaLinha(item) {
-        return {
-            class: item.index % 2 === 0 ? 'linhaPar' : 'linhaImpar', // Alterna classes com base no ID
-        };
-    },
-
-    desativaInput() {
-      if(this.datatable.itensSelecionados.length == 0) {
-        return true
+      // 🔵 Azul (pendente ou incompleto)
+      if (item.item.possui_pagamento == SimENaoEnumDescricao.SIM)
+      {
+        return { style: 'background-color: #d6ecff;' }; // azul claro
       }
-      return false;
-    }
+
+      // 🔁 Alterna entre linhaPar/linhaImpar como fallback se nenhuma condição for atendida
+      return {
+        class: item.index % 2 === 0 ? 'linhaPar' : 'linhaImpar', // Alterna classes com base no ID
+      };
+
+    },
   }
 }
 
@@ -603,4 +761,5 @@ export default {
 .class-on-data-table table {
     table-layout: fixed;
 }
+
 </style>

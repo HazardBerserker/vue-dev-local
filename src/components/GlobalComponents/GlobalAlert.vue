@@ -18,7 +18,7 @@
         >
           <template #default>
             <v-progress-linear
-              v-if="alert.duration > 0"
+              v-show="alert.duration > 0"
               :model-value="alert.progress"
               height="4"
               :color="alert.progressColor"
