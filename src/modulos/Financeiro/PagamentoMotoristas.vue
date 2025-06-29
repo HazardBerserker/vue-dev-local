@@ -8,7 +8,15 @@
 
       <!-- Título -->
       <div class="d-flex justify-space-between">
-        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
+        <div class="d-flex ga-3 align-center mb-3">
+          <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3">Filtros:</h5>
+          <v-badge :content="filtrosAplicadosDepoisDaBusca">
+            <v-chip size="small" label>
+              <v-icon start>mdi-account-filter</v-icon>
+              aplicados
+            </v-chip>
+          </v-badge>
+        </div>
         <!-- Botão Mostrar/Ocultar -->
         <div>
           <v-slide-x-transition>
@@ -310,6 +318,14 @@ export default {
   unmounted() {
     this.propriedadesDoAlertaFixo = null
   },
+  watch: {
+    filtros: {
+      handler() {
+        this.quantidadeDeFiltrosAplicados()
+      },
+      deep: true
+    }
+  },
   data () {
     return {
       opcoesSImENao: [
@@ -326,6 +342,8 @@ export default {
       SimENaoEnum,
       permissao: false,
       propriedadesDoAlertaFixo: null,
+      filtrosAplicadosAntesDaBusca: 0,
+      filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
       },
       opcoesAtivo: [
@@ -465,6 +483,20 @@ export default {
   },
   methods: {
 
+    quantidadeDeFiltrosAplicados() {
+      let filtrosAplicadosAntesDaBusca = 0
+
+      for (let filtro in this.filtros) {
+        if(this.filtros[filtro] != null) {
+          filtrosAplicadosAntesDaBusca += 1
+          continue
+        }
+        filtrosAplicadosAntesDaBusca - 1
+      }
+
+      this.filtrosAplicadosAntesDaBusca = filtrosAplicadosAntesDaBusca
+    },
+
     filtrarPorPagamentosEmAberto() {
       if(this.datatable.carregando) return
       this.filtros.status_pagamento = StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE
@@ -590,9 +622,7 @@ export default {
     },
 
     limpaFiltros() {
-      if(this.datatable.carregando) return
-      this.filtros = []
-      this.buscaFrete()
+      this.filtros = {}
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {
@@ -662,6 +692,8 @@ export default {
       this.page = page;
       this.itemsPerPage = itemsPerPage;
       this.sortBy = sortBy;
+
+      this.filtrosAplicadosDepoisDaBusca = this.filtrosAplicadosAntesDaBusca
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);

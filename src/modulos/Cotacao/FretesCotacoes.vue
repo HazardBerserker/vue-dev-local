@@ -8,7 +8,15 @@
 
       <!-- Título -->
       <div class="d-flex justify-space-between">
-        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
+        <div class="d-flex ga-3 align-center mb-3">
+          <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3">Filtros:</h5>
+          <v-badge :content="filtrosAplicadosDepoisDaBusca">
+            <v-chip size="small" label>
+              <v-icon start>mdi-account-filter</v-icon>
+              aplicados
+            </v-chip>
+          </v-badge>
+        </div>
         <!-- Botão Mostrar/Ocultar -->
         <div>
           <v-slide-x-transition>
@@ -51,6 +59,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -65,6 +74,7 @@
                     placeholder="dd/mm/yy"
                     clearable
                     variant="outlined"
+                    hide-details
                   ></v-date-input>
                 </v-col>
 
@@ -75,6 +85,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -85,6 +96,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -95,21 +107,22 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
               </v-row>
 
               <v-row dense>
                 <v-col cols="12" md="2">
-                  <InputTextMoeda v-model="filtros.valor_frete_efetivo" prefix="R$" label="Frete:" clearable/>
+                  <InputTextMoeda v-model="filtros.valor_frete_efetivo" prefix="R$" label="Frete:" hide-details clearable/>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.valor_notafiscal" prefix="R$" label="NF:" clearable/>
+                  <InputTextMoeda v-model="filtros.valor_notafiscal" prefix="R$" label="NF:" hide-details clearable/>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" clearable/>
+                  <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" hide-details clearable/>
                 </v-col>
 
                 <v-col cols="12" md="2">
@@ -119,6 +132,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -129,6 +143,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -350,6 +365,14 @@ export default {
   unmounted() {
     this.propriedadesDoAlertaFixo = null
   },
+  watch: {
+    filtros: {
+      handler() {
+        this.quantidadeDeFiltrosAplicados()
+      },
+      deep: true
+    }
+  },
   data () {
     return {
       formataData,
@@ -362,6 +385,8 @@ export default {
       SimENaoEnum,
       permissao: false,
       propriedadesDoAlertaFixo: null,
+      filtrosAplicadosAntesDaBusca: 0,
+      filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
       },
       busca_geral: null,
@@ -515,6 +540,21 @@ export default {
     }
   },
   methods: {
+
+    quantidadeDeFiltrosAplicados() {
+      let filtrosAplicadosAntesDaBusca = 0
+
+      for (let filtro in this.filtros) {
+        if(this.filtros[filtro] != null) {
+          filtrosAplicadosAntesDaBusca += 1
+          continue
+        }
+        filtrosAplicadosAntesDaBusca - 1
+      }
+
+      this.filtrosAplicadosAntesDaBusca = filtrosAplicadosAntesDaBusca
+    },
+
     format(date) {
       return formatDate(date, 'dd/MM/yyyy');
     },
@@ -555,9 +595,7 @@ export default {
     },
 
     limpaFiltros() {
-      if(this.datatable.carregando) return
       this.filtros = []
-      this.buscaFrete()
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {
@@ -627,6 +665,8 @@ export default {
       this.page = page;
       this.itemsPerPage = itemsPerPage;
       this.sortBy = sortBy;
+
+      this.filtrosAplicadosDepoisDaBusca = this.filtrosAplicadosAntesDaBusca
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);

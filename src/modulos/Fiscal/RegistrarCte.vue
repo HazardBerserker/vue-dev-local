@@ -62,7 +62,15 @@
 
       <!-- Título -->
       <div class="d-flex justify-space-between">
-        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
+        <div class="d-flex ga-3 align-center mb-3">
+          <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3">Filtros:</h5>
+          <v-badge :content="filtrosAplicadosDepoisDaBusca">
+            <v-chip size="small" label>
+              <v-icon start>mdi-account-filter</v-icon>
+              aplicados
+            </v-chip>
+          </v-badge>
+        </div>
         <!-- Botão Mostrar/Ocultar -->
         <div>
           <v-slide-x-transition>
@@ -363,6 +371,12 @@ export default {
   watch: {
     'datatable.itensSelecionados'() {
       this.desativaOuAtivaBotoes()
+    },
+    filtros: {
+      handler() {
+        this.quantidadeDeFiltrosAplicados()
+      },
+      deep: true
     }
   },
   data () {
@@ -380,6 +394,8 @@ export default {
       itemSelecionado: {},
       permissao: false,
       propriedadesDoAlertaFixo: null,
+      filtrosAplicadosAntesDaBusca: 0,
+      filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
       },
       // busca_geral: null,
@@ -524,6 +540,20 @@ export default {
     }
   },
   methods: {
+    quantidadeDeFiltrosAplicados() {
+      let filtrosAplicadosAntesDaBusca = 0
+
+      for (let filtro in this.filtros) {
+        if(this.filtros[filtro] != null) {
+          filtrosAplicadosAntesDaBusca += 1
+          continue
+        }
+        filtrosAplicadosAntesDaBusca - 1
+      }
+
+      this.filtrosAplicadosAntesDaBusca = filtrosAplicadosAntesDaBusca
+    },
+
     limpaFiltros() {
       this.filtros = {}
     },
@@ -646,6 +676,8 @@ export default {
       this.page = page;
       this.itemsPerPage = itemsPerPage;
       this.sortBy = sortBy;
+
+      this.filtrosAplicadosDepoisDaBusca = this.filtrosAplicadosAntesDaBusca
 
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
@@ -817,22 +849,22 @@ export default {
 
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,
-        ativo: SimENaoEnum[item.ativo]
+        status: StatusCteEnum[item.status],
+        vCarga: formataMoeda(item.vCarga),
+        vTPrest: formataMoeda(item.vTPrest),
       }));
 
       // Adicionando cabeçalhos
       worksheet.columns = [
       { header: 'ID', key: 'Id_CTe', width: 15 },
-      { header: 'Ativo', key: 'ativo', width: 15 },
-      { header: 'Razão Social', key: 'razao_social', width: 40 },
-      { header: 'CNPJ', key: 'cnpj', width: 40 },
-      { header: 'Endereço', key: 'endereco', width: 40 },
-      { header: 'Cep', key: 'cep', width: 30 },
-      { header: 'Cidade', key: 'cidade', width: 25 },
-      { header: 'Bairro', key: 'bairro', width: 30 },
-      { header: 'Número', key: 'numero', width: 25 },
-      { header: 'País', key: 'pais', width: 30 },
-      { header: 'UF', key: 'uf', width: 10 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Remetente', key: 'rem_xNome', width: 40 },
+      { header: 'Destinatário', key: 'dest_xNome', width: 40 },
+      { header: 'Cidade Destinatário', key: 'dest_xMun', width: 40 },
+      { header: 'UF Destinatário', key: 'dest_UF', width: 30 },
+      { header: 'Emissão', key: 'dhEmi', width: 25 },
+      { header: 'Nota', key: 'vCarga', width: 30 },
+      { header: 'Frete', key: 'vTPrest', width: 30 },
       { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
       { header: 'Data Criação', key: 'data_criacao', width: 25 },
       { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
