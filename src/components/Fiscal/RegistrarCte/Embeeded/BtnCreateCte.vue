@@ -18,7 +18,7 @@
       </template>
 
       <template #subtitle>
-        <span>Envie o Arquivo XML para Registrar o CTE</span>
+        <span>Envie apenas arquivos XML para criação do(s) CTE(s)</span>
       </template>
 
       <v-form ref="form">
@@ -28,7 +28,7 @@
               <v-col cols="12" class="py-0">
                 <v-file-input
                   v-model="arquivosXml"
-                  label="Selecione imagens"
+                  label="Selecione o(s) arquivo(s) XML(s)"
                   :rules="regrasXml"
                   accept=".xml"
                   multiple
@@ -41,7 +41,7 @@
       </v-form>
 
       <template #action-button>
-        <v-btn variant="flat" color="green" rounded="pill" @click="criaCte">Criar Cte</v-btn>
+        <v-btn variant="flat" color="green" rounded="pill" @click="criaCte">Regitrar</v-btn>
       </template>
     </DialogCreateCadastro>
   </div>
@@ -82,7 +82,7 @@ export default {
       return this.$refs.form.validate();
     },
     limpaCampos() {
-      this.xml = null
+      this.arquivosXml = null
     },
     formataDadosParaEnvio() {
 
@@ -137,11 +137,6 @@ export default {
           this.$emit('acrescentaODadoNoArrayLocalmente', item.cte)
 
         })
-        console.log(arrayDeitens);
-
-
-
-
         this.limpaCampos()
         this.closeDialog()
       } finally {

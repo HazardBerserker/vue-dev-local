@@ -101,15 +101,15 @@
 
               <v-row dense>
                 <v-col cols="12" md="2">
-                  <InputTextMoeda v-model="filtros.valor_frete_efetivo" prefix="R$" label="Frete:"/>
+                  <InputTextMoeda v-model="filtros.valor_frete_efetivo" prefix="R$" label="Frete:" clearable/>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.valor_notafiscal" prefix="R$" label="NF:"/>
+                  <InputTextMoeda v-model="filtros.valor_notafiscal" prefix="R$" label="NF:" clearable/>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:"/>
+                  <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" clearable/>
                 </v-col>
 
                 <v-col cols="12" md="2">

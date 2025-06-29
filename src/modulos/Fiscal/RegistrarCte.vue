@@ -1,112 +1,215 @@
 <template>
-   <div>
+  <div>
     <v-breadcrumbs :items="['Fiscal', 'Registrar CTE']" class="mb-6"></v-breadcrumbs>
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
-    <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao">
-      <div class="d-flex flex-column w-100">
-        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 ps-1">Filtros:</h5>
-        <div class="d-flex my-auto ga-2">
-          <v-text-field
-            v-model="busca_geral"
-            hide-details
-            label="Busca Geral..."
-            width="500"
-            variant="solo-filled"
-            density="compact"
-            bg-color="white"
-            clearable
-            flat
-            rounded
-          ></v-text-field>
-          <v-select
-            v-model="filtros.ativo"
-            hide-details
-            label="Busca pelo Status de Ativo"
-            width="300"
-            variant="solo-filled"
-            density="compact"
-            :items="opcoesAtivo"
-            item-value="value"
-            item-title="label"
-            bg-color="white"
-            clearable
-            flat
-            rounded
-          ></v-select>
-          <v-btn
-            color="blue-darken-3"
-            variant="flat"
-            class="text-white fill-height"
-            @click="buscaCte"
-            rounded="pill"
-          >
-            <v-icon>
-              mdi-magnify
-            </v-icon>
-          </v-btn>
-        </div>
-        <span class="text-caption text-grey-darken-1 ps-2 pt-2">Remova todos os acentos e sinais para buscar os dados corretamente</span>
-      </div>
+    <div class="d-flex ga-2 my-auto justify-end mb-4" v-if="permissao">
+      <!-- Ctes Autorizados -->
+      <v-card
+        width="250"
+        class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
+        color="green-darken-4"
+      >
+          <v-avatar size="40" class="me-4 bg-white text-green-darken-4">
+              <v-icon>mdi-account</v-icon>
+          </v-avatar>
+          <div class="d-flex flex-column">
+              <span class="text-body-2 text-white">CTEs Autorizados</span>
+              <v-chip variant="flat" size="small" color="white" class="mt-1 text-green-darken-4">
+                  <v-fade-transition mode="out-in">
+                      <span v-if="!datatable.carregando">
+                      <strong :key="'inativos'">
+                        {{ numeroDeCtesAutorizados() }}
+                      </strong>
+                    </span>
+                      <span v-else>
+                        <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
+                      </span>
+                  </v-fade-transition>
+              </v-chip>
+          </div>
+      </v-card>
 
-      <v-divider></v-divider>
-
-      <!-- KPIs -->
-      <div class="d-flex ga-2 my-auto">
-        <!-- Ctes Ativos -->
-        <v-card
+      <!-- Ctes Cancelados -->
+      <v-card
           width="250"
           class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-          color="green-darken-4"
-        >
-            <v-avatar size="40" class="me-4 bg-white text-green-darken-4">
-                <v-icon>mdi-account</v-icon>
-            </v-avatar>
-            <div class="d-flex flex-column">
-                <span class="text-body-2 text-white">Ctes Ativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-green-darken-4">
-                    <v-fade-transition mode="out-in">
-                        <span v-if="!datatable.carregando">
-                        <strong :key="'inativos'">
-                          {{ numeroDeCtesAtivos() }}
-                        </strong>
-                      </span>
-                        <span v-else>
-                          <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
-                        </span>
-                    </v-fade-transition>
-                </v-chip>
-            </div>
-        </v-card>
+          color="red-darken-4"
+      >
+          <v-avatar size="40" class="me-4 bg-white text-red-darken-4">
+              <v-icon>mdi-account-off</v-icon>
+          </v-avatar>
+          <div class="d-flex flex-column justify-center">
+            <span class="text-body-2 text-white">CTEs Cancelados</span>
+              <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4" loading="true">
+                  <v-fade-transition mode="out-in">
+                    <span v-if="!datatable.carregando">
+                      <strong :key="'inativos'">
+                        {{ numeroDeCtesCancelados() }}
+                      </strong>
+                    </span>
+                    <span v-else>
+                      <v-progress-circular indeterminate color="red" size="15"></v-progress-circular>
+                    </span>
+                  </v-fade-transition>
+              </v-chip>
+          </div>
+      </v-card>
+    </div>
 
-        <!-- Ctes Inativos -->
-        <v-card
-            width="250"
-            class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-            color="red-darken-4"
-        >
-            <v-avatar size="40" class="me-4 bg-white text-red-darken-4">
-                <v-icon>mdi-account-off</v-icon>
-            </v-avatar>
-            <div class="d-flex flex-column justify-center">
-              <span class="text-body-2 text-white">Ctes Inativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4" loading="true">
-                    <v-fade-transition mode="out-in">
-                      <span v-if="!datatable.carregando">
-                        <strong :key="'inativos'">
-                          {{ numeroDeCtesInativos() }}
-                        </strong>
-                      </span>
-                      <span v-else>
-                        <v-progress-circular indeterminate color="red" size="15"></v-progress-circular>
-                      </span>
-                    </v-fade-transition>
-                </v-chip>
-            </div>
-        </v-card>
+    <v-card class="pa-4 rounded-xl elevation-2 bg-grey-lighten-5 d-flex flex-column mb-4" width="100%" v-if="permissao">
+
+      <!-- Título -->
+      <div class="d-flex justify-space-between">
+        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 mb-3">Filtros:</h5>
+        <!-- Botão Mostrar/Ocultar -->
+        <div>
+          <v-slide-x-transition>
+            <v-btn
+              v-if="mostrarFiltros"
+              variant="tonal"
+              color="red"
+              @click="limpaFiltros"
+              class="mb-3 me-2 align-self-start"
+              rounded
+            >
+              <v-icon start>mdi-filter-off</v-icon>
+              Limpar Filtros
+            </v-btn>
+          </v-slide-x-transition>
+            <v-btn
+              variant="tonal"
+              color="primary"
+              @click="mostrarFiltros = !mostrarFiltros"
+              class="mb-3 align-self-start"
+              rounded
+            >
+              <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
+              {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+            </v-btn>
+        </div>
       </div>
 
+      <!-- Área dos Filtros -->
+      <v-expand-transition>
+        <div v-show="mostrarFiltros">
+          <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
+            <v-card-text>
+
+              <v-row dense>
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.Id_CTe"
+                    label="ID CTE"
+                    variant="outlined"
+                    density="compact"
+                    hide-details
+                    clearable
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-select
+                    v-model="filtros.status"
+                    hide-details
+                    label="Busca por Status"
+                    variant="outlined"
+                    density="compact"
+                    :items="opcoesStatus"
+                    item-value="value"
+                    item-title="label"
+                    bg-color="white"
+                    clearable
+                  ></v-select>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-text-field
+                    v-model="filtros.rem_xNome"
+                    label="Remetente"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-text-field
+                    v-model="filtros.dest_xNome"
+                    label="Destinatário"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.dest_xMun"
+                    label="Cidade Destinatário"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row dense>
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.dest_UF"
+                    label="UF Destinatário"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.dhEmi"
+                    label="Data Emissão"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <InputTextMoeda v-model="filtros.vCarga" prefix="R$" label="Nota:" clearable/>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <InputTextMoeda v-model="filtros.vTPrest" prefix="R$" label="Frete:" clearable/>
+                </v-col>
+              </v-row>
+
+            </v-card-text>
+
+            <!-- Botão Buscar -->
+            <v-card-actions>
+              <v-btn
+                color="blue-darken-3"
+                variant="flat"
+                class="text-white"
+                @click="buscaCte"
+                rounded="pill"
+                prepend-icon="mdi-magnify"
+              >
+                Buscar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
+      </v-expand-transition>
     </v-card>
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
@@ -190,7 +293,7 @@
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
             @update:options="buscaCte"
-            height="52vh"
+            height="46vh"
             density="comfortable"
             no-data-text="Nenhum Cte encontrado, tente alterar o(s) filtro(s)"
           >
@@ -203,6 +306,12 @@
               >
                 {{ StatusCteEnum[item.status] }}
               </v-chip>
+            </template>
+            <template #[`item.vCarga`]="{ item }">
+              {{ formataMoeda(item.vCarga) }}
+            </template>
+            <template #[`item.vTPrest`]="{ item }">
+              {{ formataMoeda(item.vTPrest) }}
             </template>
             <template #[`footer.prepend`]>
               <div class="d-flex w-100 align-center my-auto ps-4">
@@ -225,7 +334,7 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData, formataCNPJ } from '@/utils/masks';
+import { formataCEP, formataData, formataCNPJ, formataMoeda } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
@@ -235,12 +344,15 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteEnum';
 import { inject } from 'vue'
+import { format as formatDate } from 'date-fns'
+import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 
 export default {
   name: 'CtesScreen',
   components: {
     GlobalAlertFixed,
     BtnCreateCte,
+    InputTextMoeda
   },
   created() {
     this.dialog = inject('dialog')
@@ -257,17 +369,18 @@ export default {
     return {
       formataCEP,
       formataCNPJ,
+      formataMoeda,
       StatusCteEnum,
       StatusCteEnumDescricao,
       SimENaoEnumDescricao,
       SimENaoEnum,
+      mostrarFiltros: false,
       desativaInputDeAutorizar: false,
       desativaInputDeCancelar: false,
       itemSelecionado: {},
       permissao: false,
       propriedadesDoAlertaFixo: null,
       filtros: {
-        // ativo: null
       },
       // busca_geral: null,
       // filtrosDaBuscaGeral: {
@@ -284,14 +397,14 @@ export default {
       //   usuario_criacao: null,
       //   usuario_ultima_alteracao: null,
       // },
-      opcoesAtivo: [
+      opcoesStatus: [
         {
-          label: 'Sim',
-          value: 1,
+          label: StatusCteEnum[StatusCteEnumDescricao.AUTORIZADO],
+          value: StatusCteEnumDescricao.AUTORIZADO,
         },
         {
-          label: 'Não',
-          value: 0,
+          label: StatusCteEnum[StatusCteEnumDescricao.CANCELADO],
+          value: StatusCteEnumDescricao.CANCELADO,
         }
       ],
       datatable: {
@@ -383,12 +496,6 @@ export default {
             align:'center',
           },
           {
-            title: 'Status',
-            key: 'status',
-            width: '250',
-            align:'center',
-          },
-          {
             title: 'Usuário Criação',
             key: 'usuario_criacao',
             width: '300',
@@ -417,6 +524,9 @@ export default {
     }
   },
   methods: {
+    limpaFiltros() {
+      this.filtros = {}
+    },
 
     desativaOuAtivaBotoes() {
        if(this.datatable.itensSelecionados.length == 1) {
@@ -431,8 +541,6 @@ export default {
           alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
           return;
         }
-
-
 
         if(item.status == StatusCteEnumDescricao.CANCELADO) {
           this.desativaInputDeCancelar = true
@@ -457,9 +565,15 @@ export default {
       this.desativaInputDeAutorizar = true
       this.desativaInputDeCancelar = true
     },
+
     gerarQuery( page, itemsPerPage, sortBy ) {
+      const camposQueADataPrecisaSerConvertida = [
+        'dhEmi'
+      ]
+
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
+      const filtrosInternos = this.filtros
 
       for (const chave in this.filtrosDaBuscaGeral) {
         if (this.busca_geral != null && this.busca_geral !== '') {
@@ -471,9 +585,12 @@ export default {
       }
 
       //laço iterativo para fazer buscar apenas os filtros que estao preenchidos
-      for (const chave in this.filtros) {
-        if (this.filtros[chave] != null && this.filtros[chave] !== '') {
-          const filtro = { key: [chave], value: this.filtros[chave] };
+      for (const chave in filtrosInternos) {
+        if (filtrosInternos[chave] != null && filtrosInternos[chave] !== '') {
+          if(camposQueADataPrecisaSerConvertida.includes(chave)) {
+            filtrosInternos[chave] = formatDate(filtrosInternos[chave], 'yyyy-MM-dd')
+          }
+          const filtro = { key: [chave], value: filtrosInternos[chave] };
           arrayDeFiltros.push(filtro)
         }
       }
@@ -498,18 +615,18 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeCtesInativos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.NAO
+    numeroDeCtesCancelados() {
+      const itensCancelados = this.datatable.itens.filter(item => {
+        return item.status == StatusCteEnumDescricao.CANCELADO
       })
-      return itensAtivos.length
+      return itensCancelados.length
     },
 
-    numeroDeCtesAtivos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == SimENaoEnumDescricao.SIM
+    numeroDeCtesAutorizados() {
+      const itensAutorizados = this.datatable.itens.filter(item => {
+        return item.status == StatusCteEnumDescricao.AUTORIZADO
       })
-      return itensAtivos.length
+      return itensAutorizados.length
     },
 
     async buscaCte( options = {} ) {

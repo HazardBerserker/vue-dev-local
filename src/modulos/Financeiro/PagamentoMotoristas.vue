@@ -51,6 +51,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -61,6 +62,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -71,21 +73,22 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-select v-model="filtros.adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" clearable></v-select>
+                  <v-select v-model="filtros.adiantamento" density="compact" variant="outlined" label="Adiantamento:" :items="opcoesSImENao" itemTitle="descricao" hide-details itemValue="valor" clearable></v-select>
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-select v-model="filtros.saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" clearable></v-select>
+                  <v-select v-model="filtros.saldo" density="compact" variant="outlined" label="Saldo:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" hide-details clearable></v-select>
                 </v-col>
               </v-row>
 
               <v-row dense>
                 <v-col cols="12" md="2">
-                  <v-select v-model="filtros.integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" clearable></v-select>
+                  <v-select v-model="filtros.integral" density="compact" variant="outlined" label="Integral:" :items="opcoesSImENao" itemTitle="descricao" itemValue="valor" hide-details clearable></v-select>
                 </v-col>
 
                 <v-col cols="12" md="3">
@@ -95,6 +98,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
 
@@ -105,6 +109,7 @@
                     variant="outlined"
                     density="compact"
                     clearable
+                    hide-details
                   ></v-text-field>
                 </v-col>
               </v-row>

@@ -12,7 +12,7 @@
                     <span v-html="ajudaMensagem"></span>
                 </v-tooltip>
             </template>
-            <v-text-field v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled">
+            <v-text-field v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled" :clearable="clearable">
                 <template #prepend-inner>
                   {{ prefix }}
                 </template>
@@ -22,7 +22,7 @@
                 </template>
             </v-text-field>
         </v-badge>
-        <v-text-field v-else v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled">
+        <v-text-field v-else v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled" :clearable="clearable">
             <template #prepend-inner>
               {{ prefix }}
             </template>
@@ -115,6 +115,10 @@
         bgColor: {
           type: String,
           default: null
+        },
+        clearable: {
+          type: Boolean,
+          default: false,
         }
     },
     data () {

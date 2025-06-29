@@ -1,4 +1,5 @@
 import { createVuetify } from 'vuetify'
+import { pt } from 'vuetify/locale'
 import '@mdi/font/css/materialdesignicons.css'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import * as components from 'vuetify/components'
@@ -8,6 +9,10 @@ import { VDateInput } from 'vuetify/labs/VDateInput'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 
 const vuetify = createVuetify({
+  locale: {
+    locale: 'pt',
+    messages: { pt }, // carrega os textos padrão do Vuetify traduzidos
+  },
   components: {
     ...components,
     VDateInput,
