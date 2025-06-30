@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4" elevation="2">
+  <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-h6 font-weight-bold">Indicadores Gerais</v-card-title>
 
     <v-row dense class="mt-2">
@@ -7,11 +7,11 @@
         <v-sheet
           rounded="lg"
           class="pa-3 d-flex flex-column align-center justify-center"
-          :color="indicador.cor + ' lighten-4'"
+          :color="indicador.cor"
         >
-          <v-icon :color="indicador.cor" size="30">{{ indicador.icone }}</v-icon>
-          <div class="text-subtitle-2 mt-2 font-weight-medium text-center">{{ indicador.titulo }}</div>
-          <div class="text-h6 font-weight-bold mt-1" :style="{ color: indicador.cor }">
+          <v-icon color="white" size="30">{{ indicador.icone }}</v-icon>
+          <div class="text-subtitle-2 mt-2 font-weight-medium text-center text-white">{{ indicador.titulo }}</div>
+          <div class="text-h6 font-weight-bold mt-1 text-white">
             {{ indicador.valor }}
           </div>
         </v-sheet>

@@ -8,6 +8,18 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import {mask} from 'vue-the-mask'
 import { VueMaskFilter } from 'v-mask';
 import money from 'v-money3'
+import * as Highcharts from 'highcharts/highmaps';
+import HighchartsVue from 'highcharts-vue';
+import mapData from '@highcharts/map-collection/countries/br/br-all.geo.json';
+// Inicializa o módulo
+Highcharts.maps['countries/br/br-all'] = mapData;
+Highcharts.setOptions({
+  lang: {
+    decimalPoint: ',',
+    thousandsSep: '.',
+  }
+});
+// Carrega os dados do GeoJSON
 
 // GERENCIAMENTO DO ESTADO
 const pinia = createPinia()
@@ -26,5 +38,6 @@ app.use(router)
 app.use(pinia)
 app.use(vuetify)
 app.use(money)
+app.use(HighchartsVue, { highcharts: Highcharts })
 
 app.mount('#app')
