@@ -138,7 +138,7 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Dashboards',
-                caminho: '',
+                caminho: '/dashboard',
                 icone: 'mdi-chart-box'
             },
           ],

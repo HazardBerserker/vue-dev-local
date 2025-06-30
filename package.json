@@ -12,6 +12,7 @@
   "dependencies": {
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/js": "^7.4.47",
+    "apexcharts": "^4.7.0",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
@@ -31,6 +32,7 @@
     "vue-mask-next": "^1.0.0",
     "vue-router": "^4.5.0",
     "vue-the-mask": "^0.11.1",
+    "vue3-apexcharts": "^1.8.0",
     "vuetify": "^3.8.8"
   },
   "devDependencies": {

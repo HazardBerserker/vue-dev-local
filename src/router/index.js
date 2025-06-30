@@ -8,6 +8,7 @@ import NovaCotacao from '@/modulos/Cotacao/NovaCotacao.vue'
 import FretesCotacoes from '@/modulos/Cotacao/FretesCotacoes.vue'
 import PagamentoMotoristas from '@/modulos/Financeiro/PagamentoMotoristas.vue'
 import RegistrarCte from '@/modulos/Fiscal/RegistrarCte.vue'
+import Dashboard from '@/modulos/Dashboard/Dashboard.vue'
 
 AuthLayout
 
@@ -22,6 +23,11 @@ const routes = [
     component: AuthLayout,
     meta: { requiresAuth: true },
     children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: Dashboard
+      },
       {
         path: 'cadastros/clientes',
         name: 'Cliente',

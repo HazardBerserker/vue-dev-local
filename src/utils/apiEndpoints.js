@@ -36,5 +36,9 @@ export const endpoints = {
     autoriza: `${URL_BASE}/ctes/autoriza`,
     cancela: `${URL_BASE}/ctes/cancela`,
     novo: `${URL_BASE}/ctes/cria-cte-xml`,
+  },
+  dashboard: {
+    fretesFracionadosDedicados: `${URL_BASE}/dashboard/fretes-fracionados-dedicados`,
+    ganhosEPerdasCotacoes: `${URL_BASE}/dashboard/ganho-e-perdas-cotacoes`
   }
 };
