@@ -3,7 +3,6 @@
     <v-card-text style="height: 100%;">
       <highcharts :options="chartOptions" :constructor-type="'mapChart'" />
     </v-card-text>
-    {{dados}}
   </v-card>
 </template>
 

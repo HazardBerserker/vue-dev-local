@@ -5,41 +5,41 @@
     <div v-if="permissao">
       <v-row>
         <v-col cols="12">
-          <!-- <IndicadoresFrete :dados="dadosIndicadoresFrete" /> -->
+          <IndicadoresFrete :dados="dadosIndicadoresFrete" />
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="4">
-          <!-- <GanhosEPerdasCotacoes :dados="dadosganhosEPerdasCotacoes"/> -->
+          <GanhosEPerdasCotacoes :dados="dadosganhosEPerdasCotacoes"/>
         </v-col>
         <v-col cols="4">
-          <!-- <FretesFracionadosDedicados :dados="dadosFretesFracionadosEDedicados"/> -->
+          <FretesFracionadosDedicados :dados="dadosFretesFracionadosEDedicados"/>
         </v-col>
         <v-col cols="4">
-          <!-- <FretesOTD :dados="dadosFretesOTD"/> -->
+          <FretesOTD :dados="dadosFretesOTD"/>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
-          <!-- <FreteVsMercadoria :dados="dadosFreteVsMercadoria"/> -->
+          <FreteVsMercadoria :dados="dadosFreteVsMercadoria"/>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <!-- <Top5ClientesFaturamentoLinha :dados="dadosTop5ClientesFaturamento"/> -->
+          <Top5ClientesFaturamentoLinha :dados="dadosTop5ClientesFaturamento"/>
         </v-col>
         <v-col cols="6">
-          <!-- <Top5ClientesFaturamentoDonut :dados="dadosTop5ClientesFaturamento"/> -->
+          <Top5ClientesFaturamentoDonut :dados="dadosTop5ClientesFaturamento"/>
         </v-col>
       </v-row>
-      <!-- <v-row>
+      <v-row>
         <v-col cols="6">
           <Top5ClientesQuantidadeCteLinha :dados="dadosTop5ClientesQuantidadeCteLinha"/>
         </v-col>
         <v-col cols="6">
           <Top5ClientesQuantidadeCteDonut :dados="dadosTop5ClientesQuantidadeCteDonut"/>
         </v-col>
-      </v-row> -->
+      </v-row>
       <v-row>
         <v-col cols="6">
           <QuantidadeCtePorUF :dados="dadosPorUfQuantidadeCte"/>
@@ -65,7 +65,7 @@ import ApiService from '@/services/ApiService'
 import GanhosEPerdasCotacoes from '@/components/Dashboard/Embeeded/GanhosEPerdasCotacoes.vue';
 import FretesFracionadosDedicados from '@/components/Dashboard/Embeeded/FretesFracionadosDedicados.vue';
 import { endpoints } from '@/utils/apiEndpoints';
-// import FretesOTD from '@/components/Dashboard/Embeeded/FretesOTD.vue';
+import FretesOTD from '@/components/Dashboard/Embeeded/FretesOTD.vue';
 import IndicadoresFrete from '@/components/Dashboard/Embeeded/IndicadoresFrete.vue';
 import FreteVsMercadoria from '@/components/Dashboard/Embeeded/FreteVsMercadoria.vue';
 import Top5ClientesFaturamentoLinha from '@/components/Dashboard/Embeeded/Top5ClientesFaturamentoLinha.vue';
@@ -82,7 +82,7 @@ export default {
   components: {
     GanhosEPerdasCotacoes,
     FretesFracionadosDedicados,
-    // FretesOTD,
+    FretesOTD,
     IndicadoresFrete,
     FreteVsMercadoria,
     Top5ClientesFaturamentoLinha,
@@ -110,13 +110,13 @@ export default {
     };
   },
   async mounted() {
-    // await this.buscaGanhosEPerdasCotacoes()
-    // await this.buscaFretesFracionadosEDedicados()
-    // await this.buscaFretesOTD()
-    // await this.carregaIndicadoresFrete()
-    // await this.carregaFreteVsMercadoria()
-    // await this.carregaTop5ClientesFaturamento()
-    // await this.carregaTop5ClientesQuantidadeCte()
+    await this.buscaGanhosEPerdasCotacoes()
+    await this.buscaFretesFracionadosEDedicados()
+    await this.buscaFretesOTD()
+    await this.carregaIndicadoresFrete()
+    await this.carregaFreteVsMercadoria()
+    await this.carregaTop5ClientesFaturamento()
+    await this.carregaTop5ClientesQuantidadeCte()
     await this.carregaDadosPorUF()
     this.permissao = true
   },
