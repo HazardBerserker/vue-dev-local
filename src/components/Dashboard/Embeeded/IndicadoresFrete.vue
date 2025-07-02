@@ -1,7 +1,8 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
-    <v-card-title class="text-h6 font-weight-bold">Indicadores Gerais</v-card-title>
-
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Indicadores Gerais
+    </v-card-title>
     <v-row dense class="mt-2">
       <v-col cols="6" md="3" v-for="(indicador, index) in indicadores" :key="index">
         <v-sheet

@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
-    <v-card-title class="text-h6 font-weight-bold mb-4">
-      Entregas no Prazo vs Fora do Prazo (OTD)
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      OTD no Prazo x Fora do Prazo
     </v-card-title>
 
     <v-card-text>

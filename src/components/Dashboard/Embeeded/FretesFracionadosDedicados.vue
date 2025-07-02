@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
-    <v-card-title class="text-h6 font-weight-bold mb-4">
-      Cotações Ganhas vs Perdidas por Mês
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Fretes Fracionados x Dedicados
     </v-card-title>
 
     <v-card-text>
@@ -35,7 +35,7 @@ export default {
       valores: [],
       options: {
         labels: [],
-        colors: ['#3498db', '#f39c12'], // Azul (Fracionado), Laranja (Dedicado)
+        colors: ['#f39c12', '#9b59b6', '#3498db'], // Roxo (Fracionado), Laranja (Dedicado), Azul (aéreo)
         legend: {
           position: 'bottom',
         },

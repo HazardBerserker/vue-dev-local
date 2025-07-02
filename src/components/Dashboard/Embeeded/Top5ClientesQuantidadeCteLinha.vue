@@ -1,6 +1,8 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
-    <v-card-title class="text-h6 font-weight-bold">Evolução Mensal - Quantidade CT-es</v-card-title>
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Evolução - Quantidade CT-es
+    </v-card-title>
     <v-card-text>
       <apexchart
         type="line"

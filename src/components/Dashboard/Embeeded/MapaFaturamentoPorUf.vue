@@ -1,5 +1,8 @@
 <template>
   <v-card class="pa-4" elevation="2" height="600">
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Faturamento por UF (Mapa de Calor)
+    </v-card-title>
     <v-card-text style="height: 100%;">
       <highcharts :options="chartOptions" :constructor-type="'mapChart'" />
     </v-card-text>
@@ -25,7 +28,7 @@ export default {
           height: 500
         },
         title: {
-          text: 'Faturamento por UF (Mapa de Calor)'
+          text: ''
         },
         mapNavigation: {
           enabled: true,
@@ -37,7 +40,7 @@ export default {
           min: 0,
           max: Math.max(...this.dados.map(item => item.total)),
           stops: [
-            [0, '#ffcccc'],
+            [0, '#ffe5e5'],
             [0.25, '#ff9999'],
             [0.5, '#ff6666'],
             [0.75, '#ff3333'],

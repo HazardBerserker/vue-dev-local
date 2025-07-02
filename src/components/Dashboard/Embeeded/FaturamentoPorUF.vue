@@ -1,5 +1,8 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Dados por UF - Faturamento
+    </v-card-title>
     <v-card-text>
       <apexchart type="bar" height="600" :options="options" :series="series" />
     </v-card-text>
@@ -68,11 +71,6 @@ export default {
         },
         yaxis: {
           labels: { show: false }
-        },
-        title: {
-          text: 'Dados por UF - Faturamento',
-          align: 'center',
-          floating: true
         },
         subtitle: {
           text: 'Distribuição de valores por Estado',

@@ -1,19 +1,18 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
-  <v-card-title class="text-h6 font-weight-bold mb-4">
-    Cotações Ganhas vs Perdidas por Mês
-  </v-card-title>
-
-  <v-card-text>
-    <apexchart
-      width="100%"
-      height="300"
-      type="bar"
-      :options="options"
-      :series="series"
-    />
-  </v-card-text>
-</v-card>
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Cotações Aceitas x Rejeitadas
+    </v-card-title>
+    <v-card-text>
+      <apexchart
+        width="100%"
+        height="300"
+        type="bar"
+        :options="options"
+        :series="series"
+      />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

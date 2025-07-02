@@ -1,5 +1,8 @@
 <template>
   <v-card class="pa-4" elevation="2" height="600">
+    <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
+      Quantidade de Fretes por UF
+    </v-card-title>
     <v-card-text style="height: 100%;">
       <highcharts :options="chartOptions" constructor-type="mapChart" />
     </v-card-text>
@@ -26,7 +29,7 @@ export default {
           height: 500
         },
         title: {
-          text: 'Quantidade de Fretes por UF'
+          text: ''
         },
         mapNavigation: {
           enabled: true,
