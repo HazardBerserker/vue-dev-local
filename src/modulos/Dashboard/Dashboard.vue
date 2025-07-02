@@ -110,152 +110,162 @@ export default {
     };
   },
   async mounted() {
-    await this.buscaGanhosEPerdasCotacoes()
-    await this.buscaFretesFracionadosEDedicados()
-    await this.buscaFretesOTD()
-    await this.carregaIndicadoresFrete()
-    await this.carregaFreteVsMercadoria()
-    await this.carregaTop5ClientesFaturamento()
-    await this.carregaTop5ClientesQuantidadeCte()
-    await this.carregaDadosPorUF()
+    await this.buscaDashboardUnificado()
+    // await this.buscaFretesFracionadosEDedicados()
+    // await this.buscaFretesOTD()
+    // await this.carregaIndicadoresFrete()
+    // await this.carregaFreteVsMercadoria()
+    // await this.carregaTop5ClientesFaturamento()
+    // await this.carregaTop5ClientesQuantidadeCte()
+    // await this.carregaDadosPorUF()
     this.permissao = true
   },
   methods: {
-    async buscaGanhosEPerdasCotacoes() {
+    async buscaDashboardUnificado() {
       try {
 
-        const endpoint = endpoints.dashboard.ganhosEPerdasCotacoes;
+        const endpoint = endpoints.dashboard.dashboardUnificado;
 
         const resposta =  await ApiService({
           method: 'get',
           url: endpoint,
         })
 
-        this.dadosganhosEPerdasCotacoes = resposta
+        this.dadosganhosEPerdasCotacoes = resposta.data.ganhosEPerdasCotacoes
+        this.dadosFretesFracionadosEDedicados = resposta.data.fretesFracionadosDedicados
+        this.dadosFretesOTD = resposta.data.fretesOtd
+        this.dadosIndicadoresFrete = resposta.data.obterIndicadores
+        this.dadosFreteVsMercadoria = resposta.data.obterComparativoFreteMercadoria
+        this.dadosTop5ClientesFaturamento = resposta.data.topClientesFaturamento.linha
+        this.dadosTop5ClientesQuantidadeCteLinha = resposta.data.topClientesQuantidade.linha
+        this.dadosTop5ClientesQuantidadeCteDonut = resposta.data.topClientesFaturamento.donut
+        this.dadosPorUfFaturamento = resposta.data.dadosPorUf.frete
+        this.dadosPorUfQuantidadeCte = resposta.data.dadosPorUf.quantidade
+
 
       } catch (error) {
         console.error('Erro ao buscar carregaDadosFreteMensal', error)
       }
     },
 
-    async buscaFretesFracionadosEDedicados() {
-      try {
-        const resposta =  await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/fretes-fracionados-dedicados',
-        })
+    // async buscaFretesFracionadosEDedicados() {
+    //   try {
+    //     const resposta =  await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/fretes-fracionados-dedicados',
+    //     })
 
-        this.dadosFretesFracionadosEDedicados = resposta
+    //     this.dadosFretesFracionadosEDedicados = resposta
 
-      } catch (error) {
-        console.error('Erro ao buscar carregaDadosFretesFracionadosEDedicados', error)
-      }
-    },
+    //   } catch (error) {
+    //     console.error('Erro ao buscar carregaDadosFretesFracionadosEDedicados', error)
+    //   }
+    // },
 
-    async buscaFretesOTD() {
-      try {
-        const resposta = await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/otd',
-        });
+    // async buscaFretesOTD() {
+    //   try {
+    //     const resposta = await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/otd',
+    //     });
 
-        this.dadosFretesOTD = resposta;
-      } catch (error) {
-        console.error('Erro ao buscar OTD', error);
-      }
-    },
+    //     this.dadosFretesOTD = resposta;
+    //   } catch (error) {
+    //     console.error('Erro ao buscar OTD', error);
+    //   }
+    // },
 
-    async carregaIndicadoresFrete() {
-      try {
-        const resposta = await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/indicadores-fretes',
-          // params: {
-          //   ano: this.filtros.ano,
-          //   tomador: this.filtros.tomador,
-          //   uf: this.filtros.uf
-          // }
-        })
+    // async carregaIndicadoresFrete() {
+    //   try {
+    //     const resposta = await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/indicadores-fretes',
+    //       // params: {
+    //       //   ano: this.filtros.ano,
+    //       //   tomador: this.filtros.tomador,
+    //       //   uf: this.filtros.uf
+    //       // }
+    //     })
 
-        this.dadosIndicadoresFrete = resposta;
-      } catch (error) {
-          console.error('Erro ao carregar indicadores de frete', error);
-      }
-    },
+    //     this.dadosIndicadoresFrete = resposta;
+    //   } catch (error) {
+    //       console.error('Erro ao carregar indicadores de frete', error);
+    //   }
+    // },
 
-    async carregaFreteVsMercadoria() {
-      try {
-        const resposta = await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/frete-vs-mercadoria',
-          // params: {
-          //   ano: this.filtros.ano,
-          //   tomador: this.filtros.tomador,
-          //   uf: this.filtros.uf
-          // }
-        })
+    // async carregaFreteVsMercadoria() {
+    //   try {
+    //     const resposta = await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/frete-vs-mercadoria',
+    //       // params: {
+    //       //   ano: this.filtros.ano,
+    //       //   tomador: this.filtros.tomador,
+    //       //   uf: this.filtros.uf
+    //       // }
+    //     })
 
-        this.dadosFreteVsMercadoria = resposta.data.data;
-      } catch (error) {
-          console.error('Erro ao carregar indicadores de frete', error);
-      }
-    },
+    //     this.dadosFreteVsMercadoria = resposta.data.data;
+    //   } catch (error) {
+    //       console.error('Erro ao carregar indicadores de frete', error);
+    //   }
+    // },
 
-    async carregaTop5ClientesFaturamento() {
-      try {
-        const resposta = await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/top5-clientes-faturamento',
-          // params: {
-          //   ano: this.filtros.ano,
-          //   tomador: this.filtros.tomador,
-          //   uf: this.filtros.uf
-          // }
-        })
+    // async carregaTop5ClientesFaturamento() {
+    //   try {
+    //     const resposta = await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/top5-clientes-faturamento',
+    //       // params: {
+    //       //   ano: this.filtros.ano,
+    //       //   tomador: this.filtros.tomador,
+    //       //   uf: this.filtros.uf
+    //       // }
+    //     })
 
-        this.dadosTop5ClientesFaturamento = resposta.data;
-      } catch (error) {
-          console.error('Erro ao carregar indicadores de frete', error);
-      }
-    },
+    //     this.dadosTop5ClientesFaturamento = resposta.data;
+    //   } catch (error) {
+    //       console.error('Erro ao carregar indicadores de frete', error);
+    //   }
+    // },
 
-    async carregaTop5ClientesQuantidadeCte() {
-      try {
-        const resposta = await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/top5-clientes-quantidade-cte',
-          // params: {
-          //   ano: this.filtros.ano,
-          //   tomador: this.filtros.tomador,
-          //   uf: this.filtros.uf
-          // }
-        })
+    // async carregaTop5ClientesQuantidadeCte() {
+    //   try {
+    //     const resposta = await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/top5-clientes-quantidade-cte',
+    //       // params: {
+    //       //   ano: this.filtros.ano,
+    //       //   tomador: this.filtros.tomador,
+    //       //   uf: this.filtros.uf
+    //       // }
+    //     })
 
-        this.dadosTop5ClientesQuantidadeCteLinha = resposta.data.linha;
-        this.dadosTop5ClientesQuantidadeCteDonut = resposta.data.donut;
-      } catch (error) {
-          console.error('Erro ao carregar indicadores de frete', error);
-      }
-    },
+    //     this.dadosTop5ClientesQuantidadeCteLinha = resposta.data.linha;
+    //     this.dadosTop5ClientesQuantidadeCteDonut = resposta.data.donut;
+    //   } catch (error) {
+    //       console.error('Erro ao carregar indicadores de frete', error);
+    //   }
+    // },
 
-    async carregaDadosPorUF() {
-      try {
-        const resposta = await ApiService({
-          method: 'get',
-          url: 'http://api-dev.local/dashboard/dados-por-uf',
-          // params: {
-          //   ano: this.filtros.ano,
-          //   tomador: this.filtros.tomador,
-          //   uf: this.filtros.uf
-          // }
-        })
+    // async carregaDadosPorUF() {
+    //   try {
+    //     const resposta = await ApiService({
+    //       method: 'get',
+    //       url: 'http://api-dev.local/dashboard/dados-por-uf',
+    //       // params: {
+    //       //   ano: this.filtros.ano,
+    //       //   tomador: this.filtros.tomador,
+    //       //   uf: this.filtros.uf
+    //       // }
+    //     })
 
-        this.dadosPorUfFaturamento = resposta.data.frete;
-        this.dadosPorUfQuantidadeCte = resposta.data.quantidade;
-      } catch (error) {
-          console.error('Erro ao carregar indicadores de frete', error);
-      }
-    },
+    //     this.dadosPorUfFaturamento = resposta.data.frete;
+    //     this.dadosPorUfQuantidadeCte = resposta.data.quantidade;
+    //   } catch (error) {
+    //       console.error('Erro ao carregar indicadores de frete', error);
+    //   }
+    // },
   }
 }
 </script>

@@ -60,8 +60,8 @@ export default {
     async carregaDadosFreteMensal() {
       try {
 
-        this.valores = this.dados.data.valores;
-        this.options.labels = this.dados.data.labels;
+        this.valores = this.dados.valores;
+        this.options.labels = this.dados.labels;
 
       } catch (error) {
         console.error('Erro ao buscar dados do dashboard', error)

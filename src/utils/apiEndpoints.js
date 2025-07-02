@@ -39,6 +39,7 @@ export const endpoints = {
   },
   dashboard: {
     fretesFracionadosDedicados: `${URL_BASE}/dashboard/fretes-fracionados-dedicados`,
-    ganhosEPerdasCotacoes: `${URL_BASE}/dashboard/ganho-e-perdas-cotacoes`
+    ganhosEPerdasCotacoes: `${URL_BASE}/dashboard/ganho-e-perdas-cotacoes`,
+    dashboardUnificado: `${URL_BASE}/dashboard/dashboard-unificado`,
   }
 };

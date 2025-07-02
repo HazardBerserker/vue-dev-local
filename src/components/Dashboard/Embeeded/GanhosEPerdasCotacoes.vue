@@ -56,9 +56,9 @@ export default {
     async carregaDadosFreteMensal() {
       try {
 
-        this.meses = this.dados.data.map(item => item.mes);
-        this.ganhos = this.dados.data.map(item => item.ganhos);
-        this.perdas = this.dados.data.map(item => item.perdas);
+        this.meses = this.dados.map(item => item.mes);
+        this.ganhos = this.dados.map(item => item.ganhos);
+        this.perdas = this.dados.map(item => item.perdas);
 
         this.options.xaxis.categories = this.meses;
 

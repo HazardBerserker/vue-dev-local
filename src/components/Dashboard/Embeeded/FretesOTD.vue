@@ -56,8 +56,8 @@ export default {
   methods: {
     async carregaDadosOtd() {
       try {
-        this.valores = this.dados.data.valores;
-        this.options.labels = this.dados.data.labels;
+        this.valores = this.dados.valores;
+        this.options.labels = this.dados.labels;
       } catch (error) {
         console.error('Erro ao carregar dados OTD', error);
       }

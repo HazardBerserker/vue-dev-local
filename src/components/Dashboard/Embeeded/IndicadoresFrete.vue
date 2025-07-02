@@ -34,25 +34,25 @@ export default {
       return [
         {
           titulo: 'Total Fretes',
-          valor: this.dados.data.total_fretes,
+          valor: this.dados.total_fretes,
           cor: '#3498db',
           icone: 'mdi-truck'
         },
         {
           titulo: 'R$ Fretes',
-          valor: this.dados.data.valor_fretes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+          valor: this.dados.valor_fretes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
           cor: '#2ecc71',
           icone: 'mdi-currency-usd'
         },
         {
           titulo: 'CT-es Cancelados',
-          valor: this.dados.data.fretes_cancelados,
+          valor: this.dados.fretes_cancelados,
           cor: '#e74c3c',
           icone: 'mdi-close-circle-outline'
         },
         {
           titulo: 'R$ Mercadorias',
-          valor: this.dados.data.valor_mercadorias.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+          valor: this.dados.valor_mercadorias.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
           cor: '#9b59b6',
           icone: 'mdi-package-variant'
         }
