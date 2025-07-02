@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
-      Participação no Faturamento - Top 5 Clientes
+      Participação no Faturamento - Top 10 Clientes
     </v-card-title>
     <v-card-text>
       <apexchart type="donut" height="322" :options="chartOptions" :series="series" />
@@ -13,7 +13,7 @@
 import ApexCharts from 'vue3-apexcharts';
 
 export default {
-  name: 'Top5ClientesFaturamentoDonut',
+  name: 'Top10ClientesFaturamentoDonut',
   components: {
     apexchart: ApexCharts
   },
@@ -26,6 +26,10 @@ export default {
   computed: {
     chartOptions() {
       return {
+        chart: {
+          toolbar: { show: true },
+          zoom: { enabled: false }
+        },
         labels: this.labels,
         legend: {
           position: 'bottom'

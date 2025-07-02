@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
-      Evolução Faturamento - Top 5 Clientes
+      Evolução Faturamento - Top 10 Clientes
     </v-card-title>
     <v-card-text>
       <apexchart type="line" height="307" :options="chartOptions" :series="series" />
@@ -13,7 +13,7 @@
 import ApexCharts from 'vue3-apexcharts';
 
 export default {
-  name: 'Top5ClientesFaturamentoLinha',
+  name: 'Top10ClientesFaturamentoLinha',
   components: {
     apexchart: ApexCharts
   },

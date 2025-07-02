@@ -595,7 +595,7 @@ export default {
     },
 
     limpaFiltros() {
-      this.filtros = []
+      this.filtros = {}
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {

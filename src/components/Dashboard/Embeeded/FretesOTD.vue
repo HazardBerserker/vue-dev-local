@@ -9,8 +9,8 @@
         type="donut"
         width="100%"
         height="315"
-        :options="options"
-        :series="valores"
+        :options="chartOptions"
+        :series="series"
       />
     </v-card-text>
   </v-card>
@@ -30,38 +30,74 @@ export default {
   components: {
     apexchart: ApexCharts
   },
-  data() {
-    return {
-      valores: [],
-      options: {
-        labels: [],
+  computed: {
+    chartOptions() {
+      return {
+        chart: {
+          toolbar: { show: true },
+          zoom: { enabled: false }
+        },
+        labels: this.labels,
         colors: ['#2ecc71', '#e74c3c'], // Verde (prazo), Vermelho (fora)
         legend: {
-          position: 'bottom'
+          position: 'bottom',
         },
         tooltip: {
           y: {
-            formatter: (val) => `${val} fretes`
-          }
+            formatter: (val) => `${val} fretes`,
+          },
         },
         dataLabels: {
-          formatter: (val) => `${val.toFixed(1)}%`
+          formatter: (val) => {
+            return `${val.toFixed(1)}%`;
+          },
         }
-      }
+      };
+    },
+    series() {
+      return this.dados.valores
+    },
+    labels() {
+      return this.dados.labels
     }
   },
-  async mounted() {
-    await this.carregaDadosOtd()
-  },
-  methods: {
-    async carregaDadosOtd() {
-      try {
-        this.valores = this.dados.valores;
-        this.options.labels = this.dados.labels;
-      } catch (error) {
-        console.error('Erro ao carregar dados OTD', error);
-      }
-    }
-  }
+
+  // data() {
+  //   return {
+  //     valores: [],
+  //     options: {
+  //       chart: {
+  //         toolbar: { show: true },
+  //         zoom: { enabled: false }
+  //       },
+  //       labels: [],
+  //       colors: ['#2ecc71', '#e74c3c'], // Verde (prazo), Vermelho (fora)
+  //       legend: {
+  //         position: 'bottom'
+  //       },
+  //       tooltip: {
+  //         y: {
+  //           formatter: (val) => `${val} fretes`
+  //         }
+  //       },
+  //       dataLabels: {
+  //         formatter: (val) => `${val.toFixed(1)}%`
+  //       }
+  //     }
+  //   }
+  // },
+  // async mounted() {
+  //   await this.carregaDadosOtd()
+  // },
+  // methods: {
+  //   async carregaDadosOtd() {
+  //     try {
+  //       this.valores = this.dados.valores;
+  //       this.options.labels = this.dados.labels;
+  //     } catch (error) {
+  //       console.error('Erro ao carregar dados OTD', error);
+  //     }
+  //   }
+  // }
 }
 </script>

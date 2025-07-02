@@ -31,7 +31,6 @@ export default {
       return {
         chart: {
           type: 'bar',
-          toolbar: { show: false }
         },
         plotOptions: {
           bar: {

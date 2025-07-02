@@ -1,8 +1,125 @@
 <template>
   <div>
-    <v-breadcrumbs :items="['Dashboard']" class="mb-6"></v-breadcrumbs>
+    <v-breadcrumbs :items="['Dashboard', 'Métricas Gerais']" class="mb-6"></v-breadcrumbs>
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
+
+    <v-card class="pa-4 rounded-xl elevation-2 bg-grey-lighten-5 d-flex flex-column mb-3" width="100%" v-if="permissao">
+
+    <div class="d-flex justify-space-between">
+        <div class="d-flex ga-3 align-center mb-3">
+          <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3">Filtros:</h5>
+          <v-badge :content="filtrosAplicadosDepoisDaBusca">
+            <v-chip size="small" label>
+              <v-icon start>mdi-account-filter</v-icon>
+              aplicados
+            </v-chip>
+          </v-badge>
+        </div>
+        <!-- Botão Mostrar/Ocultar -->
+        <div>
+          <v-slide-x-transition>
+            <v-btn
+              v-if="mostrarFiltros"
+              variant="tonal"
+              color="red"
+              @click="limpaFiltros"
+              class="mb-3 me-2 align-self-start"
+              rounded
+            >
+              <v-icon start>mdi-filter-off</v-icon>
+              Limpar Filtros
+            </v-btn>
+          </v-slide-x-transition>
+            <v-btn
+              variant="tonal"
+              color="primary"
+              @click="mostrarFiltros = !mostrarFiltros"
+              class="mb-3 align-self-start"
+              rounded
+            >
+              <v-icon start>{{ mostrarFiltros ? 'mdi-eye-off' : 'mdi-filter' }}</v-icon>
+              {{ mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+            </v-btn>
+        </div>
+      </div>
+
+      <!-- Área dos Filtros -->
+      <v-expand-transition>
+        <div v-show="mostrarFiltros">
+          <v-card class="rounded-xl elevation-0 mb-4 pa-4" width="100%">
+            <v-card-text>
+
+              <v-row dense>
+
+                <v-col cols="12" md="4">
+                  <v-row>
+                    <v-col cols="12">
+                      <span class="text-h6 text-grey-darken-1">
+                        Preencha os campos para filtragem de dados dinâmica
+                      </span>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                      v-model="filtros.uf"
+                        label="UF"
+                        variant="outlined"
+                        density="compact"
+                        clearable
+                        placeholder="Busca por UF..."
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                      v-model="filtros.cliente"
+                        label="Cliente"
+                        variant="outlined"
+                        density="compact"
+                        clearable
+                        placeholder="Busca por Nome do Cliente..."
+                        hide-details
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                      v-model="filtros.modalidade_frete"
+                      label="Modalidade Frete"
+                      variant="outlined"
+                      density="compact"
+                      clearable
+                      placeholder="Ex: Fracionado, Dedicado"
+                      hide-details
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col>
+
+                </v-col>
+                <v-col cols="12" md="7">
+                  <v-date-picker width="100%" v-model="filtros.date" label="ID Frete/Cotação" hide-details multiple="range" show-adjacent-months/>
+                </v-col>
+              </v-row>
+            </v-card-text>
+
+            <!-- Botão Buscar -->
+            <v-card-actions>
+              <v-btn
+                color="blue-darken-3"
+                variant="flat"
+                class="text-white"
+                @click="buscaDashboardUnificado"
+                rounded="pill"
+                prepend-icon="mdi-magnify"
+              >
+                Buscar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
+      </v-expand-transition>
+    </v-card>
 
     <div v-if="permissao">
       <v-row>
@@ -28,18 +145,18 @@
       </v-row>
       <v-row>
         <v-col cols="6">
-          <Top5ClientesFaturamentoLinha :dados="dadosTop5ClientesFaturamento"/>
+          <Top10ClientesFaturamentoLinha :dados="dadosTop5ClientesFaturamento"/>
         </v-col>
         <v-col cols="6">
-          <Top5ClientesFaturamentoDonut :dados="dadosTop5ClientesFaturamento"/>
+          <Top10ClientesFaturamentoDonut :dados="dadosTop5ClientesFaturamento"/>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <Top5ClientesQuantidadeCteLinha :dados="dadosTop5ClientesQuantidadeCteLinha"/>
+          <Top10ClientesQuantidadeCteLinha :dados="dadosTop10ClientesQuantidadeCteLinha"/>
         </v-col>
         <v-col cols="6">
-          <Top5ClientesQuantidadeCteDonut :dados="dadosTop5ClientesQuantidadeCteDonut"/>
+          <DistribuicaoAnualClientesQuantidadeCteDonut :dados="quantidadeCtePorClienteDonut"/>
         </v-col>
       </v-row>
       <v-row>
@@ -70,10 +187,10 @@ import { endpoints } from '@/utils/apiEndpoints';
 import FretesOTD from '@/components/Dashboard/Embeeded/FretesOTD.vue';
 import IndicadoresFrete from '@/components/Dashboard/Embeeded/IndicadoresFrete.vue';
 import FreteVsMercadoria from '@/components/Dashboard/Embeeded/FreteVsMercadoria.vue';
-import Top5ClientesFaturamentoLinha from '@/components/Dashboard/Embeeded/Top5ClientesFaturamentoLinha.vue';
-import Top5ClientesFaturamentoDonut from '@/components/Dashboard/Embeeded/Top5ClientesFaturamentoDonut.vue';
-import Top5ClientesQuantidadeCteLinha from '@/components/Dashboard/Embeeded/Top5ClientesQuantidadeCteLinha.vue';
-import Top5ClientesQuantidadeCteDonut from '@/components/Dashboard/Embeeded/Top5ClientesQuantidadeCteDonut.vue';
+import Top10ClientesFaturamentoLinha from '@/components/Dashboard/Embeeded/Top10ClientesFaturamentoLinha.vue';
+import Top10ClientesFaturamentoDonut from '@/components/Dashboard/Embeeded/Top10ClientesFaturamentoDonut.vue';
+import Top10ClientesQuantidadeCteLinha from '@/components/Dashboard/Embeeded/Top10ClientesQuantidadeCteLinha.vue';
+import DistribuicaoAnualClientesQuantidadeCteDonut from '@/components/Dashboard/Embeeded/DistribuicaoAnualClientesQuantidadeCteDonut.vue';
 import QuantidadeCtePorUF from '@/components/Dashboard/Embeeded/QuantidadeCtePorUF.vue';
 import FaturamentoPorUF from '@/components/Dashboard/Embeeded/FaturamentoPorUF.vue';
 import MapaFaturamentoPorUf from '@/components/Dashboard/Embeeded/MapaFaturamentoPorUf.vue';
@@ -81,6 +198,7 @@ import MapaQuantidadeCtePorUf from '@/components/Dashboard/Embeeded/MapaQuantida
 import { useLoadingStore } from '@/stores/loading';
 import { useAlertStore } from '@/stores/alertStore';
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
+import { format } from 'date-fns';
 
 export default {
   name: 'DashboardView',
@@ -90,18 +208,34 @@ export default {
     FretesOTD,
     IndicadoresFrete,
     FreteVsMercadoria,
-    Top5ClientesFaturamentoLinha,
-    Top5ClientesFaturamentoDonut,
-    Top5ClientesQuantidadeCteLinha,
-    Top5ClientesQuantidadeCteDonut,
+    Top10ClientesFaturamentoLinha,
+    Top10ClientesFaturamentoDonut,
+    Top10ClientesQuantidadeCteLinha,
+    DistribuicaoAnualClientesQuantidadeCteDonut,
     QuantidadeCtePorUF,
     FaturamentoPorUF,
     MapaFaturamentoPorUf,
     MapaQuantidadeCtePorUf,
     GlobalAlertFixed
   },
+  watch: {
+    filtros: {
+      handler() {
+        this.quantidadeDeFiltrosAplicados()
+      },
+      deep: true
+    }
+  },
   data() {
     return {
+      mostrarFiltros: false,
+      filtrosAplicadosAntesDaBusca: 0,
+      filtrosAplicadosDepoisDaBusca: 0,
+      filtros: {
+        date: null
+      },
+      dataInicio: null,
+      dataFim: null,
       propriedadesDoAlertaFixo: null,
       dadosganhosEPerdasCotacoes: null,
       dadosFretesFracionadosEDedicados: null,
@@ -109,8 +243,8 @@ export default {
       dadosIndicadoresFrete: null,
       dadosFreteVsMercadoria: null,
       dadosTop5ClientesFaturamento: null,
-      dadosTop5ClientesQuantidadeCteLinha: null,
-      dadosTop5ClientesQuantidadeCteDonut: null,
+      dadosTop10ClientesQuantidadeCteLinha: null,
+      quantidadeCtePorClienteDonut: null,
       dadosPorUfFaturamento: null,
       dadosPorUfQuantidadeCte: null,
       permissao: false
@@ -136,10 +270,36 @@ export default {
     this.propriedadesDoAlertaFixo = null
   },
   methods: {
+     limpaFiltros() {
+      this.filtros = {
+        date: null
+      }
+    },
+
     async buscaDashboardUnificado() {
+
+      this.filtrosAplicadosDepoisDaBusca = this.filtrosAplicadosAntesDaBusca
+
       try {
 
-        const endpoint = endpoints.dashboard.dashboardUnificado;
+        if(this.permissao) {
+          const loading = useLoadingStore()
+          loading.show('Atualizando Dados...')
+        }
+
+
+        if(this.filtros?.date != null && this.filtros?.date?.length != 0) {
+          this.dataInicio = format(this.filtros.date[0], 'yyyy-MM-dd')
+          this.dataFim = format(this.filtros.date[this.filtros.date.length -1], 'yyyy-MM-dd')
+        }
+
+        const query = this.gerarQuery()
+
+        const endpoint = `${endpoints.dashboard.dashboardUnificado}?${query}`;
+
+        console.log(endpoint);
+
+
 
         const resposta =  await ApiService({
           method: 'get',
@@ -152,8 +312,8 @@ export default {
         this.dadosIndicadoresFrete = resposta.data.obterIndicadores
         this.dadosFreteVsMercadoria = resposta.data.obterComparativoFreteMercadoria
         this.dadosTop5ClientesFaturamento = resposta.data.topClientesFaturamento.linha
-        this.dadosTop5ClientesQuantidadeCteLinha = resposta.data.topClientesQuantidade.linha
-        this.dadosTop5ClientesQuantidadeCteDonut = resposta.data.topClientesQuantidade.donut
+        this.dadosTop10ClientesQuantidadeCteLinha = resposta.data.quantidadeCtePorCliente.linha
+        this.quantidadeCtePorClienteDonut = resposta.data.quantidadeCtePorCliente.donut
         this.dadosPorUfFaturamento = resposta.data.dadosPorUf.frete
         this.dadosPorUfQuantidadeCte = resposta.data.dadosPorUf.quantidade
 
@@ -165,7 +325,44 @@ export default {
           return
         }
         throw error
+      } finally {
+        if(this.permissao) {
+          const loading = useLoadingStore()
+          loading.hide()
+        }
       }
+    },
+
+    gerarQuery() {
+      let queryParams = new URLSearchParams();
+
+      if(this.dataInicio) {
+        queryParams.append('data_inicial', this.dataInicio);
+      }
+      if(this.dataFim) {
+        queryParams.append('data_final', this.dataFim);
+      }
+      if(this.filtros?.uf) {
+        queryParams.append('uf', this.filtros?.uf);
+      }
+      if(this.filtros?.cliente) {
+        queryParams.append('cliente', this.filtros?.cliente);
+      }
+
+      return queryParams
+    },
+
+    quantidadeDeFiltrosAplicados() {
+      let filtrosAplicadosAntesDaBusca = 0
+
+      for (let filtro in this.filtros) {
+        if(this.filtros[filtro] != null && this.filtros[filtro]?.length != 0) {
+          filtrosAplicadosAntesDaBusca += 1
+          continue
+        }
+        filtrosAplicadosAntesDaBusca - 1
+      }
+      this.filtrosAplicadosAntesDaBusca = filtrosAplicadosAntesDaBusca
     },
   }
 }

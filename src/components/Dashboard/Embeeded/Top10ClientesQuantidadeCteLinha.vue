@@ -1,10 +1,15 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
-      Distribuição Anual - Quantidade CT-es
+      Evolução Quantidade CT-es - Top 10
     </v-card-title>
     <v-card-text>
-      <apexchart type="donut" height="315" :options="options" :series="dados.series" />
+      <apexchart
+        type="line"
+        height="300"
+        :options="options"
+        :series="dados"
+      />
     </v-card-text>
   </v-card>
 </template>
@@ -13,7 +18,7 @@
 import ApexCharts from 'vue3-apexcharts'
 
 export default {
-  name: 'Top5ClientesQuantidadeCteDonut',
+  name: 'Top10ClientesQuantidadeCteLinha',
   components: { apexchart: ApexCharts },
   props: {
     dados: {
@@ -24,10 +29,19 @@ export default {
   data() {
     return {
       options: {
-        labels: this.dados.labels,
+        chart: { type: 'line',
+          zoom: { enabled: false }
+        },
+        stroke: { width: 2 },
+        xaxis: {
+          categories: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        },
         colors: ['#3498db', '#2ecc71', '#e67e22', '#9b59b6', '#f1c40f'],
-        tooltip: { y: { formatter: val => `${val} CT-es` } },
-        legend: { position: 'bottom' }
+        tooltip: {
+          y: {
+            formatter: val => `${val} CT-es`
+          }
+        }
       }
     }
   }

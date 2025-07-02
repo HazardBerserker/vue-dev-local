@@ -75,8 +75,6 @@ export default {
   },
   methods: {
     carregarSeries() {
-      console.log(this.dados.data);
-
       const categorias = this.dados.map(item => item.mes);
       const serieFrete = this.dados.map(item => item.frete);
       const serieMercadoria = this.dados.map(item => item.mercadoria);

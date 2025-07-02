@@ -9,8 +9,8 @@
         type="donut"
         width="100%"
         height="315"
-        :options="options"
-        :series="valores"
+        :options="chartOptions"
+        :series="series"
       />
     </v-card-text>
   </v-card>
@@ -30,11 +30,14 @@ export default {
   components: {
     apexchart: ApexCharts
   },
-  data() {
-    return {
-      valores: [],
-      options: {
-        labels: [],
+  computed: {
+    chartOptions() {
+      return {
+        chart: {
+          toolbar: { show: true },
+          zoom: { enabled: false }
+        },
+        labels: this.labels,
         colors: ['#f39c12', '#9b59b6', '#3498db'], // Roxo (Fracionado), Laranja (Dedicado), Azul (aéreo)
         legend: {
           position: 'bottom',
@@ -49,24 +52,56 @@ export default {
             return `${val.toFixed(1)}%`;
           },
         }
-      },
-      series: [],
-    };
-  },
-  async mounted() {
-    await this.carregaDadosFreteMensal()
-  },
-  methods: {
-    async carregaDadosFreteMensal() {
-      try {
-
-        this.valores = this.dados.valores;
-        this.options.labels = this.dados.labels;
-
-      } catch (error) {
-        console.error('Erro ao buscar dados do dashboard', error)
-      }
+      };
+    },
+    series() {
+      return this.dados.valores
+    },
+    labels() {
+      return this.dados.labels
     }
-  }
+  },
+  // data() {
+  //   return {
+  //     valores: [],
+  //     options: {
+  //       chart: {
+  //         zoom: { enabled: false },
+  //         toolbar: { show: true },
+  //       },
+  //       labels: [],
+  //       colors: ['#f39c12', '#9b59b6', '#3498db'], // Roxo (Fracionado), Laranja (Dedicado), Azul (aéreo)
+  //       legend: {
+  //         position: 'bottom',
+  //       },
+  //       tooltip: {
+  //         y: {
+  //           formatter: (val) => `${val} fretes`,
+  //         },
+  //       },
+  //       dataLabels: {
+  //         formatter: (val) => {
+  //           return `${val.toFixed(1)}%`;
+  //         },
+  //       }
+  //     },
+  //     // series: [],
+  //   };
+  // },
+  // async mounted() {
+  //   await this.carregaDadosFreteMensal()
+  // },
+  // methods: {
+  //   async carregaDadosFreteMensal() {
+  //     try {
+
+  //       this.valores = this.dados.valores;
+  //       this.options.labels = this.dados.labels;
+
+  //     } catch (error) {
+  //       console.error('Erro ao buscar dados do dashboard', error)
+  //     }
+  //   }
+  // }
 }
 </script>

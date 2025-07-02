@@ -8,7 +8,7 @@
         width="100%"
         height="300"
         type="bar"
-        :options="options"
+        :options="chartOptions"
         :series="series"
       />
     </v-card-text>
@@ -29,46 +29,41 @@ export default {
   components: {
     apexchart: ApexCharts
   },
-  data() {
-    return {
-      meses: [],
-      ganhos: [],
-      perdas: [],
-      options: {
-        chart: { type: 'bar', stacked: true },
-        colors: ['#2ecc71', '#e74c3c'], // Verde e vermelho
+  computed: {
+    chartOptions() {
+      return {
+        chart: {
+          stacked: true,
+          toolbar: { show: true },
+          zoom: { enabled: false }
+        },
+        colors: ['#2ecc71', '#e74c3c'], // Verde (prazo), Vermelho (fora)
         xaxis: {
-          categories: [], // nomes dos meses
+          categories: this.meses(), // nomes dos meses
         },
         plotOptions: {
           bar: { horizontal: false },
         },
         legend: { position: 'top' }
-      },
-      series: [],
-    };
-  },
-  async mounted() {
-    await this.carregaDadosFreteMensal()
+      };
+    },
+    series() {
+      return [
+        { name: 'Ganhos', data: this.ganhos() },
+        { name: 'Perdas', data: this.perdas() },
+      ];
+    },
   },
   methods: {
-    async carregaDadosFreteMensal() {
-      try {
-
-        this.meses = this.dados.map(item => item.mes);
-        this.ganhos = this.dados.map(item => item.ganhos);
-        this.perdas = this.dados.map(item => item.perdas);
-
-        this.options.xaxis.categories = this.meses;
-
-        this.series = [
-          { name: 'Ganhos', data: this.ganhos },
-          { name: 'Perdas', data: this.perdas },
-        ];
-      } catch (error) {
-        console.error('Erro ao buscar dados do dashboard', error)
-      }
-    }
+    meses() {
+      return this.dados.map(item => item.mes);
+    },
+    ganhos() {
+      return this.dados.map(item => item.ganhos);
+    },
+    perdas() {
+      return this.dados.map(item => item.perdas);
+    },
   }
 }
 </script>

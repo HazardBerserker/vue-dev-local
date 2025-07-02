@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
-      Quantidade de CTEs por UF
+      Quantidade de CT-es por UF
     </v-card-title>
     <v-card-text>
       <apexchart type="bar" height="600" :options="chartOptions" :series="series" />
