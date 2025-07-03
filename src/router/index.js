@@ -9,6 +9,7 @@ import FretesCotacoes from '@/modulos/Cotacao/FretesCotacoes.vue'
 import PagamentoMotoristas from '@/modulos/Financeiro/PagamentoMotoristas.vue'
 import RegistrarCte from '@/modulos/Fiscal/RegistrarCte.vue'
 import Dashboard from '@/modulos/Dashboard/Dashboard.vue'
+import MeusFretes from '@/modulos/MenuDoCliente/MeusFretes.vue'
 
 AuthLayout
 
@@ -57,6 +58,11 @@ const routes = [
         path: 'fiscal/registrar-cte',
         name: 'Registrar CTE',
         component: RegistrarCte
+      },
+      {
+        path: 'menu-do-cliente/meus-fretes',
+        name: 'MeusFretes',
+        component: MeusFretes
       },
     ]
   },

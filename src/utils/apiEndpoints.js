@@ -38,8 +38,9 @@ export const endpoints = {
     novo: `${URL_BASE}/ctes/cria-cte-xml`,
   },
   dashboard: {
-    fretesFracionadosDedicados: `${URL_BASE}/dashboard/fretes-fracionados-dedicados`,
-    ganhosEPerdasCotacoes: `${URL_BASE}/dashboard/ganho-e-perdas-cotacoes`,
     dashboardUnificado: `${URL_BASE}/dashboard/dashboard-unificado`,
-  }
+  },
+  meusFretes: {
+    datatable: `${URL_BASE}/meus-fretes/datatable`,
+  },
 };

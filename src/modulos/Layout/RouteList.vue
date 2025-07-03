@@ -159,14 +159,14 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Meus Fretes',
-                caminho: '',
+                caminho: '/menu-do-cliente/meus-fretes',
                 icone: 'mdi-domain'
             },
-            {
-                nome: 'Dashboard Cliente',
-                caminho: '',
-                icone: 'mdi-chart-box'
-            }
+            // {
+            //     nome: 'Dashboard Cliente',
+            //     caminho: '',
+            //     icone: 'mdi-chart-box'
+            // }
           ],
         }
       ],
