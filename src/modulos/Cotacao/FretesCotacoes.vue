@@ -752,7 +752,7 @@ export default {
     async exportarExcel() {
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Fretes');
+      const worksheet = workbook.addWorksheet('fretes-cotacoes');
 
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,

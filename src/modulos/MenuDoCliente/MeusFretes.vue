@@ -108,7 +108,7 @@
               <v-row dense>
                 <v-col cols="12" md="2">
                   <v-text-field
-                    v-model="filtros.Id_CTe"
+                    v-model="filtros.id_cte"
                     label="ID CTE"
                     variant="outlined"
                     density="compact"
@@ -118,69 +118,19 @@
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-select
-                    v-model="filtros.status"
-                    hide-details
-                    label="Busca por Status"
+                   <v-text-field
+                    v-model="filtros.nota_fiscal"
+                    label="Buscar por NF"
                     variant="outlined"
                     density="compact"
-                    :items="opcoesStatus"
-                    item-value="value"
-                    item-title="label"
-                    bg-color="white"
-                    clearable
-                  ></v-select>
-                </v-col>
-
-                <v-col cols="12" md="3">
-                  <v-text-field
-                    v-model="filtros.rem_xNome"
-                    label="Remetente"
-                    variant="outlined"
-                    density="compact"
-                    clearable
                     hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="3">
-                  <v-text-field
-                    v-model="filtros.dest_xNome"
-                    label="Destinatário"
-                    variant="outlined"
-                    density="compact"
                     clearable
-                    hide-details
                   ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-text-field
-                    v-model="filtros.dest_xMun"
-                    label="Cidade Destinatário"
-                    variant="outlined"
-                    density="compact"
-                    clearable
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row dense>
-                <v-col cols="12" md="2">
-                  <v-text-field
-                    v-model="filtros.dest_UF"
-                    label="UF Destinatário"
-                    variant="outlined"
-                    density="compact"
-                    clearable
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="3">
                   <v-date-input
-                    v-model="filtros.dhEmi"
+                    v-model="filtros.data_emissao"
                     label="Data Emissão"
                     prepend-icon=""
                     density="compact"
@@ -192,11 +142,60 @@
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.vCarga" prefix="R$" label="Nota:" clearable/>
+                  <v-text-field
+                    v-model="filtros.meus_fretes_remetente"
+                    label="Remetente"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.vTPrest" prefix="R$" label="Frete:" clearable/>
+                  <v-text-field
+                    v-model="filtros.cte_destinatario"
+                    label="Destinatário"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+
+              </v-row>
+
+              <v-row dense>
+
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.cte_cidade_destinatario"
+                    label="Cidade Destino"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <v-text-field
+                    v-model="filtros.cte_uf_destinatario"
+                    label="UF Destino"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <InputTextMoeda v-model="filtros.frete" prefix="R$" label="Valor Frete" clearable/>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <InputTextMoeda v-model="filtros.valor_nf" prefix="R$" label="Valor NF" clearable/>
                 </v-col>
               </v-row>
 
@@ -208,7 +207,7 @@
                 color="blue-darken-3"
                 variant="flat"
                 class="text-white"
-                @click="buscaCte"
+                @click="buscaFretes"
                 rounded="pill"
                 prepend-icon="mdi-magnify"
               >
@@ -295,11 +294,45 @@
                 mdi-alert-circle
               </v-icon>
             </template>
+            <template #[`item.detalhes`]="{ item }">
+              <v-hover>
+                <template v-slot:default="{ isHovering, props }">
+                  <v-icon
+                    v-if="isHovering"
+                    size="25"
+                    v-bind="props"
+                    @click="abrirDialogDetalhesFrete(item)"
+                    class="cursor-pointer"
+                    key="olhoAberto"
+                  >
+                    mdi-eye
+                  </v-icon>
+                  <v-icon
+                  v-else
+                    size="25"
+                    v-bind="props"
+                    @click="abrirDialogDetalhesFrete(item)"
+                    class="cursor-pointer"
+                    key="olhoFechado"
+                  >
+                    mdi-eye-outline
+                  </v-icon>
+                </template>
+              </v-hover>
+            </template>
+            <template #[`item.nota_fiscal`]="{ item }">
+              <div class="text-truncate" v-tooltip="`${formatarNotasFiscais(item.nota_fiscal)}`">
+                {{ formatarNotasFiscais(item.nota_fiscal) }}
+              </div>
+            </template>
             <template #[`item.frete`]="{ item }">
               {{ formataMoeda(item.frete) }}
             </template>
             <template #[`item.valor_nf`]="{ item }">
               {{ formataMoeda(item.valor_nf) }}
+            </template>
+            <template #[`item.previsao`]="{ item }">
+              {{ calcularDataComPrazo(item.data_emissao, item.prazo) }}
             </template>
             <template #[`footer.prepend`]>
               <div class="d-flex w-100 align-center my-auto ps-6 justify-start">
@@ -323,6 +356,7 @@
         </v-card>
       </v-col>
     </v-row>
+    <MeuFreteDetalhesDialog ref="meuFreteDialog"/>
   </div>
 </template>
 
@@ -340,12 +374,14 @@ import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteE
 import { inject } from 'vue'
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
+import MeuFreteDetalhesDialog from '@/components/MenuDoCliente/Embeeded/MeuFreteDetalhesDialog.vue';
 
 export default {
   name: 'CtesScreen',
   components: {
     GlobalAlertFixed,
-    InputTextMoeda
+    InputTextMoeda,
+    MeuFreteDetalhesDialog
   },
   created() {
     this.dialog = inject('dialog')
@@ -420,6 +456,13 @@ export default {
             sortable: false,
           },
           {
+            title: 'Detalhes',
+            key: 'detalhes',
+            align: 'center',
+            width: '100',
+            sortable: false,
+          },
+          {
             title: 'ID CTE',
             key: 'id_cte',
             align: 'center',
@@ -432,8 +475,14 @@ export default {
             width: '170',
           },
           {
+            title: 'Emissão',
+            key: 'data_emissao',
+            align: 'center',
+            width: '250',
+          },
+          {
             title: 'Remetente',
-            key: 'remetente',
+            key: 'meus_fretes_remetente',
             align: 'start',
             cellProps: {
               class: 'text-start'
@@ -442,7 +491,7 @@ export default {
           },
           {
             title: 'Destinatário',
-            key: 'destinatario',
+            key: 'cte_destinatario',
             align: 'start',
             cellProps: {
               class: 'text-start'
@@ -451,7 +500,7 @@ export default {
           },
           {
             title: 'Cidade Destino',
-            key: 'cidade_destinatario',
+            key: 'cte_cidade_destinatario',
             width: '200',
             align:'start',
             cellProps: {
@@ -460,7 +509,7 @@ export default {
           },
           {
             title: 'UF Destino',
-            key: 'uf_destinatario',
+            key: 'cte_uf_destinatario',
             width: '150',
             align:'center',
           },
@@ -489,12 +538,6 @@ export default {
             align: 'center',
           },
           {
-            title: 'Data Criação',
-            key: 'data_criacao',
-            width: '250',
-            align: 'center',
-          },
-          {
             title: 'Data Última Alteração',
             key: 'data_ultima_alteracao',
             align: 'center',
@@ -505,8 +548,85 @@ export default {
     }
   },
   methods: {
-    baixarComprovante() {
 
+    calcularDataComPrazo(dataEmissao, prazoEmDias) {
+      if (!dataEmissao || isNaN(prazoEmDias)) return '';
+
+      // Se prazo for 0, apenas retorna a data original
+      if (prazoEmDias === 0) {
+        return dataEmissao;
+      }
+
+      // Converte de "dd/mm/yyyy" para "yyyy-mm-dd"
+      const [dia, mes, ano] = dataEmissao.split('/');
+      const dataConvertida = `${ano}-${mes}-${dia}`;
+      const data = new Date(dataConvertida);
+
+      if (isNaN(data.getTime())) return '';
+
+      data.setDate(data.getDate() + prazoEmDias);
+
+      // Retorna no formato brasileiro
+      return data.toLocaleDateString('pt-BR');
+    },
+
+    abrirDialogDetalhesFrete(frete) {
+      this.$refs.meuFreteDialog.abrir(frete);
+    },
+
+    formatarNotasFiscais(notasString) {
+      if (!notasString) return '';
+
+      return notasString
+        .split(',')
+        .map(chave => {
+          // Extrai substring igual ao PHP (pos 25, 9 chars)
+          const parte = chave.substr(25, 9);
+
+          // Converte para número inteiro (remove zeros à esquerda)
+          return parseInt(parte, 10);
+        })
+        .filter(n => !isNaN(n)) // remove valores inválidos
+        .join(' / ');
+    },
+
+    async baixarComprovante() {
+      const alertStore = useAlertStore()
+      const loading = useLoadingStore()
+      try {
+        const urlCompleta = this.itemSelecionado.arquivo_comprovante;
+        const nomeArquivo = urlCompleta.split('/').pop();
+        const endpoint = endpoints.meusFretes.baixaComprovante;
+
+        loading.show('Baixando Comprovante...')
+
+        const resposta =  await ApiService({
+          method: 'get',
+          url: `${endpoint}/${nomeArquivo}`,
+          responseType: 'blob'
+        })
+
+        const urlBlob = window.URL.createObjectURL(new Blob([resposta.data]));
+
+        // Cria o link temporário para download
+        const link = document.createElement('a');
+        link.href = urlBlob;
+        link.setAttribute('download', nomeArquivo);
+
+        // Anexa o link ao DOM, dispara o clique e remove o link
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Libera o objeto URL para liberar memória
+        window.URL.revokeObjectURL(urlBlob);
+
+        alertStore.addAlert('Comprovante Baixado com Sucesso!', 'success')
+      } catch (error) {
+        alertStore.addAlert(error?.response?.data?.message, 'error')
+      } finally {
+        loading.hide()
+      }
     },
 
     quantidadeDeFiltrosAplicados() {
@@ -528,7 +648,9 @@ export default {
     },
 
     desativaOuAtivaBotoes() {
-       if(this.datatable.itensSelecionados.length == 1) {
+      this.desativaInputBaixarComprovante = false
+
+      if(this.datatable.itensSelecionados.length == 1) {
 
         const alertStore = useAlertStore()
 
@@ -549,12 +671,12 @@ export default {
         return
       }
 
-      this.desativaInputBaixarComprovante = false
+      this.desativaInputBaixarComprovante = true
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {
       const camposQueADataPrecisaSerConvertida = [
-        'dhEmi'
+        'data_emissao'
       ]
 
       let arrayDeFiltros = []
@@ -654,7 +776,7 @@ export default {
       } catch (error) {
         if(this.permissao) {
           const alertStore = useAlertStore()
-          alertStore.addAlert(error.message, 'error', 3000);
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
           return
         }
         this.propriedadesDoAlertaFixo = {
@@ -672,31 +794,31 @@ export default {
     async exportarExcel() {
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Ctes');
+      const worksheet = workbook.addWorksheet('meus-fretes');
 
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,
         status: StatusCteEnum[item.status],
-        vCarga: formataMoeda(item.vCarga),
-        vTPrest: formataMoeda(item.vTPrest),
+        valor_nf: formataMoeda(item.valor_nf),
+        frete: formataMoeda(item.frete),
+        previsao: this.calcularDataComPrazo(item.data_emissao, item.prazo),
       }));
 
       // Adicionando cabeçalhos
       worksheet.columns = [
-      { header: 'ID', key: 'Id_CTe', width: 15 },
-      { header: 'Status', key: 'status', width: 15 },
-      { header: 'Remetente', key: 'rem_xNome', width: 40 },
-      { header: 'Destinatário', key: 'dest_xNome', width: 40 },
-      { header: 'Cidade Destinatário', key: 'dest_xMun', width: 40 },
-      { header: 'UF Destinatário', key: 'dest_UF', width: 30 },
-      { header: 'Emissão', key: 'dhEmi', width: 25 },
-      { header: 'Nota', key: 'vCarga', width: 30 },
-      { header: 'Frete', key: 'vTPrest', width: 30 },
-      { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
-      { header: 'Data Criação', key: 'data_criacao', width: 25 },
-      { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
-      { header: 'Data Última Alteração', key: 'data_ultima_alteracao', width: 25 }
-    ];
+        { header: 'ID CTE', key: 'id_cte', width: 18, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Nota Fiscal', key: 'nota_fiscal', width: 17, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Emissão', key: 'data_emissao', width: 25, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Remetente', key: 'meus_fretes_remetente', width: 35, style: { alignment: { horizontal: 'left' } } },
+        { header: 'Destinatário', key: 'cte_destinatario', width: 35, style: { alignment: { horizontal: 'left' } } },
+        { header: 'Cidade Destino', key: 'cte_cidade_destinatario', width: 20, style: { alignment: { horizontal: 'left' } } },
+        { header: 'UF Destino', key: 'cte_uf_destinatario', width: 15, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Frete', key: 'frete', width: 24, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Valor NF', key: 'valor_nf', width: 24, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Previsão', key: 'previsao', width: 25, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Entrega', key: 'entrega_efetiva', width: 25, style: { alignment: { horizontal: 'center' } } },
+        { header: 'Data Última Alteração', key: 'data_ultima_alteracao', width: 25 }
+      ];
 
       // Adicionando os dados
       itensFormatados.forEach(item => worksheet.addRow(item));

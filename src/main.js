@@ -12,13 +12,16 @@ import * as Highcharts from 'highcharts/highmaps';
 import HighchartsVue from 'highcharts-vue';
 import mapData from '@highcharts/map-collection/countries/br/br-all.geo.json';
 // Inicializa o módulo
-Highcharts.maps['countries/br/br-all'] = mapData;
 Highcharts.setOptions({
   lang: {
     decimalPoint: ',',
     thousandsSep: '.',
+    locale: 'pt-BR',
+    loading: 'Carregando...',
+    noData: 'Sem dados para exibir'
   }
 });
+Highcharts.maps['countries/br/br-all'] = mapData;
 // Carrega os dados do GeoJSON
 
 // GERENCIAMENTO DO ESTADO

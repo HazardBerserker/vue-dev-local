@@ -13,8 +13,8 @@
         <v-row dense>
           <v-col cols="6" v-for="(valor, campo) in camposTexto" :key="campo">
             <div class="mb-2">
-              <strong class="text-grey-darken-2">{{ formatLabel(campo) }}:</strong>
-              <div class="text-grey-darken-4">{{ valor }}</div>
+              <div class="text-grey-darken-3">{{ formatLabel(campo) }}:</div>
+              <div class="text-grey-darken-5"><strong>{{ valor }}</strong></div>
             </div>
           </v-col>
         </v-row>

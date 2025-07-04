@@ -41,7 +41,7 @@
       </v-form>
 
       <template #action-button>
-        <v-btn variant="flat" color="green" rounded="pill" @click="criaCte">Regitrar</v-btn>
+        <v-btn variant="flat" color="green" rounded="pill" @click="criaCte">Registrar</v-btn>
       </template>
     </DialogCreateCadastro>
   </div>

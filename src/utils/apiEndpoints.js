@@ -42,5 +42,6 @@ export const endpoints = {
   },
   meusFretes: {
     datatable: `${URL_BASE}/meus-fretes/datatable`,
+    baixaComprovante: `${URL_BASE}/meus-fretes/baixa-comprovante`,
   },
 };
