@@ -11,46 +11,53 @@
               </div>
             </v-scroll-y-reverse-transition>
 
-            <span class="text-subtitle-2 text-start font-weight-medium slogan-text">Logistica inteligente, frete eficiente!</span>
-            <v-text-field
-               v-model="email"
-               prepend-inner-icon="mdi-account-circle"
-               icon-color="redNeveah"
-               base-color="redNeveah"
-              bg-color="grey-lighten-3"
-               color="redNeveah"
-               class="w-100"
-               hide-details="auto"
-               label="Usuário"
-               variant="solo"
-               density="comfortable"
-            ></v-text-field>
-            <v-text-field
-              v-model="senha"
-              prepend-inner-icon="mdi-shield-key"
-              icon-color="redNeveah"
-              base-color="redNeveah"
-              bg-color="grey-lighten-3"
-              color="redNeveah"
-              class="w-100"
-              hide-details="auto"
-              label="Senha"
-              variant="solo"
-              density="comfortable"
-              :type="senhaEstaEscondida ? 'password' : null "
-            >
-               <template #append-inner>
-                  <v-icon v-if="senhaEstaEscondida" color="redNeveah" @click="senhaEstaEscondida = !senhaEstaEscondida">
-                    mdi-eye-off-outline
-                  </v-icon>
-                  <v-icon v-else color="redNeveah" @click="senhaEstaEscondida = !senhaEstaEscondida">
-                    mdi-eye-outline
-                  </v-icon>
-               </template>
-            </v-text-field>
+          <span class="text-subtitle-2 text-start font-weight-medium slogan-text">Logistica inteligente, frete eficiente!</span>
+            <form @submit.prevent="login" class="w-100 d-flex flex-column ga-3 w-100 justify-center align-start elevation-0" rounded="lg">
+              <v-text-field
+                name="email"
+                v-model="email"
+                autocomplete="username"
+                label="Usuário"
+                prepend-inner-icon="mdi-account-circle"
+                icon-color="redNeveah"
+                base-color="redNeveah"
+                bg-color="grey-lighten-3"
+                color="redNeveah"
+                class="w-100"
+                hide-details="auto"
+                variant="solo"
+                density="comfortable"
+              />
+
+              <v-text-field
+                name="senha"
+                v-model="senha"
+                autocomplete="current-password"
+                prepend-inner-icon="mdi-shield-key"
+                icon-color="redNeveah"
+                base-color="redNeveah"
+                bg-color="grey-lighten-3"
+                color="redNeveah"
+                class="w-100"
+                hide-details="auto"
+                label="Senha"
+                variant="solo"
+                density="comfortable"
+                :type="senhaEstaEscondida ? 'password' : 'text'"
+              >
+                <template #append-inner>
+                  <v-icon
+                    :icon="senhaEstaEscondida ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                    color="redNeveah"
+                    @click="senhaEstaEscondida = !senhaEstaEscondida"
+                  />
+                </template>
+              </v-text-field>
+
             <v-hover>
               <template v-slot:default="{ isHovering, props }">
                 <v-btn
+                  type="submit"
                   v-bind="props"
                   class="w-100 animated-gradient"
                   :color=" !isHovering ? 'redNeveah' : 'orange-accent-4'"
@@ -59,7 +66,7 @@
                   <v-scroll-y-reverse-transition mode="out-in">
                     <template v-if="estadoDoAcesso === 'carregando'">
                       <div class="d-flex align-center gap-2">
-                          <v-progress-circular size="20" indeterminate></v-progress-circular>
+                        <v-progress-circular size="20" indeterminate></v-progress-circular>
                       </div>
                     </template>
 
@@ -72,15 +79,15 @@
 
                     <template v-else-if="estadoDoAcesso === 'sucesso'">
                       <div class="d-flex align-center gap-2">
-                          <span>Sucesso</span>
-                          <v-icon size="small" class="ps-3">mdi-check</v-icon>
+                        <span>Sucesso</span>
+                        <v-icon size="small" class="ps-3">mdi-check</v-icon>
                       </div>
                     </template>
 
                     <template v-else-if="estadoDoAcesso === 'novamente'">
                       <div class="d-flex align-center gap-2">
-                          <span>Tente novamente</span>
-                          <v-icon size="small" class="ps-3">mdi-lightbulb-on</v-icon>
+                        <span>Tente novamente</span>
+                        <v-icon size="small" class="ps-3">mdi-lightbulb-on</v-icon>
                       </div>
                     </template>
 
@@ -88,10 +95,11 @@
                       <span>ACESSAR</span>
                     </template>
                   </v-scroll-y-reverse-transition>
-              </v-btn>
+                </v-btn>
               </template>
             </v-hover>
-          </v-card>
+          </form>
+        </v-card>
       </div>
 
       <!-- Lado direito: Formulário -->

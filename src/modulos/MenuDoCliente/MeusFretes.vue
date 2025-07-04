@@ -105,6 +105,64 @@
           <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
             <v-card-text>
 
+              <v-row dense class="mb-4">
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_inicial_emissao"
+                    label="Data Inicial Emissão"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_final_emissao"
+                    label="Data Final Emissão"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_inicial_entrega"
+                    label="Data Inicial Entrega"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_final_entrega"
+                    label="Data Final Entrega"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+              </v-row>
+
               <v-row dense>
                 <v-col cols="12" md="2">
                   <v-text-field
@@ -128,25 +186,12 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" md="2">
-                  <v-date-input
-                    v-model="filtros.data_emissao"
-                    label="Data Emissão"
-                    prepend-icon=""
-                    density="compact"
-                    prepend-inner-icon="$calendar"
-                    placeholder="dd/mm/yy"
-                    clearable
-                    variant="outlined"
-                  ></v-date-input>
-                </v-col>
-
                 <v-col cols="12" md="3">
                   <v-text-field
-                    v-model="filtros.meus_fretes_remetente"
-                    label="Remetente"
-                    variant="outlined"
-                    density="compact"
+                  v-model="filtros.meus_fretes_remetente"
+                  label="Remetente"
+                  variant="outlined"
+                  density="compact"
                     clearable
                     hide-details
                   ></v-text-field>
@@ -163,11 +208,6 @@
                   ></v-text-field>
                 </v-col>
 
-
-              </v-row>
-
-              <v-row dense>
-
                 <v-col cols="12" md="2">
                   <v-text-field
                     v-model="filtros.cte_cidade_destinatario"
@@ -178,7 +218,9 @@
                     hide-details
                   ></v-text-field>
                 </v-col>
+              </v-row>
 
+              <v-row dense>
                 <v-col cols="12" md="2">
                   <v-text-field
                     v-model="filtros.cte_uf_destinatario"
@@ -385,6 +427,7 @@ export default {
   },
   created() {
     this.dialog = inject('dialog')
+    this.quantidadeDeFiltrosAplicados()
   },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
@@ -401,7 +444,13 @@ export default {
     }
   },
   data () {
+    const hoje = new Date();
+    const noventaDiasAtras = new Date();
+    noventaDiasAtras.setDate(hoje.getDate() - 90);
+
     return {
+      hoje,
+      noventaDiasAtras,
       formataCNPJ,
       formataMoeda,
       StatusCteEnum,
@@ -416,6 +465,8 @@ export default {
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
+        data_inicial_emissao: noventaDiasAtras,
+        data_final_emissao: hoje,
       },
       opcoesStatus: [
         {
@@ -434,10 +485,9 @@ export default {
         chave_primaria: 'id_cte',
         itens: [],
         itens_por_pagina: [
-            {value: 20, title: '20'},
-            {value: 100, title: '100'},
-            {value: -1, title: 'Todos'},
-            // {value: -1, title: 'Todos'}
+          {value: 20, title: '20'},
+          {value: 100, title: '100'},
+          {value: -1, title: 'Todos'},
         ],
         totalRegistros: 0,
         ultima_pagina: 0,
@@ -633,6 +683,8 @@ export default {
       let filtrosAplicadosAntesDaBusca = 0
 
       for (let filtro in this.filtros) {
+        console.log(this.filtros[filtro]);
+
         if(this.filtros[filtro] != null) {
           filtrosAplicadosAntesDaBusca += 1
           continue
@@ -644,7 +696,10 @@ export default {
     },
 
     limpaFiltros() {
-      this.filtros = {}
+      this.filtros = {
+        data_inicial_emissao: this.noventaDiasAtras,
+        data_final_emissao: this.hoje,
+      }
     },
 
     desativaOuAtivaBotoes() {
@@ -676,12 +731,16 @@ export default {
 
     gerarQuery( page, itemsPerPage, sortBy ) {
       const camposQueADataPrecisaSerConvertida = [
-        'data_emissao'
+        'data_inicial_emissao',
+        'data_final_emissao',
+        'data_inicial_entrega',
+        'data_final_entrega',
       ]
 
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
       const filtrosInternos = this.filtros
+      let queryParams = new URLSearchParams();
 
       for (const chave in this.filtrosDaBuscaGeral) {
         if (this.busca_geral != null && this.busca_geral !== '') {
@@ -696,14 +755,15 @@ export default {
       for (const chave in filtrosInternos) {
         if (filtrosInternos[chave] != null && filtrosInternos[chave] !== '') {
           if(camposQueADataPrecisaSerConvertida.includes(chave)) {
-            filtrosInternos[chave] = formatDate(filtrosInternos[chave], 'yyyy-MM-dd')
+            const dataFormatada = formatDate(filtrosInternos[chave], 'yyyy-MM-dd');
+            queryParams.append(chave, dataFormatada);
+            continue
           }
           const filtro = { key: [chave], value: filtrosInternos[chave] };
           arrayDeFiltros.push(filtro)
         }
       }
 
-      let queryParams = new URLSearchParams();
 
       queryParams.append('por_pagina', itemsPerPage);
       queryParams.append('pagina_atual', page);
@@ -760,6 +820,9 @@ export default {
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
         const url = endpoints.meusFretes.datatable;
+
+        console.log(query);
+
 
         const resposta =  await ApiService({
           method: 'get',
