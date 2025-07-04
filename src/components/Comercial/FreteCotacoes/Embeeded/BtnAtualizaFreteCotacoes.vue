@@ -5,6 +5,7 @@
       prepend-icon="mdi-pencil"
       variant="tonal"
       density="comfortable"
+      :disabled="loading"
       class="text-white"
       rounded="pill"
       @click="openDialog"
@@ -239,7 +240,7 @@ import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import { useLoadingStore } from '@/stores/loading';
-import { formataDataSomenteData } from '@/utils/masks';
+import { formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
@@ -255,6 +256,10 @@ export default {
         type: Object,
         required: true
       },
+      loading: {
+        type: Boolean,
+        required: true,
+      }
     },
 
 
@@ -466,11 +471,14 @@ export default {
         this.saldo = this.item.saldo
         this.integral = this.item.integral
         this.imposto_considerado = this.item.imposto_considerado
+        this.entrega_efetiva = this.item.entrega_efetiva ? formatarDataParaInputVuetify(this.item.entrega_efetiva) : null
+        this.coleta_efetiva = this.item.coleta_efetiva ? formatarDataParaInputVuetify(this.item.coleta_efetiva) : null
         this.cte = this.item.cte_vinculado
 
         if(this.item.cte_vinculado) {
           this.cte = objetoCte
         }
+
         if(this.item.cpf_motorista && this.item.nome_motorista) {
           this.motorista = objetoMotorista
         }

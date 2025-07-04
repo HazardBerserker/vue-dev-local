@@ -8,6 +8,7 @@
       class="text-white"
       rounded="pill"
       @click="openDialog"
+      :disabled="loading"
     >
       Editar
     </v-btn>
@@ -244,7 +245,7 @@ import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import { useLoadingStore } from '@/stores/loading';
-import { formataDataSomenteData } from '@/utils/masks';
+import { formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
@@ -261,9 +262,11 @@ export default {
         type: Object,
         required: true
       },
+      loading: {
+        type: Boolean,
+        required: true
+      }
     },
-
-
     data() {
       return {
         imagem_que_sera_exibida: false,
@@ -449,6 +452,9 @@ export default {
           Id_CTe: this.item.cte_vinculado,
         }
 
+        console.log(this.item.entrega_efetiva);
+
+
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
         this.id_remetente = this.item.id_remetente
@@ -472,7 +478,8 @@ export default {
         this.adiantamento = this.item.adiantamento
         this.saldo = this.item.saldo
         this.integral = this.item.integral
-        this.entrega_efetiva = this.item.entrega_efetiva
+        this.entrega_efetiva = this.item.entrega_efetiva ? formatarDataParaInputVuetify(this.item.entrega_efetiva) : null
+        this.coleta_efetiva = this.item.coleta_efetiva ? formatarDataParaInputVuetify(this.item.coleta_efetiva) : null
         this.imposto_considerado = this.item.imposto_considerado
         this.cte = this.item.cte_vinculado
 

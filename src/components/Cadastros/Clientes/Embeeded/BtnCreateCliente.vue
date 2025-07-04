@@ -8,6 +8,7 @@
       class="text-white"
       rounded="pill"
       @click="openDialog"
+      :disabled="loading"
     >
       Criar cliente
     </v-btn>
@@ -114,6 +115,12 @@ export default {
     components: {
       DialogCreateCadastro,
       InputText
+    },
+    props: {
+      loading: {
+        type: Boolean,
+        required: true
+      }
     },
     data() {
       return {

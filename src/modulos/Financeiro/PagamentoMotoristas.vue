@@ -50,6 +50,35 @@
         <div v-show="mostrarFiltros">
           <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
             <v-card-text>
+              <v-row dense class="mb-4">
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_inicial_criacao"
+                    label="Data Inicial Criação"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_final_criacao"
+                    label="Data Final Criação"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+              </v-row>
 
               <v-row dense>
                 <v-col cols="12" md="2">
@@ -75,14 +104,19 @@
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-text-field
+                  <v-combobox
+                    :loading="comboBoxTomadorLoading"
+                    @keyup="buscarTomador"
                     v-model="filtros.tomador"
-                    label="Tomador"
-                    variant="outlined"
                     density="compact"
-                    clearable
+                    variant="outlined"
+                    label="Tomador"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeTomadores"
+                    item-title="razao_social"
+                    item-value="id_cliente"
                     hide-details
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
 
                 <v-col cols="12" md="2">
@@ -100,14 +134,19 @@
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-text-field
+                  <v-combobox
+                    :loading="comboBoxMotoristaLoading"
+                    @keyup="buscarMotorista"
                     v-model="filtros.nome_motorista"
-                    label="Motorista"
-                    variant="outlined"
                     density="compact"
-                    clearable
+                    variant="outlined"
+                    label="Motorista"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeMotoristas"
+                    item-title="nome_completo"
+                    item-value="id_motorista"
                     hide-details
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
 
                 <v-col cols="12" md="2">
@@ -269,7 +308,7 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaPagamentoMotoristas :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+              <BtnAtualizaPagamentoMotoristas :item="item" :loading="datatable.carregando" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
             <template #[`item.valor_cobrado_efetivo`]="{ item }">
               {{ formataMoeda(item.valor_cobrado_efetivo) }}
@@ -308,12 +347,17 @@ import { StatusFreteCotacaoEnum } from '@/Enums/Comercial/StatusFreteCotacaoEnum
 import { format as formatDate } from 'date-fns'
 import { StatusPagamentoEnumDescricao } from '@/Enums/Financeiro/StatusPagamentoEnum';
 import { FormaPagamentoEnumDescricao } from '@/Enums/Financeiro/FormaPagamentoEnum';
+import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
+import { buscaListaDeMotoristasHelper } from '@/helpers/buscaListaDeMotoristas';
 
 export default {
   name: 'FretesCotacoes',
   components: {
     GlobalAlertFixed,
     BtnAtualizaPagamentoMotoristas,
+  },
+  created() {
+    this.quantidadeDeFiltrosAplicados()
   },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
@@ -324,10 +368,26 @@ export default {
         this.quantidadeDeFiltrosAplicados()
       },
       deep: true
-    }
+    },
+    'filtros.tomador'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.tomador = newValue.razao_social
+      }
+    },
+    'filtros.nome_motorista'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.nome_motorista = newValue.nome_completo
+      }
+    },
   },
   data () {
+    const hoje = new Date();
+    const noventaDiasAtras = new Date();
+    noventaDiasAtras.setDate(hoje.getDate() - 90);
+
     return {
+      hoje,
+      noventaDiasAtras,
       opcoesSImENao: [
         { valor: 0, descricao: 'Não' },
         { valor: 1, descricao: 'Sim' },
@@ -342,9 +402,20 @@ export default {
       SimENaoEnum,
       permissao: false,
       propriedadesDoAlertaFixo: null,
+
+      // combobox
+      listaDeTomadores: [],
+      comboBoxTomadorLoading: false,
+
+      // combobox
+      listaDeMotoristas: [],
+      comboBoxMotoristaLoading: false,
+
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
+        data_inicial_criacao: noventaDiasAtras,
+        data_final_criacao: hoje,
       },
       opcoesAtivo: [
         {
@@ -483,6 +554,30 @@ export default {
   },
   methods: {
 
+    async buscarTomador() {
+      await buscaListaDeClientesHelper(
+        this.filtros.tomador,
+        (clientes) => {
+          this.listaDeTomadores = clientes;
+        },
+        (loading) => {
+          this.comboBoxTomadorLoading = loading;
+        }
+      );
+    },
+
+    async buscarMotorista() {
+      await buscaListaDeMotoristasHelper(
+        this.filtros.nome_motorista,
+        (motoristas) => {
+          this.listaDeMotoristas = motoristas;
+        },
+        (loading) => {
+          this.comboBoxMotoristaLoading = loading;
+        }
+      );
+    },
+
     quantidadeDeFiltrosAplicados() {
       let filtrosAplicadosAntesDaBusca = 0
 
@@ -590,11 +685,8 @@ export default {
       }, 0);
 
       return total
-      // const itensAtivos = this.datatable.itens.filter(item => {
-      //   return item.status_pagamento == StatusFreteCotacaoEnumDescricao.EM_ABERTO
-      // })
-      // return itensAtivos.length
     },
+
     numeroDePagamentosRealizados() {
       const total =  this.datatable.itens.reduce((acumulador, item) => {
         let valorAdicional = 0
@@ -622,17 +714,22 @@ export default {
     },
 
     limpaFiltros() {
-      this.filtros = {}
+      this.filtros = {
+        data_inicial_criacao: this.noventaDiasAtras,
+        data_final_criacao: this.hoje,
+      }
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {
       const camposQueADataPrecisaSerConvertida = [
-        'data_cotacao'
+        'data_inicial_criacao',
+        'data_final_criacao'
       ]
 
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
       const filtrosInternos = this.filtros
+      let queryParams = new URLSearchParams();
 
       for (const chave in this.filtrosDaBuscaGeral) {
         if (this.busca_geral != null && this.busca_geral !== '') {
@@ -647,14 +744,14 @@ export default {
       for (const chave in filtrosInternos) {
         if (filtrosInternos[chave] != null && filtrosInternos[chave] !== '') {
           if(camposQueADataPrecisaSerConvertida.includes(chave)) {
-            filtrosInternos[chave] = formatDate(filtrosInternos[chave], 'yyyy-MM-dd')
+            const dataFormatada = formatDate(filtrosInternos[chave], 'yyyy-MM-dd');
+            queryParams.append(chave, dataFormatada);
+            continue
           }
           const filtro = { key: [chave], value: filtrosInternos[chave] };
           arrayDeFiltros.push(filtro)
         }
       }
-
-      let queryParams = new URLSearchParams();
 
       queryParams.append('por_pagina', itemsPerPage);
       queryParams.append('pagina_atual', page);

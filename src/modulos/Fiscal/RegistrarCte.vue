@@ -105,6 +105,36 @@
           <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
             <v-card-text>
 
+              <v-row dense class="mb-4">
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_inicial_emissao"
+                    label="Data Inicial Emissão"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_final_emissao"
+                    label="Data Final Emissão"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+              </v-row>
+
               <v-row dense>
                 <v-col cols="12" md="2">
                   <v-text-field
@@ -133,14 +163,19 @@
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-text-field
+                  <v-combobox
+                    :loading="comboBoxRemetenteLoading"
+                    @keyup="buscarRemetente"
                     v-model="filtros.rem_xNome"
-                    label="Remetente"
-                    variant="outlined"
                     density="compact"
-                    clearable
+                    variant="outlined"
+                    label="Remetente"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeRemetentes"
+                    item-title="razao_social"
+                    item-value="id_cliente"
                     hide-details
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
 
                 <v-col cols="12" md="3">
@@ -176,19 +211,6 @@
                     clearable
                     hide-details
                   ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="3">
-                  <v-date-input
-                    v-model="filtros.dhEmi"
-                    label="Data Emissão"
-                    prepend-icon=""
-                    density="compact"
-                    prepend-inner-icon="$calendar"
-                    placeholder="dd/mm/yy"
-                    clearable
-                    variant="outlined"
-                  ></v-date-input>
                 </v-col>
 
                 <v-col cols="12" md="3">
@@ -354,6 +376,7 @@ import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteE
 import { inject } from 'vue'
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
+import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 
 export default {
   name: 'CtesScreen',
@@ -364,6 +387,7 @@ export default {
   },
   created() {
     this.dialog = inject('dialog')
+    this.quantidadeDeFiltrosAplicados()
   },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
@@ -377,10 +401,22 @@ export default {
         this.quantidadeDeFiltrosAplicados()
       },
       deep: true
-    }
+    },
+    'filtros.rem_xNome'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.rem_xNome = newValue.razao_social
+      }
+    },
   },
   data () {
+
+    const hoje = new Date();
+    const noventaDiasAtras = new Date();
+    noventaDiasAtras.setDate(hoje.getDate() - 90);
+
     return {
+      hoje,
+      noventaDiasAtras,
       formataCEP,
       formataCNPJ,
       formataMoeda,
@@ -396,23 +432,15 @@ export default {
       propriedadesDoAlertaFixo: null,
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,
+
+      // combobox
+      listaDeRemetentes: [],
+      comboBoxRemetenteLoading: false,
+
       filtros: {
+        data_inicial_emissao: noventaDiasAtras,
+        data_final_emissao: hoje,
       },
-      // busca_geral: null,
-      // filtrosDaBuscaGeral: {
-      //   id_cte: null,
-      //   razao_social: null,
-      //   cnpj: null,
-      //   endereco: null,
-      //   cep: null,
-      //   cidade: null,
-      //   bairro: null,
-      //   pais: null,
-      //   uf: null,
-      //   numero: null,
-      //   usuario_criacao: null,
-      //   usuario_ultima_alteracao: null,
-      // },
       opcoesStatus: [
         {
           label: StatusCteEnum[StatusCteEnumDescricao.AUTORIZADO],
@@ -452,6 +480,15 @@ export default {
             sortable: false,
           },
           {
+            title: 'Emissão',
+            key: 'dhEmi',
+            align:'start',
+            cellProps: {
+              class: 'text-start'
+            },
+            width: '250'
+          },
+          {
             title: 'Status',
             key: 'status',
             align: 'center',
@@ -489,15 +526,6 @@ export default {
             key: 'dest_UF',
             width: '300',
             align:'center',
-          },
-          {
-            title: 'Emissão',
-            key: 'dhEmi',
-            align:'start',
-            cellProps: {
-              class: 'text-start'
-            },
-            width: '250'
           },
           {
             title: 'Nota',
@@ -540,6 +568,19 @@ export default {
     }
   },
   methods: {
+
+    async buscarRemetente() {
+      await buscaListaDeClientesHelper(
+        this.filtros.rem_xNome,
+        (clientes) => {
+          this.listaDeRemetentes = clientes;
+        },
+        (loading) => {
+          this.comboBoxRemetenteLoading = loading;
+        }
+      );
+    },
+
     quantidadeDeFiltrosAplicados() {
       let filtrosAplicadosAntesDaBusca = 0
 
@@ -555,7 +596,10 @@ export default {
     },
 
     limpaFiltros() {
-      this.filtros = {}
+      this.filtros = {
+        data_inicial_emissao: this.noventaDiasAtras,
+        data_final_emissao: this.hoje,
+      }
     },
 
     desativaOuAtivaBotoes() {
@@ -598,12 +642,14 @@ export default {
 
     gerarQuery( page, itemsPerPage, sortBy ) {
       const camposQueADataPrecisaSerConvertida = [
-        'dhEmi'
+        'data_inicial_emissao',
+        'data_final_emissao',
       ]
 
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
       const filtrosInternos = this.filtros
+      let queryParams = new URLSearchParams();
 
       for (const chave in this.filtrosDaBuscaGeral) {
         if (this.busca_geral != null && this.busca_geral !== '') {
@@ -618,14 +664,14 @@ export default {
       for (const chave in filtrosInternos) {
         if (filtrosInternos[chave] != null && filtrosInternos[chave] !== '') {
           if(camposQueADataPrecisaSerConvertida.includes(chave)) {
-            filtrosInternos[chave] = formatDate(filtrosInternos[chave], 'yyyy-MM-dd')
+            const dataFormatada = formatDate(filtrosInternos[chave], 'yyyy-MM-dd');
+            queryParams.append(chave, dataFormatada);
+            continue
           }
           const filtro = { key: [chave], value: filtrosInternos[chave] };
           arrayDeFiltros.push(filtro)
         }
       }
-
-      let queryParams = new URLSearchParams();
 
       queryParams.append('por_pagina', itemsPerPage);
       queryParams.append('pagina_atual', page);
@@ -698,7 +744,7 @@ export default {
       } catch (error) {
         if(this.permissao) {
           const alertStore = useAlertStore()
-          alertStore.addAlert(error.message, 'error', 3000);
+          alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
           return
         }
         this.propriedadesDoAlertaFixo = {

@@ -203,19 +203,14 @@
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-combobox
-                    :loading="comboBoxDestinatarioLoading"
-                    @keyup="buscarDestinatario"
+                  <v-text-field
                     v-model="filtros.cte_destinatario"
-                    density="compact"
-                    variant="outlined"
                     label="Destinatário"
-                    placeholder="Comece a digitar..."
-                    :items="listaDeDestinatarios"
-                    item-title="razao_social"
-                    item-value="id_cliente"
+                    variant="outlined"
+                    density="compact"
+                    clearable
                     hide-details
-                  ></v-combobox>
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="2">
@@ -458,11 +453,6 @@ export default {
         this.filtros.meus_fretes_remetente = newValue.razao_social
       }
     },
-    'filtros.cte_destinatario'(newValue) {
-      if (typeof newValue === 'object') {
-        this.filtros.cte_destinatario = newValue.razao_social
-      }
-    },
   },
   data () {
     const hoje = new Date();
@@ -483,13 +473,10 @@ export default {
       itemSelecionado: {},
       permissao: false,
       propriedadesDoAlertaFixo: null,
+
       // combobox
       listaDeClientes: [],
       comboBoxRemetenteLoading: false,
-
-      // combobox
-      listaDeDestinatarios: [],
-      comboBoxDestinatarioLoading: false,
 
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,
@@ -636,18 +623,6 @@ export default {
         },
         (loading) => {
           this.comboBoxRemetenteLoading = loading;
-        }
-      );
-    },
-
-    async buscarDestinatario() {
-      await buscaListaDeClientesHelper(
-        this.filtros.cte_destinatario,
-        (clientes) => {
-          this.listaDeDestinatarios = clientes;
-        },
-        (loading) => {
-          this.comboBoxDestinatarioLoading = loading;
         }
       );
     },

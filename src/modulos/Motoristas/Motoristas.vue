@@ -112,7 +112,7 @@
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
 
-          <BtnCreateMotorista @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
+          <BtnCreateMotorista :loading="datatable.carregando" @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <!-- <v-btn
               color="red-darken-3"
@@ -192,7 +192,7 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaMotorista :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+              <BtnAtualizaMotorista :item="item" :loading="datatable.carregando" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
             <template #[`item.cep_residencia`]="{ item }">
               {{ formataCEP(item.cep_residencia) }}

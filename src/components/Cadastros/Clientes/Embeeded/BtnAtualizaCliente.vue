@@ -8,6 +8,7 @@
       class="text-white"
       rounded="pill"
       @click="openDialog"
+      :disabled="loading"
     >
       Editar
     </v-btn>
@@ -107,6 +108,10 @@ export default {
         type: Object,
         required: true
       },
+      loading: {
+        type: Boolean,
+        required: true
+      }
     },
     data() {
       return {

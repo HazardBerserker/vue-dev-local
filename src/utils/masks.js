@@ -42,3 +42,13 @@ export function formataMoeda(valor) {
     maximumFractionDigits: 2
   }).format(valor);
 }
+
+export function formatarDataParaInputVuetify(dataString) {
+  // dataString: "26/02/2025 00:00:00"
+
+  const [dataParte] = dataString.split(' '); // "26/02/2025"
+  const [dia, mes, ano] = dataParte.split('/');
+
+  // Formata para YYYY-MM-DD
+  return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+}

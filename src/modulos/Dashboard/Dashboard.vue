@@ -71,15 +71,19 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field
-                      v-model="filtros.cliente"
-                        label="Cliente"
-                        variant="outlined"
+                      <v-combobox
+                        :loading="comboBoxClienteLoading"
+                        @keyup="buscarCliente"
+                        v-model="filtros.cliente"
                         density="compact"
-                        clearable
-                        placeholder="Busca por Nome do Cliente..."
+                        variant="outlined"
+                        label="Cliente"
+                        placeholder="Comece a digitar..."
+                        :items="listaDeClientes"
+                        item-title="razao_social"
+                        item-value="id_cliente"
                         hide-details
-                        ></v-text-field>
+                      ></v-combobox>
                     </v-col>
                     <v-col cols="12">
                       <v-text-field
@@ -199,6 +203,7 @@ import { useLoadingStore } from '@/stores/loading';
 import { useAlertStore } from '@/stores/alertStore';
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { format } from 'date-fns';
+import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 
 export default {
   name: 'DashboardView',
@@ -224,7 +229,12 @@ export default {
         this.quantidadeDeFiltrosAplicados()
       },
       deep: true
-    }
+    },
+    'filtros.cliente'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.cliente = newValue.razao_social
+      }
+    },
   },
   data() {
     return {
@@ -234,6 +244,10 @@ export default {
       filtros: {
         date: null
       },
+      // combobox
+      listaDeClientes: [],
+      comboBoxClienteLoading: false,
+
       dataInicio: null,
       dataFim: null,
       propriedadesDoAlertaFixo: null,
@@ -270,7 +284,20 @@ export default {
     this.propriedadesDoAlertaFixo = null
   },
   methods: {
-     limpaFiltros() {
+
+    async buscarCliente() {
+      await buscaListaDeClientesHelper(
+        this.filtros.cliente,
+        (clientes) => {
+          this.listaDeClientes = clientes;
+        },
+        (loading) => {
+          this.comboBoxClienteLoading = loading;
+        }
+      );
+    },
+
+    limpaFiltros() {
       this.filtros = {
         date: null
       }

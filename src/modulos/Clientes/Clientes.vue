@@ -112,7 +112,7 @@
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
         <div class="d-flex align-center ga-2">
 
-          <BtnCreateCliente @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
+          <BtnCreateCliente :loading="datatable.carregando" @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
           <v-btn
             color="grey-darken-3"
@@ -192,7 +192,7 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaCliente :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+              <BtnAtualizaCliente :item="item" :loading="datatable.carregando" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
             <template #[`item.cep`]="{ item }">
               {{ formataCEP(item.cep) }}

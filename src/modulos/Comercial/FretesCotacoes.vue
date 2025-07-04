@@ -51,6 +51,36 @@
           <v-card class="rounded-xl elevation-1 mb-4 pa-4" width="100%">
             <v-card-text>
 
+              <v-row dense class="mb-4">
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_inicial_criacao"
+                    label="Data Inicial Criação"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+
+                <v-col cols="12" md="3">
+                  <v-date-input
+                    v-model="filtros.data_final_criacao"
+                    label="Data Final Criação"
+                    prepend-icon=""
+                    density="compact"
+                    prepend-inner-icon="$calendar"
+                    placeholder="dd/mm/yy"
+                    clearable
+                    variant="outlined"
+                    hide-details
+                  ></v-date-input>
+                </v-col>
+              </v-row>
+
               <v-row dense>
                 <v-col cols="12" md="2">
                   <v-text-field
@@ -64,29 +94,32 @@
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-date-input
-                    v-model="filtros.data_cotacao"
-                    label="Data Criação"
-                    prepend-icon=""
-                    density="compact"
-                    prepend-inner-icon="$calendar"
-                    :display-format="format"
-                    placeholder="dd/mm/yy"
-                    clearable
+                  <v-select
+                    v-model="filtros.status"
                     variant="outlined"
-                    hide-details
-                  ></v-date-input>
+                    density="compact"
+                    :items="opcoesStatus"
+                    label="Status"
+                    item-value="value"
+                    item-title="label"
+                    clearable>
+                  </v-select>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-text-field
+                  <v-combobox
+                    :loading="comboBoxRemetenteLoading"
+                    @keyup="buscarRemetente"
                     v-model="filtros.remetente"
-                    label="Remetente"
-                    variant="outlined"
                     density="compact"
-                    clearable
+                    variant="outlined"
+                    label="Remetente"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeRemetentes"
+                    item-title="razao_social"
+                    item-value="id_cliente"
                     hide-details
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
 
                 <v-col cols="12" md="3">
@@ -125,16 +158,6 @@
                   <InputTextMoeda v-model="filtros.valor_cobrado_efetivo" prefix="R$" label="Valor Cobrado:" hide-details clearable/>
                 </v-col>
 
-                <v-col cols="12" md="2">
-                  <v-text-field
-                    v-model="filtros.status"
-                    label="Status"
-                    variant="outlined"
-                    density="compact"
-                    clearable
-                    hide-details
-                  ></v-text-field>
-                </v-col>
 
                 <v-col cols="12" md="2">
                   <v-text-field
@@ -179,7 +202,10 @@
                 <v-avatar size="40" class="me-4 bg-blue-darken-2 text-white">
                   <v-icon>mdi-truck</v-icon>
                 </v-avatar>
-                <span class="text-body-2 font-weight-bold text-blue-darken-2">Em Aberto</span>
+                <div>
+                  <v-chip class="me-4" color="blue-darken-4" variant="flat" prepend-icon="mdi-filter-variant" @click="filtrarStatusFreteCotacaoEmAberto">Filtrar</v-chip>
+                  <span class="text-body-2 font-weight-bold text-blue-darken-2">Em Aberto</span>
+                </div>
               </div>
               <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
@@ -201,7 +227,10 @@
                 <v-avatar size="40" class="me-4 bg-green-darken-2 text-white">
                   <v-icon>mdi-check-circle</v-icon>
                 </v-avatar>
-                <span class="text-body-2 font-weight-bold text-green-darken-2">Aceitas</span>
+                <div>
+                  <v-chip class="me-4" color="green-darken-4" variant="flat" prepend-icon="mdi-filter-variant" @click="filtrarStatusFreteCotacaoAceitas">Filtrar</v-chip>
+                  <span class="text-body-2 font-weight-bold text-green-darken-2">Aceitas</span>
+                </div>
               </div>
               <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
@@ -223,7 +252,10 @@
                 <v-avatar size="40" class="me-4 bg-red-darken-2 text-white">
                   <v-icon>mdi-close-circle</v-icon>
                 </v-avatar>
-                <span class="text-body-2 font-weight-bold text-red-darken-2">Rejeitadas</span>
+                <div>
+                  <v-chip class="me-4" color="red-darken-4" variant="flat" prepend-icon="mdi-filter-variant" @click="filtrarStatusFreteCotacaoRejeitadas">Filtrar</v-chip>
+                  <span class="text-body-2 font-weight-bold text-red-darken-2">Rejeitadas</span>
+                </div>
               </div>
               <v-card class="mt-3 h-100 rounded-xl bg-red-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
@@ -309,7 +341,7 @@
               </v-chip>
             </template>
             <template #[`item.acao`]="{ item }">
-              <BtnAtualizaFreteCotacoes :item="item" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
+              <BtnAtualizaFreteCotacoes :item="item" :loading="datatable.carregando" @atualizaODadoNoArrayLocalmente="onAtualizaODadoNoArrayLocalmente"/>
             </template>
             <template #[`item.valor_motorista_efetivo`]="{ item }">
               {{ formataMoeda(item.valor_motorista_efetivo) }}
@@ -329,6 +361,7 @@
                 :disabled="datatable.carregando"
                 @click="exportarExcel"
                 readonly
+                :prepend-icon="item.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO ? 'mdi-alert-circle' : 'mdi-check'"
               >
                 {{ StatusFreteCotacaoEnum[item.status] }}
               </v-btn>
@@ -342,7 +375,6 @@
 
 <script>
 import ApiService from '@/services/ApiService';
-import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { formataData, formataDataSomenteData, formataMoeda } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
@@ -354,6 +386,8 @@ import { saveAs } from 'file-saver';
 import { StatusFreteCotacaoEnum, StatusFreteCotacaoEnumDescricao } from '@/Enums/Comercial/StatusFreteCotacaoEnum';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
+import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
+import { SimENaoEnum } from '@/Enums/SimENaoEnum';
 
 export default {
   name: 'FretesCotacoes',
@@ -361,6 +395,9 @@ export default {
     GlobalAlertFixed,
     BtnAtualizaFreteCotacoes,
     InputTextMoeda
+  },
+  created() {
+    this.quantidadeDeFiltrosAplicados()
   },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
@@ -371,23 +408,40 @@ export default {
         this.quantidadeDeFiltrosAplicados()
       },
       deep: true
-    }
+    },
+    'filtros.remetente'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.remetente = newValue.razao_social
+      }
+    },
   },
   data () {
+    const hoje = new Date();
+    const noventaDiasAtras = new Date();
+    noventaDiasAtras.setDate(hoje.getDate() - 90);
+
     return {
+      hoje,
+      noventaDiasAtras,
       formataData,
       formataDataSomenteData,
       formataMoeda,
+      StatusFreteCotacaoEnumDescricao,
       StatusFreteCotacaoEnum,
       mostrarFiltros: false,
       tab: null,
-      SimENaoEnumDescricao,
-      SimENaoEnum,
       permissao: false,
       propriedadesDoAlertaFixo: null,
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,
+
+      // combobox
+      listaDeRemetentes: [],
+      comboBoxRemetenteLoading: false,
+
       filtros: {
+        data_inicial_criacao: noventaDiasAtras,
+        data_final_criacao: hoje,
       },
       busca_geral: null,
       filtrosDaBuscaGeral: {
@@ -405,15 +459,19 @@ export default {
         usuario_criacao: null,
         usuario_ultima_alteracao: null,
       },
-      opcoesAtivo: [
+      opcoesStatus: [
         {
-          label: 'Sim',
-          value: 1,
+          label: StatusFreteCotacaoEnum[StatusFreteCotacaoEnumDescricao.EM_ABERTO],
+          value: StatusFreteCotacaoEnumDescricao.EM_ABERTO,
         },
         {
-          label: 'Não',
-          value: 0,
-        }
+          label: StatusFreteCotacaoEnum[StatusFreteCotacaoEnumDescricao.ACEITA],
+          value: StatusFreteCotacaoEnumDescricao.ACEITA,
+        },
+        {
+          label: StatusFreteCotacaoEnum[StatusFreteCotacaoEnumDescricao.REJEITADA],
+          value: StatusFreteCotacaoEnumDescricao.REJEITADA,
+        },
       ],
       datatable: {
         itensSelecionados: [],
@@ -475,7 +533,7 @@ export default {
           {
             title: 'Cidade',
             key: 'cidade_destinatario',
-            width: '300',
+            width: '250',
             align:'start',
             cellProps: {
               class: 'text-start'
@@ -485,7 +543,7 @@ export default {
             title: 'UF',
             key: 'uf_destinatario',
             align: 'center',
-            width: '150'
+            width: '100'
           },
           {
             title: 'R$ Motorista',
@@ -541,6 +599,36 @@ export default {
   },
   methods: {
 
+    filtrarStatusFreteCotacaoEmAberto() {
+      if(this.datatable.carregando) return
+      this.filtros.status = StatusFreteCotacaoEnumDescricao.EM_ABERTO
+      this.buscaFrete()
+    },
+
+    filtrarStatusFreteCotacaoRejeitadas() {
+      if(this.datatable.carregando) return
+      this.filtros.status = StatusFreteCotacaoEnumDescricao.REJEITADA
+      this.buscaFrete()
+    },
+
+    filtrarStatusFreteCotacaoAceitas() {
+      if(this.datatable.carregando) return
+      this.filtros.status = StatusFreteCotacaoEnumDescricao.ACEITA
+      this.buscaFrete()
+    },
+
+    async buscarRemetente() {
+      await buscaListaDeClientesHelper(
+        this.filtros.remetente,
+        (clientes) => {
+          this.listaDeRemetentes = clientes;
+        },
+        (loading) => {
+          this.comboBoxRemetenteLoading = loading;
+        }
+      );
+    },
+
     quantidadeDeFiltrosAplicados() {
       let filtrosAplicadosAntesDaBusca = 0
 
@@ -595,17 +683,22 @@ export default {
     },
 
     limpaFiltros() {
-      this.filtros = {}
+      this.filtros = {
+        data_inicial_criacao: this.noventaDiasAtras,
+        data_final_criacao: this.hoje,
+      }
     },
 
     gerarQuery( page, itemsPerPage, sortBy ) {
       const camposQueADataPrecisaSerConvertida = [
-        'data_cotacao'
+        'data_inicial_criacao',
+        'data_final_criacao'
       ]
 
       let arrayDeFiltros = []
       let arrayDeFiltrosGerais = []
       const filtrosInternos = this.filtros
+      let queryParams = new URLSearchParams();
 
       for (const chave in this.filtrosDaBuscaGeral) {
         if (this.busca_geral != null && this.busca_geral !== '') {
@@ -620,14 +713,15 @@ export default {
       for (const chave in filtrosInternos) {
         if (filtrosInternos[chave] != null && filtrosInternos[chave] !== '') {
           if(camposQueADataPrecisaSerConvertida.includes(chave)) {
-            filtrosInternos[chave] = formatDate(filtrosInternos[chave], 'yyyy-MM-dd')
+            const dataFormatada = formatDate(filtrosInternos[chave], 'yyyy-MM-dd');
+            queryParams.append(chave, dataFormatada);
+            continue
           }
           const filtro = { key: [chave], value: filtrosInternos[chave] };
           arrayDeFiltros.push(filtro)
         }
       }
 
-      let queryParams = new URLSearchParams();
 
       queryParams.append('por_pagina', itemsPerPage);
       queryParams.append('pagina_atual', page);
