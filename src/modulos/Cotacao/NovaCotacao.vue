@@ -317,7 +317,7 @@
 import { format as formatDate } from 'date-fns'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-
+import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 // import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { endpoints } from '@/utils/apiEndpoints';
@@ -629,32 +629,16 @@ export default {
       return formatDate(date, 'dd/MM/yy')
     },
 
-
     async buscarRemetente() {
-      if(this.comboBoxRemetenteLoading) {
-        return;
-      }
-      try {
-
-        const endpoint = endpoints.cliente.listaPorRazaoSocial;
-        const url =  `${endpoint}/${this.coleta_remetente}`
-
-        this.comboBoxRemetenteLoading = true
-
-        const resposta =  await ApiService({
-          method: 'get',
-          url: url,
-        })
-
-        this.listaDeClientes = resposta.data.data
-
-      } catch (error) {
-        const alertStore = useAlertStore()
-        alertStore.addAlert(error?.response?.data?.message, 'error', 3000);
-        return
-      } finally {
-        this.comboBoxRemetenteLoading = false
-      }
+      await buscaListaDeClientesHelper(
+        this.coleta_remetente,
+        (clientes) => {
+          this.listaDeClientes = clientes;
+        },
+        (loading) => {
+          this.comboBoxRemetenteLoading = loading;
+        }
+      );
     },
 
     async buscarDestinatario() {

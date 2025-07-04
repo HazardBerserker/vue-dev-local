@@ -187,25 +187,35 @@
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-text-field
-                  v-model="filtros.meus_fretes_remetente"
-                  label="Remetente"
-                  variant="outlined"
-                  density="compact"
-                    clearable
+                  <v-combobox
+                    :loading="comboBoxRemetenteLoading"
+                    @keyup="buscarRemetente"
+                    v-model="filtros.meus_fretes_remetente"
+                    density="compact"
+                    variant="outlined"
+                    label="Remetente"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeClientes"
+                    item-title="razao_social"
+                    item-value="id_cliente"
                     hide-details
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
 
                 <v-col cols="12" md="3">
-                  <v-text-field
+                  <v-combobox
+                    :loading="comboBoxDestinatarioLoading"
+                    @keyup="buscarDestinatario"
                     v-model="filtros.cte_destinatario"
-                    label="Destinatário"
-                    variant="outlined"
                     density="compact"
-                    clearable
+                    variant="outlined"
+                    label="Destinatário"
+                    placeholder="Comece a digitar..."
+                    :items="listaDeDestinatarios"
+                    item-title="razao_social"
+                    item-value="id_cliente"
                     hide-details
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
 
                 <v-col cols="12" md="2">
@@ -417,6 +427,7 @@ import { inject } from 'vue'
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import MeuFreteDetalhesDialog from '@/components/MenuDoCliente/Embeeded/MeuFreteDetalhesDialog.vue';
+import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 
 export default {
   name: 'CtesScreen',
@@ -441,7 +452,17 @@ export default {
         this.quantidadeDeFiltrosAplicados()
       },
       deep: true
-    }
+    },
+    'filtros.meus_fretes_remetente'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.meus_fretes_remetente = newValue.razao_social
+      }
+    },
+    'filtros.cte_destinatario'(newValue) {
+      if (typeof newValue === 'object') {
+        this.filtros.cte_destinatario = newValue.razao_social
+      }
+    },
   },
   data () {
     const hoje = new Date();
@@ -462,6 +483,14 @@ export default {
       itemSelecionado: {},
       permissao: false,
       propriedadesDoAlertaFixo: null,
+      // combobox
+      listaDeClientes: [],
+      comboBoxRemetenteLoading: false,
+
+      // combobox
+      listaDeDestinatarios: [],
+      comboBoxDestinatarioLoading: false,
+
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
@@ -599,6 +628,30 @@ export default {
   },
   methods: {
 
+    async buscarRemetente() {
+      await buscaListaDeClientesHelper(
+        this.filtros.meus_fretes_remetente,
+        (clientes) => {
+          this.listaDeClientes = clientes;
+        },
+        (loading) => {
+          this.comboBoxRemetenteLoading = loading;
+        }
+      );
+    },
+
+    async buscarDestinatario() {
+      await buscaListaDeClientesHelper(
+        this.filtros.cte_destinatario,
+        (clientes) => {
+          this.listaDeDestinatarios = clientes;
+        },
+        (loading) => {
+          this.comboBoxDestinatarioLoading = loading;
+        }
+      );
+    },
+
     calcularDataComPrazo(dataEmissao, prazoEmDias) {
       if (!dataEmissao || isNaN(prazoEmDias)) return '';
 
@@ -683,8 +736,6 @@ export default {
       let filtrosAplicadosAntesDaBusca = 0
 
       for (let filtro in this.filtros) {
-        console.log(this.filtros[filtro]);
-
         if(this.filtros[filtro] != null) {
           filtrosAplicadosAntesDaBusca += 1
           continue
@@ -820,9 +871,6 @@ export default {
       try {
         const query = this.gerarQuery(this.page, this.itemsPerPage, this.sortBy);
         const url = endpoints.meusFretes.datatable;
-
-        console.log(query);
-
 
         const resposta =  await ApiService({
           method: 'get',
