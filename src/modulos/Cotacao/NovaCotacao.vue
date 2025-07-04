@@ -515,8 +515,6 @@ export default {
         alertStore.addAlert(resposta?.data.message, 'success')
         this.id_frete = resposta?.data?.data.id_frete
         await this.$nextTick();
-        console.log(resposta.data.data);
-
         await this.gerarPDF()
 
       } catch (erro) {

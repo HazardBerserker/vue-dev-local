@@ -123,9 +123,7 @@ export default {
           },
         });
 
-        console.log(resposta);
         const arrayDeitens = resposta?.data?.data
-
 
         arrayDeitens.forEach((item) => {
           if(item.status == 'erro') {

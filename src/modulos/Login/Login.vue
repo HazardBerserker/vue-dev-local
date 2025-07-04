@@ -140,8 +140,6 @@ export default {
         try {
           const resposta = await auth.login({ email: this.email, password: this.senha });
           this.nomeDoUsuarioLogado = resposta.data.data.user_data.nome
-          console.log(resposta);
-
 
           this.estadoDoAcesso = 'sucesso'
           await sleep(700)

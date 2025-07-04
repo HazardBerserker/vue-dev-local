@@ -297,10 +297,6 @@ export default {
 
         const endpoint = `${endpoints.dashboard.dashboardUnificado}?${query}`;
 
-        console.log(endpoint);
-
-
-
         const resposta =  await ApiService({
           method: 'get',
           url: endpoint,
