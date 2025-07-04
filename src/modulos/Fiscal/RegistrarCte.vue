@@ -12,7 +12,7 @@
         color="green-darken-4"
       >
           <v-avatar size="40" class="me-4 bg-white text-green-darken-4">
-              <v-icon>mdi-account</v-icon>
+              <v-icon>mdi-note-check</v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
               <span class="text-body-2 text-white">CTEs Autorizados</span>
@@ -38,7 +38,7 @@
           color="red-darken-4"
       >
           <v-avatar size="40" class="me-4 bg-white text-red-darken-4">
-              <v-icon>mdi-account-off</v-icon>
+              <v-icon>mdi-note-remove</v-icon>
           </v-avatar>
           <div class="d-flex flex-column justify-center">
             <span class="text-body-2 text-white">CTEs Cancelados</span>

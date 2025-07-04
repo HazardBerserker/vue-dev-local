@@ -12,7 +12,7 @@
         color="green-darken-2"
       >
           <v-avatar size="40" class="me-4 bg-white text-green-darken-2">
-              <v-icon>mdi-account</v-icon>
+              <v-icon>mdi-truck-check</v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
               <span class="text-body-2 text-white">Fretes Entregues</span>
@@ -38,7 +38,7 @@
           color="blue-darken-2"
       >
           <v-avatar size="40" class="me-4 bg-white text-blue-darken-2">
-              <v-icon>mdi-account-off</v-icon>
+              <v-icon>mdi-truck-fast</v-icon>
           </v-avatar>
           <div class="d-flex flex-column justify-center">
             <span class="text-body-2 text-white">Fretes em Viagem</span>
