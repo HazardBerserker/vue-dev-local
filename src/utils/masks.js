@@ -46,9 +46,28 @@ export function formataMoeda(valor) {
 export function formatarDataParaInputVuetify(dataString) {
   // dataString: "26/02/2025 00:00:00"
 
-  const [dataParte] = dataString.split(' '); // "26/02/2025"
+  if (typeof dataString !== 'string' || dataString.trim() === '') {
+    return null;
+  }
+
+  // Tenta extrair a parte da data antes do espaço
+  const partes = dataString.split(' ');
+  if (partes.length === 0) {
+    return null;
+  }
+
+  const dataParte = partes[0]; // "26/02/2025"
   const [dia, mes, ano] = dataParte.split('/');
 
-  // Formata para YYYY-MM-DD
-  return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+  // Verifica se dia, mes e ano existem e são strings válidas
+  if (!dia || !mes || !ano) {
+    return null;
+  }
+
+  // Garante que mês e dia tenham 2 dígitos
+  const diaFormatado = dia.padStart(2, '0');
+  const mesFormatado = mes.padStart(2, '0');
+
+  return `${ano}-${mesFormatado}-${diaFormatado}`;
 }
+

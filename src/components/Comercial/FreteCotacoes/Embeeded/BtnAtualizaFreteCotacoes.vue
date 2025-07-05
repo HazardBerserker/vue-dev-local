@@ -218,7 +218,7 @@
           class="image-container elevation-1 rounded-lg pa-1 w-100 ma-auto"
         >
           <v-img
-            :src="imagem_que_sera_exibida"
+            :src="urlTemporaria ? urlTemporaria : imagem_que_sera_exibida"
             class="rounded-lg w-50 ma-auto"
             contain
           />
@@ -244,6 +244,7 @@ import { formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/ma
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
+import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
 
 export default {
     name: 'BtnAtualizaFreteCotacoes',
@@ -262,9 +263,9 @@ export default {
       }
     },
 
-
     data() {
       return {
+        urlTemporaria: null,
         imagem_que_sera_exibida: false,
         imagemVisivel: false,
         formataDataSomenteData,
@@ -378,7 +379,14 @@ export default {
       }
     },
     methods: {
-      toggleImagem() {
+      async toggleImagem() {
+        if(this.imagemVisivel) {
+          this.imagemVisivel = !this.imagemVisivel;
+          return
+        }
+        if(urlEDaS3(this.imagem_que_sera_exibida)) {
+          this.urlTemporaria = await geraUrlTemporariaParaImagemS3(this.imagem_que_sera_exibida)
+        }
         this.imagemVisivel = !this.imagemVisivel;
       },
 
@@ -502,7 +510,7 @@ export default {
         };
 
         appendIfValid('id_frete', this.id_frete);
-        appendIfValid('data_cotacao', this.formatarParaISO(this.data_cotacao));
+        appendIfValid('data_cotacao', this.data_cotacao ? this.formatarParaISO(this.data_cotacao) : null);
         appendIfValid('id_remetente', this.id_remetente);
         appendIfValid('remetente', this.remetente);
         appendIfValid('cnpj_remetente', this.cnpj_remetente);

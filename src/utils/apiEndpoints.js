@@ -22,6 +22,7 @@ export const endpoints = {
     novo: `${URL_BASE}/fretes`,
     atualiza: `${URL_BASE}/fretes`,
     apaga: `${URL_BASE}/fretes`,
+    geraUrlTemporariaParaImagemS3: `${URL_BASE}/fretes/gerar-url-temporaria`,
   },
   cotacaoCriterios: {
     datatable: `${URL_BASE}/cotacao-criterios/datatable`,

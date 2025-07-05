@@ -452,9 +452,6 @@ export default {
           Id_CTe: this.item.cte_vinculado,
         }
 
-        console.log(this.item.entrega_efetiva);
-
-
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
         this.id_remetente = this.item.id_remetente
@@ -509,7 +506,7 @@ export default {
         };
 
         appendIfValid('id_frete', this.id_frete);
-        appendIfValid('data_cotacao', this.formatarParaISO(this.data_cotacao));
+        appendIfValid('data_cotacao', this.data_cotacao ? this.formatarParaISO(this.data_cotacao) : null);
         appendIfValid('id_remetente', this.id_remetente);
         appendIfValid('remetente', this.remetente);
         appendIfValid('cnpj_remetente', this.cnpj_remetente);
