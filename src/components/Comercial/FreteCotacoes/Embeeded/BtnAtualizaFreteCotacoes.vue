@@ -167,31 +167,50 @@
               </template>
               <div class="px-4 pt-6 bg-white py-2">
                 <div class="d-flex ga-4 text-start">
-                  <v-date-input
-                    v-model="entrega_efetiva"
-                    label="Entrega Efetiva:"
-                    prepend-icon=""
-                    density="compact"
-                    prepend-inner-icon="$calendar"
-                    :display-format="format"
-                    placeholder="dd/mm/yy"
-                    clearable
-                    variant="outlined"
-                    :disabled="!modoEdicao"
-                  ></v-date-input>
-                  <v-date-input
-                    v-model="coleta_efetiva"
-                    label="Coleta Efetiva:"
-                    prepend-icon=""
-                    density="compact"
-                    prepend-inner-icon="$calendar"
-                    :display-format="format"
-                    placeholder="dd/mm/yy"
-                    clearable
-                    variant="outlined"
-                    :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
-                  ></v-date-input>
-                  <v-file-input v-model="arquivo_comprovante" accept="image/*" :rules="entrega_efetiva && !imagem_que_sera_exibida ? regraArquivo : []" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" :disabled="!modoEdicao"></v-file-input>
+                  <v-row dense>
+                    <v-col>
+                      <v-date-input
+                        v-model="entrega_efetiva"
+                        label="Entrega Efetiva:"
+                        prepend-icon=""
+                        density="compact"
+                        prepend-inner-icon="$calendar"
+                        :display-format="format"
+                        placeholder="dd/mm/yy"
+                        clearable
+                        variant="outlined"
+                        :disabled="!modoEdicao"
+                      ></v-date-input>
+                    </v-col>
+                    <v-col>
+                      <v-date-input
+                        v-model="coleta_efetiva"
+                        label="Coleta Efetiva:"
+                        prepend-icon=""
+                        density="compact"
+                        prepend-inner-icon="$calendar"
+                        :display-format="format"
+                        placeholder="dd/mm/yy"
+                        clearable
+                        variant="outlined"
+                        :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                      ></v-date-input>
+                    </v-col>
+                    <v-col>
+                      <v-file-input
+                        v-model="arquivos_comprovante"
+                        density="compact"
+                        label="Selecione o(s) comprovantes(s)"
+                        :rules="entrega_efetiva && !imagem_que_sera_exibida ? regrasImagens : []"
+                        accept="image/*"
+                        multiple
+                        show-size
+                        clearable
+                        variant="outlined"
+                        :disabled="!modoEdicao"
+                      />
+                    </v-col>
+                  </v-row>
                 </div>
               </div>
             </v-card>
@@ -201,7 +220,7 @@
       </v-form>
 
       <v-btn
-        v-if="imagem_que_sera_exibida"
+        v-if="imagens.length"
         :color="imagemVisivel ? 'red-darken-1' : 'blue-darken-2'"
         class="rounded-lg hover-scale mb-2"
         variant="flat"
@@ -209,17 +228,20 @@
         @click="toggleImagem"
         size="small"
       >
-        {{ imagemVisivel ? 'Ocultar' : 'Exibir' }} Arquivo do Comprovante
+        {{ imagemVisivel ? 'Ocultar' : 'Exibir' }} {{ imagens.length > 1 ? 'Comprovantes' : 'Comprovante' }}
       </v-btn>
 
       <v-expand-transition>
         <div
           v-if="imagemVisivel"
-          class="image-container elevation-1 rounded-lg pa-1 w-100 ma-auto"
+          class="image-container d-flex flex-wrap justify-center ga-4 elevation-1 rounded-lg pa-2"
         >
           <v-img
-            :src="urlTemporaria ? urlTemporaria : imagem_que_sera_exibida"
-            class="rounded-lg w-50 ma-auto"
+            v-for="(img, index) in imagensVisiveis"
+            :key="index"
+            :src="img"
+            class="rounded-lg"
+            style="max-width: 300px; max-height: 300px;"
             contain
           />
         </div>
@@ -265,9 +287,10 @@ export default {
 
     data() {
       return {
-        urlTemporaria: null,
-        imagem_que_sera_exibida: false,
+        imagem_que_sera_exibida: null,
         imagemVisivel: false,
+        imagensTemporarias: [],
+
         formataDataSomenteData,
         id_frete: null,
         data_cotacao: null,
@@ -300,7 +323,7 @@ export default {
 
         coleta_efetiva: null,
         entrega_efetiva: null,
-        arquivo_comprovante: null,
+        arquivos_comprovante: null,
 
         motorista: null,
         cte: null,
@@ -356,8 +379,11 @@ export default {
           (v) => v !== null && v !== undefined || 'O Campo Ativo é obrigatório',
         ],
 
-        regraArquivo: [
-          (v) => v !== null && v !== undefined || 'O Arquivo é obrigatório quando a Entrega Efetiva esta preenchida',
+        regrasImagens: [
+          (v) => v?.length > 0 || 'Você deve selecionar pelo menos uma imagem',
+          (v) =>
+            v?.every(file => file.type.startsWith('image/')) ||
+            'Todos os arquivos devem ser imagens válidas',
         ],
 
         // Combobox do motorista
@@ -378,18 +404,63 @@ export default {
         modoEdicao: false
       }
     },
+    computed: {
+      imagens() {
+        if (!this.imagem_que_sera_exibida) return []
+        return this.imagem_que_sera_exibida
+          .split(',')
+          .map(i => i.trim())
+          .filter(i => i.length > 0)
+      },
+      imagensVisiveis() {
+        return this.imagensTemporarias.length
+          ? this.imagensTemporarias.map(img => img.urlTemporaria)
+          : this.imagens
+      }
+    },
     methods: {
       async toggleImagem() {
-        if(this.imagemVisivel) {
-          this.imagemVisivel = !this.imagemVisivel;
+        if (this.imagemVisivel) {
+          this.imagemVisivel = false
           return
         }
-        if(urlEDaS3(this.imagem_que_sera_exibida)) {
-          this.urlTemporaria = await geraUrlTemporariaParaImagemS3(this.imagem_que_sera_exibida)
-        }
-        this.imagemVisivel = !this.imagemVisivel;
-      },
 
+        const agora = new Date()
+        const novaLista = []
+
+        const loading = useLoadingStore()
+        loading.show('Carregando imagem...')
+
+        for (const imagem of this.imagens) {
+          if (urlEDaS3(imagem)) {
+            const existente = this.imagensTemporarias.find(i => i.original === imagem)
+
+            const aindaValida = existente && new Date(existente.expiraEm) > agora
+
+            if (aindaValida) {
+              novaLista.push(existente)
+              continue
+            }
+            const novaUrl = await geraUrlTemporariaParaImagemS3(imagem)
+            const novaExpiracao = new Date(agora.getTime() + 10 * 60 * 1000) // +10min
+            novaLista.push({
+              original: imagem,
+              urlTemporaria: novaUrl,
+              expiraEm: novaExpiracao
+            })
+            continue
+          }
+          novaLista.push({
+            original: imagem,
+            urlTemporaria: imagem,
+            expiraEm: null
+          })
+        }
+        loading.hide()
+
+        this.imagensTemporarias = novaLista
+        this.imagemVisivel = true
+      },
       formatLabel(campo) {
         return campo
           .replace(/_/g, ' ')
@@ -428,7 +499,7 @@ export default {
         this.saldo = null
         this.integral = null
         this.obs_financeiro = null
-        this.arquivo_comprovante = null
+        this.arquivos_comprovante = null
         this.entrega_efetiva = null
         this.motorista = null
         this.cte = null
@@ -542,7 +613,11 @@ export default {
 
         appendIfValid('cte_vinculado', this.cte?.Id_CTe);
 
-        appendIfValid('arquivo_comprovante', this.arquivo_comprovante);
+        if (this.arquivos_comprovante.length > 0) {
+        this.arquivos_comprovante.forEach((arquivo) => {
+          formData.append('arquivo_comprovante[]', arquivo)
+        })
+      }
 
         appendIfValid('entrega_efetiva', this.entrega_efetiva ? formatDate(this.entrega_efetiva, 'yyyy-MM-dd') : null);
 
