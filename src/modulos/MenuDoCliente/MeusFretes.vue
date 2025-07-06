@@ -669,41 +669,62 @@ export default {
     },
 
     async baixarComprovante() {
-      const alertStore = useAlertStore()
-      const loading = useLoadingStore()
+      const alertStore = useAlertStore();
+      const loading = useLoadingStore();
+
       try {
-        const urlCompleta = this.itemSelecionado.arquivo_comprovante;
-        const nomeArquivo = urlCompleta.split('/').pop();
+        const rawArquivosConcatenados = this.itemSelecionado.arquivo_comprovante || '';
+
+        // Separa e extrai só o caminho relativo (remove domínio)
+        const caminhosRelativos = rawArquivosConcatenados.split(',').map((urlOuPath)  => {
+          urlOuPath = urlOuPath.trim();
+          try {
+            const url = new URL(urlOuPath);
+            let path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+            // Remove prefixo "storage/" se existir
+            return path.startsWith('storage/') ? path.replace(/^storage\//, '') : path;
+          } catch {
+            // Remove "storage/" mesmo se for path direto
+            return urlOuPath.startsWith('storage/') ? urlOuPath.replace(/^storage\//, '') : urlOuPath;
+          }
+        });
+
+        // Cria uma query string codificada para evitar problemas com vírgulas e barras
+        const params = new URLSearchParams();
+        params.append('files', caminhosRelativos.join(','));
+
         const endpoint = endpoints.meusFretes.baixaComprovante;
 
-        loading.show('Baixando Comprovante...')
+        loading.show('Baixando Comprovante(s)...');
 
-        const resposta =  await ApiService({
+        const resposta = await ApiService({
           method: 'get',
-          url: `${endpoint}/${nomeArquivo}`,
-          responseType: 'blob'
-        })
+          url: `${endpoint}?${params.toString()}`,
+          responseType: 'blob',
+        });
+
+        // Nome do arquivo para download: zip com timestamp se múltiplos, ou nome único
+        const nomeArquivoParaDownload = caminhosRelativos.length > 1
+          ? `comprovantes_${new Date().toISOString().slice(0,19).replace(/[:T]/g, '_')}.zip`
+          : caminhosRelativos[0].split('/').pop();
 
         const urlBlob = window.URL.createObjectURL(new Blob([resposta.data]));
 
-        // Cria o link temporário para download
         const link = document.createElement('a');
         link.href = urlBlob;
-        link.setAttribute('download', nomeArquivo);
+        link.setAttribute('download', nomeArquivoParaDownload);
 
-        // Anexa o link ao DOM, dispara o clique e remove o link
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        // Libera o objeto URL para liberar memória
         window.URL.revokeObjectURL(urlBlob);
 
-        alertStore.addAlert('Comprovante Baixado com Sucesso!', 'success')
+        alertStore.addAlert('Comprovante(s) Baixado(s) com Sucesso!', 'success');
       } catch (error) {
-        alertStore.addAlert(error?.response?.data?.message, 'error')
+        alertStore.addAlert(error?.response?.data?.message || 'Erro ao baixar comprovante', 'error');
       } finally {
-        loading.hide()
+        loading.hide();
       }
     },
 
