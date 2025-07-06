@@ -61,7 +61,6 @@
                   v-bind="props"
                   class="w-100 animated-gradient"
                   :color=" !isHovering ? 'redNeveah' : 'orange-accent-4'"
-                  @click="login"
                 >
                   <v-scroll-y-reverse-transition mode="out-in">
                     <template v-if="estadoDoAcesso === 'carregando'">
