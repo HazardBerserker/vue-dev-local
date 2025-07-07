@@ -11,6 +11,7 @@ import money from 'v-money3'
 import * as Highcharts from 'highcharts/highmaps';
 import HighchartsVue from 'highcharts-vue';
 import mapData from '@highcharts/map-collection/countries/br/br-all.geo.json';
+import { hydrationPlugin } from './stores/hydratationPlugin'
 // Inicializa o módulo
 Highcharts.setOptions({
   lang: {
@@ -27,6 +28,8 @@ Highcharts.maps['countries/br/br-all'] = mapData;
 // GERENCIAMENTO DO ESTADO
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
+pinia.use(hydrationPlugin)
+
 const app = createApp(App)
 
 // diretivas

@@ -6,7 +6,8 @@ import { useLoadingStore } from './loading'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    returnUrl: null
+    returnUrl: null,
+    isHydrated: false // <- nova flag
   }),
   persist: true,
 
@@ -17,18 +18,15 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(credentials) {
       try {
-        // Obtém o cookie XSRF-TOKEN necessário para autenticação via cookie
         await ApiService.get('/sanctum/csrf-cookie', {
           baseURL: `${import.meta.env.VITE_API_BASE_URL}`,
           withCredentials: true
         })
 
-        // Login com credenciais (armazenará o cookie de sessão se sucesso)
         const res = await ApiService.post('/login', credentials)
 
         if (res.status === 200 && res.data.success && res.data.data) {
           const { user_data } = res.data.data
-
           this.user = user_data
           this.returnUrl = null
           return res
@@ -51,6 +49,6 @@ export const useAuthStore = defineStore('auth', {
         router.push({ name: 'login' })
         loading.hide()
       }
-    },
+    }
   }
 })

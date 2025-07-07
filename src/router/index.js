@@ -85,14 +85,21 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const auth = useAuthStore()
+
+  // Aguarda até que o estado seja restaurado (máx: 100ms)
+  if (!auth.isHydrated) {
+    await new Promise(resolve => setTimeout(resolve, 10))
+    if (!auth.isHydrated) {
+      return false // cancela navegação e aguarda nova tentativa
+    }
+  }
+
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
-    // redireciona ao login e armazena rota desejada
     auth.returnUrl = to.fullPath
     return { name: 'login' }
   }
 })
-
 
 export default router
