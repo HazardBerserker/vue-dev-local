@@ -227,14 +227,17 @@
 
               <v-row dense>
                 <v-col cols="12" md="2">
-                  <v-text-field
+                  <v-select
                     v-model="filtros.cte_uf_destinatario"
-                    label="UF Destino"
                     variant="outlined"
                     density="compact"
-                    clearable
+                    :items="estadosBrasileiros"
+                    label="UF Destino"
+                    item-value="value"
+                    item-title="text"
                     hide-details
-                  ></v-text-field>
+                    clearable
+                  ></v-select>
                 </v-col>
 
                 <v-col cols="12" md="2">
@@ -423,6 +426,7 @@ import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import MeuFreteDetalhesDialog from '@/components/MenuDoCliente/Embeeded/MeuFreteDetalhesDialog.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
+import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
 export default {
   name: 'CtesScreen',
@@ -460,6 +464,7 @@ export default {
     noventaDiasAtras.setDate(hoje.getDate() - 90);
 
     return {
+      estadosBrasileiros,
       hoje,
       noventaDiasAtras,
       formataCNPJ,
@@ -934,7 +939,7 @@ export default {
       const buffer = await workbook.xlsx.writeBuffer();
 
       // Salvando
-      saveAs(new Blob([buffer]), 'ctes.xlsx');
+      saveAs(new Blob([buffer]), 'meus-fretes.xlsx');
     },
 
     regraPintaLinha(item) {

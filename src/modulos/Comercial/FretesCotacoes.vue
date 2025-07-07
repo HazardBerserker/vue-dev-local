@@ -134,14 +134,18 @@
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <v-text-field
+                  <v-select
                     v-model="filtros.uf_destinatario"
-                    label="UF Destinatário"
                     variant="outlined"
                     density="compact"
-                    clearable
+                    :items="estadosBrasileiros"
+                    label="UF Destinatário"
+                    item-value="value"
+                    item-title="text"
                     hide-details
-                  ></v-text-field>
+                    clearable
+                  >
+                  </v-select>
                 </v-col>
               </v-row>
 
@@ -388,6 +392,7 @@ import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 import { SimENaoEnum } from '@/Enums/SimENaoEnum';
+import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
 export default {
   name: 'FretesCotacoes',
@@ -421,6 +426,7 @@ export default {
     noventaDiasAtras.setDate(hoje.getDate() - 90);
 
     return {
+      estadosBrasileiros,
       hoje,
       noventaDiasAtras,
       formataData,

@@ -203,14 +203,18 @@
 
               <v-row dense>
                 <v-col cols="12" md="2">
-                  <v-text-field
+                  <v-select
                     v-model="filtros.dest_UF"
-                    label="UF Destinatário"
                     variant="outlined"
                     density="compact"
+                    :items="estadosBrasileiros"
+                    label="UF Destinatário"
+                    item-value="value"
+                    item-title="text"
                     clearable
                     hide-details
-                  ></v-text-field>
+                  >
+                  </v-select>
                 </v-col>
 
                 <v-col cols="12" md="3">
@@ -377,6 +381,7 @@ import { inject } from 'vue'
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
+import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
 export default {
   name: 'CtesScreen',
@@ -415,6 +420,7 @@ export default {
     noventaDiasAtras.setDate(hoje.getDate() - 90);
 
     return {
+      estadosBrasileiros,
       hoje,
       noventaDiasAtras,
       formataCEP,

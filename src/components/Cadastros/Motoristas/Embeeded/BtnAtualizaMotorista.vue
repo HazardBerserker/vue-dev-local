@@ -79,7 +79,17 @@
                   <v-text-field variant="outlined" label="Chave Pix" density="comfortable" v-model="pix" :rules="regraPix" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
-                  <InputText label="UF" v-model="uf_residencia" :rules="regraUF" counter="2"/>
+                  <v-select
+                    v-model="uf_residencia"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="estadosBrasileiros"
+                    label="UF"
+                    item-value="value"
+                    item-title="text"
+                    :rules="regraUF"
+                    clearable>
+                  </v-select>
                 </v-col>
               </v-row>
               <v-row class="mb-3">
@@ -166,8 +176,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
-// import { useAlertStore } from '@/stores/alertStore'
-// import ApiService from '@/services/ApiService.js';
+import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
 export default {
   name: 'BtnCreateMotorista',
@@ -187,6 +196,7 @@ export default {
   },
   data() {
     return {
+      estadosBrasileiros,
       numeroDeErrosFormDados: 0,
       numeroDeErrosFormArquivos: 0,
       tab: null,

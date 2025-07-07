@@ -60,15 +60,18 @@
                       </span>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field
-                      v-model="filtros.uf"
-                        label="UF"
+                      <v-select
+                        v-model="filtros.uf"
                         variant="outlined"
                         density="compact"
+                        :items="estadosBrasileiros"
+                        label="UF"
+                        item-value="value"
+                        item-title="text"
                         clearable
-                        placeholder="Busca por UF..."
                         hide-details
-                      ></v-text-field>
+                      >
+                      </v-select>
                     </v-col>
                     <v-col cols="12">
                       <v-combobox
@@ -204,6 +207,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { format } from 'date-fns';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
+import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
 export default {
   name: 'DashboardView',
@@ -238,6 +242,7 @@ export default {
   },
   data() {
     return {
+      estadosBrasileiros,
       mostrarFiltros: false,
       filtrosAplicadosAntesDaBusca: 0,
       filtrosAplicadosDepoisDaBusca: 0,

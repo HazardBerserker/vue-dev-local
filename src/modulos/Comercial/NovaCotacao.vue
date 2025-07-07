@@ -71,7 +71,19 @@
               <v-text-field v-model="coleta_cidade" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Cidade" readonly bg-color="white" placeholder="Digite a cidade"></v-text-field>
             </v-col>
             <v-col cols="4">
-              <v-text-field v-model="coleta_uf" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="UF" readonly bg-color="white" placeholder="Digite o UF"></v-text-field>
+              <v-select
+                v-model="coleta_uf"
+                variant="outlined"
+                density="compact"
+                :items="estadosBrasileiros"
+                label="UF"
+                item-value="value"
+                item-title="text"
+                :rules="regraGeralCampoObrigatorio"
+                readonly
+                bg-color="white"
+              >
+              </v-select>
             </v-col>
           </v-row>
         </v-card>
@@ -108,7 +120,18 @@
               <v-text-field v-model="cidade_destinatario" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Cidade"  bg-color="white" placeholder="Digite a cidade"></v-text-field>
             </v-col>
             <v-col cols="4">
-              <InputText label="UF" v-model="uf_destinatario" :rules="regraUFDestinatario" :clearable="false"  counter="2" density="compact" bg-color="white"/>
+              <v-select
+                v-model="uf_destinatario"
+                variant="outlined"
+                density="compact"
+                :items="estadosBrasileiros"
+                label="UF"
+                item-value="value"
+                item-title="text"
+                :rules="regraUFDestinatario"
+                clearable
+              >
+              </v-select>
             </v-col>
           </v-row>
           <v-row>
@@ -318,7 +341,6 @@ import { format as formatDate } from 'date-fns'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
-// import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { endpoints } from '@/utils/apiEndpoints';
 import ApiService from '@/services/ApiService';
@@ -327,7 +349,7 @@ import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { formataCNPJ, formataCEP } from '@/utils/masks';
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
-// import { endpoints } from '@/utils/apiEndpoints';
+import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
 export default {
   components: {
@@ -356,6 +378,7 @@ export default {
   },
   data() {
     return {
+      estadosBrasileiros,
       formataCNPJ,
       formataCEP,
       permissao: false,
@@ -374,7 +397,7 @@ export default {
       coleta_cnpj: '',
       coleta_numero: '',
       coleta_cidade: '',
-      coleta_uf: '',
+      coleta_uf: null,
       coleta_cep: '',
       coleta_endereco: '',
 
@@ -385,7 +408,7 @@ export default {
       endereco_destinatario: '',
       numero_destinatario: '',
       cidade_destinatario: '',
-      uf_destinatario: '',
+      uf_destinatario: null,
       prazo_entrega: '',
       observacoes: '',
 
