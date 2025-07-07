@@ -152,7 +152,7 @@ export default {
           await sleep(700)
           loading.show('Redirecionando...')
           await sleep(1000)
-          router.push('/')
+          router.push('/menu-do-cliente/meus-fretes')
 
         } catch (error) {
           this.estadoDoAcesso = 'falhou'

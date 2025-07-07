@@ -16,6 +16,10 @@ AuthLayout
 
 const routes = [
   {
+    path: '/',
+    redirect: '/menu-do-cliente/meus-fretes'  // redireciona ao acessar "/"
+  },
+  {
     path: '/login',
     name: 'login',
     component: Login
