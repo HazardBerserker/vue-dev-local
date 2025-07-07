@@ -12,13 +12,7 @@ import Dashboard from '@/modulos/Dashboard/Dashboard.vue'
 import MeusFretes from '@/modulos/MenuDoCliente/MeusFretes.vue'
 import NotFound from '@/components/NotFound/NotFound.vue'
 
-AuthLayout
-
 const routes = [
-  {
-    path: '/',
-    redirect: '/menu-do-cliente/meus-fretes'  // redireciona ao acessar "/"
-  },
   {
     path: '/login',
     name: 'login',
@@ -29,6 +23,10 @@ const routes = [
     component: AuthLayout,
     meta: { requiresAuth: true },
     children: [
+      {
+        path: '',
+        redirect: 'menu-do-cliente/meus-fretes'  // agora redireciona dentro do contexto autenticado
+      },
       {
         path: 'dashboard/metricas-gerais',
         name: 'Dashboard',

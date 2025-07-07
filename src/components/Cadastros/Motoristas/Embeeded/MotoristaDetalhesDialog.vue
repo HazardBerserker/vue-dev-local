@@ -43,7 +43,7 @@
                 class="image-container elevation-1 rounded-lg pa-1"
               >
                 <v-img
-                  :src="url"
+                  :src="imagensTemporarias[campo]"
                   class="rounded-lg"
                   max-width="100%"
                   max-height="250"
@@ -60,6 +60,8 @@
 
 <script>
 import { SimENaoEnum } from '@/Enums/SimENaoEnum';
+import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
+import { useLoadingStore } from '@/stores/loading';
 
 export default {
   name: 'MotoristaDetalhesDialog',
@@ -74,6 +76,7 @@ export default {
         arquivo_antt: false,
         arquivo_foto_veiculo: false,
       },
+      imagensTemporarias: {},
     };
   },
   computed: {
@@ -116,8 +119,39 @@ export default {
     fechar() {
       this.open = false;
     },
-    toggleImagem(campo) {
-      this.imagensVisiveis[campo] = !this.imagensVisiveis[campo];
+    async toggleImagem(campo) {
+      const estavaVisivel = this.imagensVisiveis[campo];
+
+      // Se já estava visível, apenas oculta
+      if (estavaVisivel) {
+        this.imagensVisiveis[campo] = false;
+        return;
+      }
+
+      // Se vai exibir e ainda não tem URL resolvida
+      if (!this.imagensTemporarias[campo]) {
+        const loading = useLoadingStore();
+        loading.show('Carregando imagem...');
+
+        await this.carregarUrlTemporaria(campo);
+
+        loading.hide();
+      }
+
+      this.imagensVisiveis[campo] = true;
+    },
+    async carregarUrlTemporaria(campo) {
+      const urlOriginal = this.camposImagem[campo];
+
+      if (!urlOriginal) return;
+
+      if (!urlEDaS3(urlOriginal)) {
+        this.imagensTemporarias[campo] = urlOriginal;
+        return;
+      }
+
+      const novaUrl = await geraUrlTemporariaParaImagemS3(urlOriginal);
+      this.imagensTemporarias[campo] = novaUrl;
     },
     formatLabel(campo) {
       return campo
