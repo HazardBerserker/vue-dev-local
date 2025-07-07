@@ -10,6 +10,7 @@ import PagamentoMotoristas from '@/modulos/Financeiro/PagamentoMotoristas.vue'
 import RegistrarCte from '@/modulos/Fiscal/RegistrarCte.vue'
 import Dashboard from '@/modulos/Dashboard/Dashboard.vue'
 import MeusFretes from '@/modulos/MenuDoCliente/MeusFretes.vue'
+import NotFound from '@/components/NotFound/NotFound.vue'
 
 AuthLayout
 
@@ -25,7 +26,7 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'dashboard',
+        path: 'dashboard/metricas-gerais',
         name: 'Dashboard',
         component: Dashboard
       },
@@ -66,13 +67,11 @@ const routes = [
       },
     ]
   },
-
-
-  // {
-  //   path: '/:pathMatch(.*)*',
-  //   name: 'not-found',
-  //   component: () => import('../views/NotFound.vue')
-  // }
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: NotFound
+  }
 ]
 
 

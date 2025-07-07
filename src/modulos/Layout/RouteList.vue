@@ -138,7 +138,7 @@ export default {
           rotasFilhas: [
             {
                 nome: 'Métricas Gerais',
-                caminho: '/dashboard',
+                caminho: '/dashboard/metricas-gerais',
                 icone: 'mdi-chart-box'
             },
           ],
