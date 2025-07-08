@@ -1,5 +1,6 @@
 import router from '@/router'
 import { useAlertStore } from '@/stores/alertStore';
+import { useAuthStore } from '@/stores/auth';
 import { sleep } from '@/utils/sleep';
 import axios from 'axios'
 
@@ -16,6 +17,8 @@ const ApiService = axios.create({
 });
 
 async function usuarioNaoAutenticado() {
+  const authStore = useAuthStore()
+  authStore.user = null
   router.push({ name: 'login' })
   await sleep(500);
   useAlertStore().addAlert('Não autenticado. Faça login novamente', 'warning', 4000)
