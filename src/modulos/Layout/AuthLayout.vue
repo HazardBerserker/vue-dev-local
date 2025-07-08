@@ -2,7 +2,7 @@
   <v-app>
       <RouteList/>
 
-      <AppBarHeader @onLogout="logout"/>
+      <AppBarHeader @onLogout="logout" @onEditaPerfil="openEditaPerfilDialog"/>
 
       <v-main class="height-screen d-flex align-center justify-center">
          <v-container class="main" fluid>
@@ -13,6 +13,8 @@
             </router-view>
          </v-container>
       </v-main>
+
+      <EditarPerfilUsuario ref="editaPerfilDialog"/>
   </v-app>
 </template>
 
@@ -20,16 +22,21 @@
 import RouteList from '@/modulos/Layout/RouteList.vue';
 import AppBarHeader from '@/modulos/Layout/AppBarHeader.vue';
 import { useAuthStore } from '@/stores/auth'
+import EditarPerfilUsuario from '@/components/Usuario/Embeeded/EditarPerfilUsuario.vue';
 
 export default {
    components: {
       RouteList,
-      AppBarHeader
+      AppBarHeader,
+      EditarPerfilUsuario
    },
    methods: {
+      openEditaPerfilDialog() {
+        this.$refs.editaPerfilDialog.openDialog()
+      },
       logout() {
-         const auth = useAuthStore()
-         auth.logout()
+        const auth = useAuthStore()
+        auth.logout()
       }
    }
 }
