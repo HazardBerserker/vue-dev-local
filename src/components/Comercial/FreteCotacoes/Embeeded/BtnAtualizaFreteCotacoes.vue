@@ -431,32 +431,35 @@ export default {
         const loading = useLoadingStore()
         loading.show('Carregando imagem...')
 
-        for (const imagem of this.imagens) {
-          if (urlEDaS3(imagem)) {
-            const existente = this.imagensTemporarias.find(i => i.original === imagem)
+        try {
+            for (const imagem of this.imagens) {
+            if (urlEDaS3(imagem)) {
+              const existente = this.imagensTemporarias.find(i => i.original === imagem)
 
-            const aindaValida = existente && new Date(existente.expiraEm) > agora
+              const aindaValida = existente && new Date(existente.expiraEm) > agora
 
-            if (aindaValida) {
-              novaLista.push(existente)
+              if (aindaValida) {
+                novaLista.push(existente)
+                continue
+              }
+              const novaUrl = await geraUrlTemporariaParaImagemS3(imagem)
+              const novaExpiracao = new Date(agora.getTime() + 10 * 60 * 1000) // +10min
+              novaLista.push({
+                original: imagem,
+                urlTemporaria: novaUrl,
+                expiraEm: novaExpiracao
+              })
               continue
             }
-            const novaUrl = await geraUrlTemporariaParaImagemS3(imagem)
-            const novaExpiracao = new Date(agora.getTime() + 10 * 60 * 1000) // +10min
             novaLista.push({
               original: imagem,
-              urlTemporaria: novaUrl,
-              expiraEm: novaExpiracao
+              urlTemporaria: imagem,
+              expiraEm: null
             })
-            continue
           }
-          novaLista.push({
-            original: imagem,
-            urlTemporaria: imagem,
-            expiraEm: null
-          })
+        } finally {
+          loading.hide()
         }
-        loading.hide()
 
         this.imagensTemporarias = novaLista
         this.imagemVisivel = true

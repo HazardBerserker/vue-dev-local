@@ -680,12 +680,13 @@ export default {
       try {
         const rawArquivosConcatenados = this.itemSelecionado.arquivo_comprovante || '';
 
-        // Separa e extrai só o caminho relativo (remove domínio)
+        // pegando todos os caminhos e usamos split para caso haja mais de um
         const caminhosRelativos = rawArquivosConcatenados.split(',').map((urlOuPath)  => {
           urlOuPath = urlOuPath.trim();
           try {
             const url = new URL(urlOuPath);
             let path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+            
             // Remove prefixo "storage/" se existir
             return path.startsWith('storage/') ? path.replace(/^storage\//, '') : path;
           } catch {
@@ -700,7 +701,7 @@ export default {
 
         const endpoint = endpoints.meusFretes.baixaComprovante;
 
-        loading.show('Baixando Comprovante(s)...');
+        loading.show('Baixando...');
 
         const resposta = await ApiService({
           method: 'get',

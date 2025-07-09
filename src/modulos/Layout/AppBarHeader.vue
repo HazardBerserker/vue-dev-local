@@ -27,7 +27,7 @@
 
         <v-list class="mt-3 px-2" density="compact" theme="dark"  slim >
           <v-list-item
-            active-color="white"
+            color="white"
             @click="emitEditaPerfil"
           >
             <template v-slot:prepend>

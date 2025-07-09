@@ -65,15 +65,9 @@ export default {
     abrir(frete) {
       this.frete = frete;
       this.open = true;
-      Object.keys(this.imagensVisiveis).forEach((campo) => {
-        this.imagensVisiveis[campo] = false;
-      });
     },
     fechar() {
       this.open = false;
-    },
-    toggleImagem(campo) {
-      this.imagensVisiveis[campo] = !this.imagensVisiveis[campo];
     },
     formatLabel(campo) {
       return campo
