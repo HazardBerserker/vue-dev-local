@@ -136,23 +136,193 @@
             <v-form ref="formArquivos">
               <v-row>
                 <v-col>
-                  <v-file-input v-model="arquivo_cnh" accept="image/*" :rules="regraArquivo" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar CNH" variant="outlined"></v-file-input>
+                  <v-file-input
+                    v-model="arquivo_cnh"
+                    accept="image/*"
+                    density="comfortable"
+                    clearable
+                    prepend-icon="mdi-camera"
+                    label="Selecionar CNH"
+                    variant="outlined"
+                    :show-size="1000"
+                    color="redNeveah"
+                    placeholder="Apenas imagens são válidas"
+                    counter
+                    :rules="regraArquivo"
+                  >
+                    <template v-slot:selection="{ fileNames }">
+                      <template v-for="(fileName, index) in fileNames" :key="fileName">
+                        <v-chip
+                          v-if="index < 2"
+                          class="me-2"
+                          color="redNeveah"
+                          size="small"
+                          label
+                        >
+                          {{ fileName }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline text-grey-darken-3 mx-2"
+                        >
+                          +{{ arquivo_cnh.length - 2 }} Arquivo(s)
+                        </span>
+                      </template>
+                    </template>
+                  </v-file-input>
                 </v-col>
                 <v-col>
-                  <v-file-input v-model="arquivo_comprovante_residencia" accept="image/*" :rules="regraArquivo" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar Comprovante de Residência" variant="outlined"></v-file-input>
+                  <v-file-input
+                    v-model="arquivo_comprovante_residencia"
+                    accept="image/*"
+                    density="comfortable"
+                    clearable
+                    prepend-icon="mdi-camera"
+                    label="Selecionar Comprovante de Residência"
+                    variant="outlined"
+                    :show-size="1000"
+                    color="redNeveah"
+                    placeholder="Apenas imagens são válidas"
+                    counter
+                    :rules="regraArquivo"
+                  >
+                    <template v-slot:selection="{ fileNames }">
+                      <template v-for="(fileName, index) in fileNames" :key="fileName">
+                        <v-chip
+                          v-if="index < 2"
+                          class="me-2"
+                          color="redNeveah"
+                          size="small"
+                          label
+                        >
+                          {{ fileName }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline text-grey-darken-3 mx-2"
+                        >
+                          +{{ arquivo_comprovante_residencia.length - 2 }} Arquivo(s)
+                        </span>
+                      </template>
+                    </template>
+                  </v-file-input>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-file-input v-model="arquivo_documento_carro" accept="image/*" :rules="regraArquivo" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Documento do Carro" variant="outlined"></v-file-input>
+                  <v-file-input
+                    v-model="arquivo_documento_carro"
+                    accept="image/*"
+                    density="comfortable"
+                    clearable
+                    prepend-icon="mdi-camera"
+                    label="Selecionar Documento do Carro"
+                    variant="outlined"
+                    :show-size="1000"
+                    color="redNeveah"
+                    placeholder="Apenas imagens são válidas"
+                    counter
+                    :rules="regraArquivo"
+                  >
+                    <template v-slot:selection="{ fileNames }">
+                      <template v-for="(fileName, index) in fileNames" :key="fileName">
+                        <v-chip
+                          v-if="index < 2"
+                          class="me-2"
+                          color="redNeveah"
+                          size="small"
+                          label
+                        >
+                          {{ fileName }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline text-grey-darken-3 mx-2"
+                        >
+                          +{{ arquivo_documento_carro.length - 2 }} Arquivo(s)
+                        </span>
+                      </template>
+                    </template>
+                  </v-file-input>
                 </v-col>
                 <v-col>
-                  <v-file-input v-model="arquivo_antt" accept="image/*" :rules="regraArquivo" density="comfortable" clearable  prepend-icon="mdi-camera" label="Selecionar ANTT" variant="outlined"></v-file-input>
+                  <v-file-input
+                    v-model="arquivo_antt"
+                    accept="image/*"
+                    density="comfortable"
+                    clearable
+                    prepend-icon="mdi-camera"
+                    label="Selecionar ANTT"
+                    variant="outlined"
+                    :show-size="1000"
+                    color="redNeveah"
+                    placeholder="Apenas imagens são válidas"
+                    counter
+                    :rules="regraArquivo"
+                  >
+                    <template v-slot:selection="{ fileNames }">
+                      <template v-for="(fileName, index) in fileNames" :key="fileName">
+                        <v-chip
+                          v-if="index < 2"
+                          class="me-2"
+                          color="redNeveah"
+                          size="small"
+                          label
+                        >
+                          {{ fileName }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline text-grey-darken-3 mx-2"
+                        >
+                          +{{ arquivo_antt.length - 2 }} Arquivo(s)
+                        </span>
+                      </template>
+                    </template>
+                  </v-file-input>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-file-input v-model="arquivo_foto_veiculo" accept="image/*" :rules="regraArquivo" density="comfortable" clearable prepend-icon="mdi-camera" label="Selecionar Foto do Veículo" variant="outlined"></v-file-input>
+                  <v-file-input
+                    v-model="arquivo_foto_veiculo"
+                    accept="image/*"
+                    density="comfortable"
+                    clearable
+                    prepend-icon="mdi-camera"
+                    label="Selecionar Foto do Veículo"
+                    variant="outlined"
+                    :show-size="1000"
+                    color="redNeveah"
+                    placeholder="Apenas imagens são válidas"
+                    counter
+                    :rules="regraArquivo"
+                  >
+                    <template v-slot:selection="{ fileNames }">
+                      <template v-for="(fileName, index) in fileNames" :key="fileName">
+                        <v-chip
+                          v-if="index < 2"
+                          class="me-2"
+                          color="redNeveah"
+                          size="small"
+                          label
+                        >
+                          {{ fileName }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline text-grey-darken-3 mx-2"
+                        >
+                          +{{ arquivo_foto_veiculo.length - 2 }} Arquivo(s)
+                        </span>
+                      </template>
+                    </template>
+                  </v-file-input>
                 </v-col>
               </v-row>
             </v-form>
@@ -162,7 +332,7 @@
       </v-tabs-window>
 
       <template #action-button>
-        <v-btn variant="flat" color="green" rounded="pill" @click="criaMotorista">Criar Motorista</v-btn>
+        <v-btn variant="flat" color="green" rounded="pill" @click="criaMotorista">Criar</v-btn>
       </template>
     </DialogCreateCadastro>
   </div>

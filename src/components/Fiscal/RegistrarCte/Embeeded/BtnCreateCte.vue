@@ -19,6 +19,7 @@
 
       <template #subtitle>
         <span>Envie apenas arquivos XML para criação do(s) CTE(s)</span>
+        <span class="text-body-2 text-grey"><em>Máximo de 200 XMLs por envio</em></span>
       </template>
 
       <v-form ref="form">
@@ -28,12 +29,39 @@
               <v-col cols="12" class="py-0">
                 <v-file-input
                   v-model="arquivosXml"
-                  label="Selecione o(s) arquivo(s) XML(s)"
-                  :rules="regrasXml"
                   accept=".xml"
                   multiple
-                  show-size
-                />
+                  density="comfortable"
+                  clearable
+                  label="Selecione o(s) arquivo(s) XML(s)"
+                  variant="outlined"
+                  :show-size="1000"
+                  color="redNeveah"
+                  placeholder="Apenas imagens são válidas"
+                  counter
+                  :rules="regrasXml"
+                >
+                  <template v-slot:selection="{ fileNames }">
+                    <template v-for="(fileName, index) in fileNames" :key="fileName">
+                      <v-chip
+                        v-if="index < 2"
+                        class="me-2"
+                        color="redNeveah"
+                        size="small"
+                        label
+                      >
+                        {{ fileName }}
+                      </v-chip>
+
+                      <span
+                        v-else-if="index === 2"
+                        class="text-overline text-grey-darken-3 mx-2"
+                      >
+                        +{{ arquivosXml.length - 2 }} Arquivo(s)
+                      </span>
+                    </template>
+                  </template>
+                </v-file-input>
               </v-col>
             </v-row>
           </v-col>
@@ -62,8 +90,17 @@ export default {
   },
   data() {
     return {
+      limite: 200,
       arquivosXml: null,
       regrasXml: [
+        (files) => {
+          if (Array.isArray(files) && files.length > this.limite) {
+            const alertStore = useAlertStore()
+            alertStore.addAlert(`Você só pode selecionar até ${this.limite} arquivos.`, 'warning')
+            return `Você só pode selecionar até ${this.limite} arquivos.`
+          }
+          return true
+        },
         (v) => v?.length > 0 || 'Você deve selecionar pelo menos um arquivo XML',
         (v) =>
           v?.every(file => file.name.endsWith('.xml')) ||

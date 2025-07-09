@@ -199,16 +199,41 @@
                     <v-col>
                       <v-file-input
                         v-model="arquivos_comprovante"
-                        density="compact"
-                        label="Selecione o(s) comprovantes(s)"
-                        :rules="entrega_efetiva && !imagem_que_sera_exibida ? regrasImagens : []"
                         accept="image/*"
                         multiple
-                        show-size
+                        density="comfortable"
                         clearable
+                        prepend-icon="mdi-camera"
+                        label="Selecione o(s) comprovantes(s)"
                         variant="outlined"
+                        :show-size="1000"
+                        color="redNeveah"
+                        placeholder="Apenas imagens são válidas"
+                        counter
                         :disabled="!modoEdicao"
-                      />
+                        :rules="entrega_efetiva && !imagem_que_sera_exibida ? regrasImagens : []"
+                      >
+                        <template v-slot:selection="{ fileNames }">
+                          <template v-for="(fileName, index) in fileNames" :key="fileName">
+                            <v-chip
+                              v-if="index < 2"
+                              class="me-2"
+                              color="redNeveah"
+                              size="small"
+                              label
+                            >
+                              {{ fileName }}
+                            </v-chip>
+
+                            <span
+                              v-else-if="index === 2"
+                              class="text-overline text-grey-darken-3 mx-2"
+                            >
+                              +{{ arquivos_comprovante.length - 2 }} Arquivo(s)
+                            </span>
+                          </template>
+                        </template>
+                      </v-file-input>
                     </v-col>
                   </v-row>
                 </div>

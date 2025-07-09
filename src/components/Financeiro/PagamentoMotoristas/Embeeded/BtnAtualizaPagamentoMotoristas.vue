@@ -196,7 +196,42 @@
                     variant="outlined"
                     disabled
                   ></v-date-input>
-                  <v-file-input v-model="arquivo_comprovante" accept="image/*" density="compact" clearable prepend-icon="mdi-camera" label="Selecionar Comprovantes:" variant="outlined" disabled></v-file-input>
+                  <v-file-input
+                    v-model="arquivo_comprovante"
+                    accept="image/*"
+                    multiple
+                    density="comfortable"
+                    clearable
+                    prepend-icon="mdi-camera"
+                    label="Selecione o(s) comprovantes(s)"
+                    variant="outlined"
+                    :show-size="1000"
+                    color="redNeveah"
+                    placeholder="Apenas imagens são válidas"
+                    counter
+                    disabled
+                  >
+                    <template v-slot:selection="{ fileNames }">
+                      <template v-for="(fileName, index) in fileNames" :key="fileName">
+                        <v-chip
+                          v-if="index < 2"
+                          class="me-2"
+                          color="redNeveah"
+                          size="small"
+                          label
+                        >
+                          {{ fileName }}
+                        </v-chip>
+
+                        <span
+                          v-else-if="index === 2"
+                          class="text-overline text-grey-darken-3 mx-2"
+                        >
+                          +{{ arquivo_comprovante.length - 2 }} Arquivo(s)
+                        </span>
+                      </template>
+                    </template>
+                  </v-file-input>
                 </div>
               </div>
             </v-card>

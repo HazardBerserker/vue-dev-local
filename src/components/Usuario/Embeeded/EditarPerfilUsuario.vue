@@ -1,12 +1,5 @@
 <template>
   <v-dialog v-model="dialogIsOpen" max-width="800px" persistent>
-    <template #activator="{ props }">
-      <v-btn color="primary" v-bind="props" @click="openDialog">
-        <v-icon left>mdi-account-cog</v-icon>
-        Editar Perfil
-      </v-btn>
-    </template>
-
     <v-card>
       <v-toolbar flat color="primary" dark>
         <v-toolbar-title>Meu Perfil</v-toolbar-title>
