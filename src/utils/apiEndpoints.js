@@ -45,4 +45,8 @@ export const endpoints = {
     datatable: `${URL_BASE}/meus-fretes/datatable`,
     baixaComprovante: `${URL_BASE}/meus-fretes/baixa-comprovante`,
   },
+  usuario: {
+    novo: `${URL_BASE}/usuarios`,
+    atualiza: `${URL_BASE}/usuarios`
+  }
 };
