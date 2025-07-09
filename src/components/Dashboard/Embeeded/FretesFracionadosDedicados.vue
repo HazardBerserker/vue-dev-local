@@ -38,7 +38,7 @@ export default {
           zoom: { enabled: false }
         },
         labels: this.labels,
-        colors: ['#f39c12', '#9b59b6', '#3498db'], // Roxo (Fracionado), Laranja (Dedicado), Azul (aéreo)
+        colors: ['#f39c12', '#9b59b6', '#3498db', '#95a5a6'], // Roxo (Dedicado), Laranja (Fracionado), Azul (aéreo), Cinza (outros)
         legend: {
           position: 'bottom',
         },

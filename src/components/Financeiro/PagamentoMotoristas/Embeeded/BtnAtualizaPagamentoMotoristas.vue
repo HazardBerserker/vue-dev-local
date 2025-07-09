@@ -89,7 +89,11 @@
                 <div class="d-flex ga-4 mb-2">
                   <v-combobox
                     :loading="comboBoxCteLoading"
-                    @keyup="buscaCte"
+                    @keyup="(event) => {
+                      const tecla = event.key
+                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                      if (teclaValida) buscaCte()
+                    }"
                     v-model="cte"
                     density="compact"
                     variant="outlined"
@@ -109,7 +113,11 @@
                 <div class="d-flex ga-4 text-start">
                   <v-combobox
                     :loading="comboBoxMotoristaLoading"
-                    @keyup="buscaMotorista"
+                    @keyup="(event) => {
+                      const tecla = event.key
+                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                      if (teclaValida) buscaMotorista()
+                    }"
                     v-model="motorista"
                     density="compact"
                     variant="outlined"

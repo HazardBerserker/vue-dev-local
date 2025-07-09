@@ -189,7 +189,11 @@
                 <v-col cols="12" md="3">
                   <v-combobox
                     :loading="comboBoxRemetenteLoading"
-                    @keyup="buscarRemetente"
+                    @keyup="(event) => {
+                      const tecla = event.key
+                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                      if (teclaValida) buscarRemetente()
+                    }"
                     v-model="filtros.meus_fretes_remetente"
                     density="compact"
                     variant="outlined"
@@ -686,7 +690,7 @@ export default {
           try {
             const url = new URL(urlOuPath);
             let path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
-            
+
             // Remove prefixo "storage/" se existir
             return path.startsWith('storage/') ? path.replace(/^storage\//, '') : path;
           } catch {

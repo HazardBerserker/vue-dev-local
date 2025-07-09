@@ -75,6 +75,12 @@ export default {
   computed: {
     usuario() {
       return useAuthStore().user
+    },
+    rotas() {
+      return [
+        ...this.rotasGerais(),
+        this.rotasMenuCliente()
+      ]
     }
   },
   data() {
@@ -82,94 +88,6 @@ export default {
       valorAtualDoRail: false,
       rail: false,
       open: [],
-      rotas: [
-        {
-          nome: 'Cadastros',
-          rotasFilhas: [
-            {
-                nome: 'Clientes',
-                caminho: '/cadastros/clientes',
-                icone: 'mdi-domain'
-            },
-            {
-                nome: 'Motoristas',
-                caminho: '/cadastros/motoristas',
-                icone: 'mdi-card-account-details-outline'
-            }
-          ],
-        },
-        {
-          nome: 'Comercial',
-          rotasFilhas: [
-            {
-                nome: 'Nova Cotação',
-                caminho: '/comercial/nova-cotacao',
-                icone: 'mdi-clipboard-plus-outline'
-            },
-            {
-                nome: 'Fretes/Cotações',
-                caminho: '/comercial/fretes-cotacoes',
-                icone: 'mdi-clipboard-text-multiple'
-            }
-          ],
-        },
-        {
-          nome: 'Financeiro',
-          rotasFilhas: [
-            {
-                nome: 'Pagamento Motoristas',
-                caminho: '/financeiro/pagamento-motoristas',
-                icone: 'mdi-account-credit-card-outline'
-            },
-          ],
-        },
-        {
-          nome: 'Fiscal',
-          rotasFilhas: [
-            {
-                nome: 'Registrar CTE',
-                caminho: '/fiscal/registrar-cte',
-                icone: 'mdi-note-plus-outline'
-            },
-          ],
-        },
-        {
-          nome: 'Dashboards',
-          rotasFilhas: [
-            {
-                nome: 'Métricas Gerais',
-                caminho: '/dashboard/metricas-gerais',
-                icone: 'mdi-chart-box'
-            },
-          ],
-        },
-        {
-          nome: 'Aplicativo',
-          rotasFilhas: [
-            {
-                nome: 'Gerar Rota',
-                caminho: '',
-                icone: 'mdi-routes'
-            },
-
-          ],
-        },
-        {
-          nome: 'Menu do Cliente',
-          rotasFilhas: [
-            {
-                nome: 'Meus Fretes',
-                caminho: '/menu-do-cliente/meus-fretes',
-                icone: 'mdi-domain'
-            },
-            // {
-            //     nome: 'Dashboard Cliente',
-            //     caminho: '',
-            //     icone: 'mdi-chart-box'
-            // }
-          ],
-        }
-      ],
     }
   },
   methods: {
@@ -187,7 +105,121 @@ export default {
 
     isActiveLink(item) {
       return this.$route.path === item.caminho; // Compara o caminho da URL com o link do item
+    },
+
+    acessoDeCliente() {
+      const usuarioEhCliente = this.usuario.id_cliente != null
+      return usuarioEhCliente
+    },
+
+    rotasGerais() {
+
+      if(this.acessoDeCliente) {
+        return [];
+      }
+
+      const rotasAdmin = [{
+        nome: 'Cadastros',
+        rotasFilhas: [
+          {
+            nome: 'Clientes',
+            caminho: '/cadastros/clientes',
+            icone: 'mdi-domain'
+          },
+          {
+            nome: 'Motoristas',
+            caminho: '/cadastros/motoristas',
+            icone: 'mdi-card-account-details-outline'
+          }
+        ],
+      },
+      {
+        nome: 'Comercial',
+        rotasFilhas: [
+          {
+            nome: 'Nova Cotação',
+            caminho: '/comercial/nova-cotacao',
+            icone: 'mdi-clipboard-plus-outline'
+          },
+          {
+            nome: 'Fretes/Cotações',
+            caminho: '/comercial/fretes-cotacoes',
+            icone: 'mdi-clipboard-text-multiple'
+          }
+        ],
+      },
+      {
+        nome: 'Financeiro',
+        rotasFilhas: [
+          {
+            nome: 'Pagamento Motoristas',
+            caminho: '/financeiro/pagamento-motoristas',
+            icone: 'mdi-account-credit-card-outline'
+          },
+        ],
+      },
+      {
+        nome: 'Fiscal',
+        rotasFilhas: [
+          {
+            nome: 'Registrar CTE',
+            caminho: '/fiscal/registrar-cte',
+            icone: 'mdi-note-plus-outline'
+          },
+        ],
+      },
+      {
+        nome: 'Dashboards',
+        rotasFilhas: [
+          {
+            nome: 'Métricas Gerais',
+            caminho: '/dashboard/metricas-gerais',
+            icone: 'mdi-chart-box'
+          },
+        ],
+      },
+      {
+        nome: 'Aplicativo',
+        rotasFilhas: [
+          {
+            nome: 'Gerar Rota',
+            caminho: '',
+            icone: 'mdi-routes'
+          },
+
+        ],
+      }]
+
+      return rotasAdmin
+    },
+
+    rotasMenuCliente() {
+      let rotaDoCliente = {
+        nome: 'Menu do Cliente',
+      }
+
+      let rotaFilha = [
+        {
+          nome: 'Meus Fretes',
+          caminho: '/menu-do-cliente/meus-fretes',
+          icone: 'mdi-domain'
+        },
+      ]
+
+      if(this.acessoDeCliente()) {
+        const rotaDashboard = {
+          nome: 'Meu Dashboard',
+          caminho: '/dashboard/metricas-gerais',
+          icone: 'mdi-chart-box'
+        }
+        rotaFilha.push(rotaDashboard)
+      }
+
+      rotaDoCliente['rotasFilhas'] = rotaFilha
+
+      return rotaDoCliente
     }
+
   }
 }
 </script>

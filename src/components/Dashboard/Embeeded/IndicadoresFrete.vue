@@ -4,7 +4,7 @@
       Indicadores Gerais
     </v-card-title>
     <v-row dense class="mt-2">
-      <v-col cols="6" md="3" v-for="(indicador, index) in indicadores" :key="index">
+      <v-col cols="6" :md="acessoDeCliente ? 4 : 3" v-for="(indicador, index) in indicadores()" :key="index">
         <v-sheet
           rounded="lg"
           class="pa-3 d-flex flex-column align-center justify-center"
@@ -22,42 +22,85 @@
 </template>
 
 <script>
+
 export default {
   name: 'IndicadoresFrete',
   props: {
     dados: {
       type: Object,
       required: true
+    },
+    acessoDeCliente: {
+      type: Boolean,
+      required: true
     }
   },
   computed: {
+    // indicadores() {
+    //   return [
+    //     {
+    //       titulo: 'Total Fretes',
+    //       valor: this.dados.total_fretes,
+    //       cor: '#3498db',
+    //       icone: 'mdi-truck'
+    //     },
+    //     {
+    //       titulo: 'R$ Fretes',
+    //       valor: this.dados.valor_fretes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    //       cor: '#2ecc71',
+    //       icone: 'mdi-currency-usd'
+    //     },
+    //     {
+    //       titulo: 'CT-es Cancelados',
+    //       valor: this.dados.fretes_cancelados,
+    //       cor: '#e74c3c',
+    //       icone: 'mdi-close-circle-outline'
+    //     },
+    //     {
+    //       titulo: 'R$ Mercadorias',
+    //       valor: this.dados.valor_mercadorias.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    //       cor: '#9b59b6',
+    //       icone: 'mdi-package-variant'
+    //     }
+    //   ];
+    // }
+  },
+  methods: {
     indicadores() {
-      return [
-        {
-          titulo: 'Total Fretes',
-          valor: this.dados.total_fretes,
-          cor: '#3498db',
-          icone: 'mdi-truck'
-        },
-        {
-          titulo: 'R$ Fretes',
-          valor: this.dados.valor_fretes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-          cor: '#2ecc71',
-          icone: 'mdi-currency-usd'
-        },
-        {
+      let indicadores =
+        [
+          {
+            titulo: 'Total Fretes',
+            valor: this.dados.total_fretes,
+            cor: '#3498db',
+            icone: 'mdi-truck'
+          },
+          {
+            titulo: 'R$ Fretes',
+            valor: this.dados.valor_fretes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            cor: '#2ecc71',
+            icone: 'mdi-currency-usd'
+          },
+          {
+            titulo: 'R$ Mercadorias',
+            valor: this.dados.valor_mercadorias.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            cor: '#9b59b6',
+            icone: 'mdi-package-variant'
+          }
+        ]
+
+      if(!this.acessoDeCliente) {
+        const objetoCte = {
           titulo: 'CT-es Cancelados',
           valor: this.dados.fretes_cancelados,
           cor: '#e74c3c',
           icone: 'mdi-close-circle-outline'
-        },
-        {
-          titulo: 'R$ Mercadorias',
-          valor: this.dados.valor_mercadorias.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-          cor: '#9b59b6',
-          icone: 'mdi-package-variant'
         }
-      ];
+
+        indicadores.push(objetoCte)
+      }
+
+      return indicadores
     }
   }
 };

@@ -23,12 +23,25 @@
               v-if="mostrarFiltros"
               variant="tonal"
               color="red"
-              @click="limpaFiltros"
+              @click="restauraFiltros"
               class="mb-3 me-2 align-self-start"
               rounded
             >
-              <v-icon start>mdi-filter-off</v-icon>
-              Limpar Filtros
+              <v-icon start>mdi-restore</v-icon>
+              Restaurar Filtros
+            </v-btn>
+          </v-slide-x-transition>
+          <v-slide-x-transition>
+            <v-btn
+              v-if="mostrarFiltros"
+              variant="tonal"
+              color="purple"
+              @click="filtros.date = gerarTodasAsDatasDoAno(anoAtual)"
+              class="mb-3 me-2 align-self-start"
+              rounded
+            >
+              <v-icon start>mdi-filter</v-icon>
+              Filtrar ano Atual
             </v-btn>
           </v-slide-x-transition>
             <v-btn
@@ -55,9 +68,14 @@
                 <v-col cols="12" md="4">
                   <v-row>
                     <v-col cols="12">
-                      <span class="text-h6 text-grey-darken-1">
-                        Preencha os campos para filtragem de dados dinâmica
-                      </span>
+                      <div class="d-flex flex-column">
+                        <span class="text-h6 text-grey-darken-1">
+                          Preencha os campos para filtragem de dados dinâmica
+                        </span>
+                        <span class="text-grey-lighten-1 mt-2">
+                          <em>Por padrão o Ano Atual ja vem selecionado</em>
+                        </span>
+                      </div>
                     </v-col>
                     <v-col cols="12">
                       <v-select
@@ -65,7 +83,7 @@
                         variant="outlined"
                         density="compact"
                         :items="estadosBrasileiros"
-                        label="UF"
+                        label="UF Destino"
                         item-value="value"
                         item-title="text"
                         clearable
@@ -75,20 +93,35 @@
                     </v-col>
                     <v-col cols="12">
                       <v-combobox
-                        :loading="comboBoxClienteLoading"
-                        @keyup="buscarCliente"
-                        v-model="filtros.cliente"
-                        density="compact"
-                        variant="outlined"
-                        label="Cliente"
-                        placeholder="Comece a digitar..."
-                        :items="listaDeClientes"
-                        item-title="razao_social"
-                        item-value="id_cliente"
-                        hide-details
-                      ></v-combobox>
+                        v-if="acessoDeAdminAoDashboard()"
+                          :loading="comboBoxClienteLoading"
+                          @keyup="(event) => {
+                            const tecla = event.key
+                            const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                            if (teclaValida) buscarCliente()
+                          }"
+                          v-model="filtros.cliente"
+                          density="compact"
+                          variant="outlined"
+                          label="Cliente (tomador)"
+                          placeholder="Comece a digitar..."
+                          :items="listaDeClientes"
+                          item-title="razao_social"
+                          item-value="id_cliente"
+                          hide-details
+                        ></v-combobox>
+                        <v-text-field
+                          v-else
+                          v-model="filtros.cliente"
+                          density="compact"
+                          variant="outlined"
+                          label="Cliente (destinatário)"
+                          placeholder="Busca pelo Destinatário..."
+                          clearable
+                          hide-details
+                        ></v-text-field>
                     </v-col>
-                    <v-col cols="12">
+                    <!-- <v-col cols="12">
                       <v-text-field
                       v-model="filtros.modalidade_frete"
                       label="Modalidade Frete"
@@ -98,7 +131,7 @@
                       placeholder="Ex: Fracionado, Dedicado"
                       hide-details
                       ></v-text-field>
-                    </v-col>
+                    </v-col> -->
                   </v-row>
                 </v-col>
                 <v-col>
@@ -131,17 +164,17 @@
     <div v-if="permissao">
       <v-row>
         <v-col cols="12">
-          <IndicadoresFrete :dados="dadosIndicadoresFrete" />
+          <IndicadoresFrete :dados="dadosIndicadoresFrete" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="4">
+        <v-col cols="4" v-if="acessoDeAdminAoDashboard()">
           <GanhosEPerdasCotacoes :dados="dadosganhosEPerdasCotacoes"/>
         </v-col>
-        <v-col cols="4">
+        <v-col :cols="!acessoDeAdminAoDashboard() ? 6 : 4">
           <FretesFracionadosDedicados :dados="dadosFretesFracionadosEDedicados"/>
         </v-col>
-        <v-col cols="4">
+        <v-col :cols="!acessoDeAdminAoDashboard() ? 6 : 4">
           <FretesOTD :dados="dadosFretesOTD"/>
         </v-col>
       </v-row>
@@ -152,18 +185,24 @@
       </v-row>
       <v-row>
         <v-col cols="6">
-          <Top10ClientesFaturamentoLinha :dados="dadosTop5ClientesFaturamento"/>
+          <Top10ClientesFaturamentoLinha :dados="dadosTop10ClientesFaturamentoLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
         </v-col>
-        <v-col cols="6">
-          <Top10ClientesFaturamentoDonut :dados="dadosTop5ClientesFaturamento"/>
+        <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
+          <ParticipacaoClientesFaturamentoDonut :dados="dadosClientesFaturamentoDonut"/>
+        </v-col>
+        <v-col cols="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+          <DestinatarioParticipacaoFaturamento :dados="dadosDestinatariosFaturamento"/>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <Top10ClientesQuantidadeCteLinha :dados="dadosTop10ClientesQuantidadeCteLinha"/>
+          <Top10ClientesQuantidadeCteLinha :dados="dadosTop10ClientesQuantidadeCteLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
         </v-col>
-        <v-col cols="6">
-          <DistribuicaoAnualClientesQuantidadeCteDonut :dados="quantidadeCtePorClienteDonut"/>
+        <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
+          <DistribuicaoPeriodoClientesQuantidadeCteDonut :dados="quantidadeCtePorClienteDonut"/>
+        </v-col>
+        <v-col cols="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+          <DestinatarioDistribuicaoPeriodoCte :dados="dadosDestinatariosDistribuicaoPeriodo"/>
         </v-col>
       </v-row>
       <v-row>
@@ -195,19 +234,24 @@ import FretesOTD from '@/components/Dashboard/Embeeded/FretesOTD.vue';
 import IndicadoresFrete from '@/components/Dashboard/Embeeded/IndicadoresFrete.vue';
 import FreteVsMercadoria from '@/components/Dashboard/Embeeded/FreteVsMercadoria.vue';
 import Top10ClientesFaturamentoLinha from '@/components/Dashboard/Embeeded/Top10ClientesFaturamentoLinha.vue';
-import Top10ClientesFaturamentoDonut from '@/components/Dashboard/Embeeded/Top10ClientesFaturamentoDonut.vue';
+import ParticipacaoClientesFaturamentoDonut from '@/components/Dashboard/Embeeded/ParticipacaoClientesFaturamentoDonut.vue';
 import Top10ClientesQuantidadeCteLinha from '@/components/Dashboard/Embeeded/Top10ClientesQuantidadeCteLinha.vue';
-import DistribuicaoAnualClientesQuantidadeCteDonut from '@/components/Dashboard/Embeeded/DistribuicaoAnualClientesQuantidadeCteDonut.vue';
+import DistribuicaoPeriodoClientesQuantidadeCteDonut from '@/components/Dashboard/Embeeded/DistribuicaoPeriodoClientesQuantidadeCteDonut.vue';
 import QuantidadeCtePorUF from '@/components/Dashboard/Embeeded/QuantidadeCtePorUF.vue';
 import FaturamentoPorUF from '@/components/Dashboard/Embeeded/FaturamentoPorUF.vue';
 import MapaFaturamentoPorUf from '@/components/Dashboard/Embeeded/MapaFaturamentoPorUf.vue';
 import MapaQuantidadeCtePorUf from '@/components/Dashboard/Embeeded/MapaQuantidadeCtePorUf.vue';
+import DestinatarioParticipacaoFaturamento from '@/components/Dashboard/Embeeded/DestinatarioParticipacaoFaturamento.vue';
+import DestinatarioDistribuicaoPeriodoCte from '@/components/Dashboard/Embeeded/DestinatarioDistribuicaoPeriodoCte.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { useAlertStore } from '@/stores/alertStore';
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { format } from 'date-fns';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 import { estadosBrasileiros } from '@/helpers/estadosHelper';
+import dayjs from 'dayjs'
+import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
+import { useAuthStore } from '@/stores/auth';
 
 export default {
   name: 'DashboardView',
@@ -218,14 +262,20 @@ export default {
     IndicadoresFrete,
     FreteVsMercadoria,
     Top10ClientesFaturamentoLinha,
-    Top10ClientesFaturamentoDonut,
+    ParticipacaoClientesFaturamentoDonut,
     Top10ClientesQuantidadeCteLinha,
-    DistribuicaoAnualClientesQuantidadeCteDonut,
+    DistribuicaoPeriodoClientesQuantidadeCteDonut,
     QuantidadeCtePorUF,
     FaturamentoPorUF,
     MapaFaturamentoPorUf,
     MapaQuantidadeCtePorUf,
-    GlobalAlertFixed
+    GlobalAlertFixed,
+    DestinatarioParticipacaoFaturamento,
+    DestinatarioDistribuicaoPeriodoCte
+  },
+  created() {
+    const anoAtual = dayjs().year()
+    this.filtros.date = this.gerarTodasAsDatasDoAno(anoAtual)
   },
   watch: {
     filtros: {
@@ -235,13 +285,20 @@ export default {
       deep: true
     },
     'filtros.cliente'(newValue) {
+      if(this.acessoDeClienteAoDashboard && !this.acessoDeAdminAoDashboard) {
+        return
+      }
+
       if (typeof newValue === 'object') {
         this.filtros.cliente = newValue.razao_social
       }
     },
   },
+
   data() {
+    const anoAtual = dayjs().year()
     return {
+      anoAtual,
       estadosBrasileiros,
       mostrarFiltros: false,
       filtrosAplicadosAntesDaBusca: 0,
@@ -261,13 +318,21 @@ export default {
       dadosFretesOTD: null,
       dadosIndicadoresFrete: null,
       dadosFreteVsMercadoria: null,
-      dadosTop5ClientesFaturamento: null,
+      dadosTop10ClientesFaturamentoLinha: null,
+      dadosClientesFaturamentoDonut: null,
       dadosTop10ClientesQuantidadeCteLinha: null,
       quantidadeCtePorClienteDonut: null,
       dadosPorUfFaturamento: null,
       dadosPorUfQuantidadeCte: null,
+      dadosDestinatariosFaturamento: null,
+      dadosDestinatariosDistribuicaoPeriodo: null,
       permissao: false
     };
+  },
+  computed: {
+    userStore() {
+      return useAuthStore()
+    }
   },
   async mounted() {
     const loading = useLoadingStore()
@@ -290,6 +355,28 @@ export default {
   },
   methods: {
 
+    acessoDeAdminAoDashboard() {
+      const usuarioEhAdmin = this.userStore?.user?.is_admin == SimENaoEnumDescricao.SIM || this.userStore?.user?.is_super_admin == SimENaoEnumDescricao.SIM
+      return usuarioEhAdmin
+    },
+    acessoDeClienteAoDashboard() {
+      const usuarioEhCliente = this.userStore?.user?.id_cliente != null
+      return usuarioEhCliente
+    },
+
+    gerarTodasAsDatasDoAno(ano) {
+      const datas = []
+      let data = dayjs(`${ano}-01-01`)
+      const ultimaData = dayjs(`${ano}-12-31`)
+
+      while (data.isBefore(ultimaData) || data.isSame(ultimaData, 'day')) {
+        datas.push(data.format('YYYY-MM-DD'))
+        data = data.add(1, 'day')
+      }
+
+      return datas
+    },
+
     async buscarCliente() {
       await buscaListaDeClientesHelper(
         this.filtros.cliente,
@@ -302,10 +389,11 @@ export default {
       );
     },
 
-    limpaFiltros() {
+    restauraFiltros() {
       this.filtros = {
         date: null
       }
+      this.filtros.date = this.gerarTodasAsDatasDoAno(this.anoAtual)
     },
 
     async buscaDashboardUnificado() {
@@ -339,12 +427,15 @@ export default {
         this.dadosFretesOTD = resposta.data.fretesOtd
         this.dadosIndicadoresFrete = resposta.data.obterIndicadores
         this.dadosFreteVsMercadoria = resposta.data.obterComparativoFreteMercadoria
-        this.dadosTop5ClientesFaturamento = resposta.data.topClientesFaturamento.linha
+        this.dadosTop10ClientesFaturamentoLinha = resposta.data.clientesFaturamento.linha
+        this.dadosClientesFaturamentoDonut = resposta.data.clientesFaturamento.donut
         this.dadosTop10ClientesQuantidadeCteLinha = resposta.data.quantidadeCtePorCliente.linha
         this.quantidadeCtePorClienteDonut = resposta.data.quantidadeCtePorCliente.donut
+        this.dadosDestinatariosFaturamento = resposta.data.destinatariosFaturamento
+
+        this.dadosDestinatariosDistribuicaoPeriodo = resposta.data.destinatariosDistribuicaoPeriodoCte
         this.dadosPorUfFaturamento = resposta.data.dadosPorUf.frete
         this.dadosPorUfQuantidadeCte = resposta.data.dadosPorUf.quantidade
-
 
       } catch (error) {
         if(this.permissao) {

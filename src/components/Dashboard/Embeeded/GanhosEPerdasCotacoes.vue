@@ -37,7 +37,7 @@ export default {
           toolbar: { show: true },
           zoom: { enabled: false }
         },
-        colors: ['#2ecc71', '#e74c3c'], // Verde (prazo), Vermelho (fora)
+        colors: ['#2ecc71', '#e74c3c', '#95a5a6'], // Verde (prazo), Vermelho (fora) cinza (outros)
         xaxis: {
           categories: this.meses(), // nomes dos meses
         },
@@ -51,6 +51,7 @@ export default {
       return [
         { name: 'Ganhos', data: this.ganhos() },
         { name: 'Perdas', data: this.perdas() },
+        { name: 'Em Aberto', data: this.emAberto() },
       ];
     },
   },
@@ -63,6 +64,9 @@ export default {
     },
     perdas() {
       return this.dados.map(item => item.perdas);
+    },
+    emAberto() {
+      return this.dados.map(item => item.em_aberto);
     },
   }
 }

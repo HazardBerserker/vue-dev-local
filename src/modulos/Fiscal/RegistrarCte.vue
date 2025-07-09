@@ -165,7 +165,11 @@
                 <v-col cols="12" md="3">
                   <v-combobox
                     :loading="comboBoxRemetenteLoading"
-                    @keyup="buscarRemetente"
+                    @keyup="(event) => {
+                      const tecla = event.key
+                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                      if (teclaValida) buscarRemetente()
+                    }"
                     v-model="filtros.rem_xNome"
                     density="compact"
                     variant="outlined"

@@ -106,7 +106,11 @@
                 <v-col cols="12" md="3">
                   <v-combobox
                     :loading="comboBoxTomadorLoading"
-                    @keyup="buscarTomador"
+                    @keyup="(event) => {
+                      const tecla = event.key
+                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                      if (teclaValida) buscarTomador()
+                    }"
                     v-model="filtros.tomador"
                     density="compact"
                     variant="outlined"
@@ -136,7 +140,11 @@
                 <v-col cols="12" md="3">
                   <v-combobox
                     :loading="comboBoxMotoristaLoading"
-                    @keyup="buscarMotorista"
+                    @keyup="(event) => {
+                      const tecla = event.key
+                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                      if (teclaValida) buscarMotorista()
+                    }"
                     v-model="filtros.nome_motorista"
                     density="compact"
                     variant="outlined"
@@ -691,15 +699,15 @@ export default {
       const total =  this.datatable.itens.reduce((acumulador, item) => {
         let valorAdicional = 0
 
-        if(item.adiantamento == StatusPagamentoEnumDescricao.OK && FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
+        if(item.adiantamento == StatusPagamentoEnumDescricao.OK && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
           valorAdicional += item.valor_motorista_efetivo * 0.70
         }
 
-        if(item.saldo == StatusPagamentoEnumDescricao.OK && FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
+        if(item.saldo == StatusPagamentoEnumDescricao.OK && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
           valorAdicional += item.valor_motorista_efetivo * 0.30
         }
 
-        if(item.integral == StatusPagamentoEnumDescricao.OK && FormaPagamentoEnumDescricao.INTEGRAL) {
+        if(item.integral == StatusPagamentoEnumDescricao.OK && item.forma_pagamento == FormaPagamentoEnumDescricao.INTEGRAL) {
           valorAdicional += item.valor_motorista_efetivo
         }
 

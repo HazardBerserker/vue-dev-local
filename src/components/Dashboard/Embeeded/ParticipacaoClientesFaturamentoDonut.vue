@@ -1,10 +1,10 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
-      Participação no Faturamento - Top 10 Clientes
+      Participação no Faturamento
     </v-card-title>
     <v-card-text>
-      <apexchart type="donut" height="322" :options="chartOptions" :series="series" />
+      <apexchart type="donut" height="362" :options="chartOptions" :series="series" />
     </v-card-text>
   </v-card>
 </template>
@@ -13,7 +13,7 @@
 import ApexCharts from 'vue3-apexcharts';
 
 export default {
-  name: 'Top10ClientesFaturamentoDonut',
+  name: 'ParticipacaoClientesFaturamentoDonut',
   components: {
     apexchart: ApexCharts
   },
@@ -31,23 +31,31 @@ export default {
           zoom: { enabled: false }
         },
         labels: this.labels,
-        legend: {
-          position: 'bottom'
-        },
         tooltip: {
           y: {
             formatter: val => 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
           }
-        }
+        },
+        colors: [
+          '#3498db', // azul
+          '#2ecc71', // verde
+          '#e67e22', // laranja
+          '#9b59b6', // roxo
+          '#f1c40f', // amarelo
+          '#1abc9c', // turquesa
+          '#e74c3c', // vermelho
+          '#34495e', // azul escuro
+          '#95a5a6', // cinza
+          '#d35400', // laranja escuro
+        ],
+        legend: false
       };
     },
     series() {
-      return this.dados.series.map(cliente => {
-        return cliente.data.reduce((soma, valor) => soma + valor, 0);
-      });
+      return this.dados.series;
     },
     labels() {
-      return this.dados.series.map(cliente => cliente.name);
+      return this.dados.labels
     }
   }
 };
