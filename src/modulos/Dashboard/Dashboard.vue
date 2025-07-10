@@ -117,7 +117,6 @@
                           variant="outlined"
                           label="Cliente (destinatário)"
                           placeholder="Busca pelo Destinatário..."
-                          clearable
                           hide-details
                         ></v-text-field>
                     </v-col>
