@@ -114,7 +114,7 @@ export default {
 
     rotasGerais() {
 
-      if(this.acessoDeCliente) {
+      if(this.acessoDeCliente()) {
         return [];
       }
 

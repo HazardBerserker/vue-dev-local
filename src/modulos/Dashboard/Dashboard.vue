@@ -184,8 +184,11 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
+        <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
           <Top10ClientesFaturamentoLinha :dados="dadosTop10ClientesFaturamentoLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
+        </v-col>
+        <v-col cols="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+          <DestinatarioValoresMercadoria :dados="dadosDestinatarioValoresMercadoria"/>
         </v-col>
         <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
           <ParticipacaoClientesFaturamentoDonut :dados="dadosClientesFaturamentoDonut"/>
@@ -252,6 +255,7 @@ import { estadosBrasileiros } from '@/helpers/estadosHelper';
 import dayjs from 'dayjs'
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { useAuthStore } from '@/stores/auth';
+import DestinatarioValoresMercadoria from '@/components/Dashboard/Embeeded/DestinatarioValoresMercadoria.vue';
 
 export default {
   name: 'DashboardView',
@@ -271,7 +275,8 @@ export default {
     MapaQuantidadeCtePorUf,
     GlobalAlertFixed,
     DestinatarioParticipacaoFaturamento,
-    DestinatarioDistribuicaoPeriodoCte
+    DestinatarioDistribuicaoPeriodoCte,
+    DestinatarioValoresMercadoria
   },
   created() {
     const anoAtual = dayjs().year()
@@ -326,6 +331,7 @@ export default {
       dadosPorUfQuantidadeCte: null,
       dadosDestinatariosFaturamento: null,
       dadosDestinatariosDistribuicaoPeriodo: null,
+      dadosDestinatarioValoresMercadoria: null,
       permissao: false
     };
   },
@@ -431,11 +437,11 @@ export default {
         this.dadosClientesFaturamentoDonut = resposta.data.clientesFaturamento.donut
         this.dadosTop10ClientesQuantidadeCteLinha = resposta.data.quantidadeCtePorCliente.linha
         this.quantidadeCtePorClienteDonut = resposta.data.quantidadeCtePorCliente.donut
-        this.dadosDestinatariosFaturamento = resposta.data.destinatariosFaturamento
-
-        this.dadosDestinatariosDistribuicaoPeriodo = resposta.data.destinatariosDistribuicaoPeriodoCte
         this.dadosPorUfFaturamento = resposta.data.dadosPorUf.frete
         this.dadosPorUfQuantidadeCte = resposta.data.dadosPorUf.quantidade
+        this.dadosDestinatariosFaturamento = resposta.data.destinatariosFaturamento
+        this.dadosDestinatariosDistribuicaoPeriodo = resposta.data.destinatariosDistribuicaoPeriodoCte
+        this.dadosDestinatarioValoresMercadoria = resposta.data.destinatarioValoresMercadoria
 
       } catch (error) {
         if(this.permissao) {

@@ -63,21 +63,51 @@ export default {
           '#d35400', // laranja escuro
         ],
         tooltip: {
-          custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const valor = series[seriesIndex][dataPointIndex]
-
+          custom: ({ series, dataPointIndex, w }) => {
             if (this.acessoDeCliente) {
-              // Cliente não deve ver nome da série
-              return `<div class="apex-tooltip">
-                <span><strong>Quantidade:</strong> ${valor} CT-es</span>
-              </div>`;
+              // Cliente vê só o valor simples, sem nomes
+              const valor = series[0][dataPointIndex]; // geralmente só 1 série para cliente
+              return `
+                <div class="apex-tooltip">
+                  <span><strong>Quantidade:</strong> ${valor} CT-es</span>
+                </div>
+              `;
             } else {
-              // Admin ou geral vê nome da série
-              const nomeCliente = w.globals.seriesNames[seriesIndex]
-              return `<div class="apex-tooltip">
-                <div><strong>${nomeCliente}</strong></div>
-                <span>Quantidade: ${valor} CT-es</span>
-              </div>`;
+              // Admin vê lista ordenada dos 10 maiores, com cores e total no topo
+              const nomes = w.globals.seriesNames;
+              const cores = w.globals.colors;
+
+              // Junta nome, valor e cor para cada série
+              const pares = series.map((serie, i) => ({
+                nome: nomes[i],
+                valor: serie[dataPointIndex] || 0,
+                cor: cores[i % cores.length] || '#000'
+              }));
+
+              // Ordena do maior para o menor valor
+              const paresOrdenados = pares.sort((a, b) => b.valor - a.valor);
+
+              // Pega só os 10 maiores (já deve ter no máximo 10, mas garantimos)
+              const top10 = paresOrdenados.slice(0, 10);
+
+              // Soma total do ponto do gráfico
+              const total = pares.reduce((acc, item) => acc + item.valor, 0);
+              const totalFormatado = total.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+
+              // Monta as linhas do tooltip
+              const linhas = top10.map(({ nome, valor, cor }) => {
+                const valorFormatado = valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                return `<div style="color: ${cor}; font-size: 13px;"><strong>${nome}:</strong> ${valorFormatado} CT-es</div>`;
+              });
+
+              return `
+                <div class="apex-tooltip pa-4" style="max-height: 450px; overflow-y: auto;">
+                  <div style="font-weight: bold; margin-bottom: 4px;">TOTAL: ${totalFormatado} CT-es</div>
+                  <div style="font-size: 12px; color: #666; margin-bottom: 4px;">(Exibindo os 10 maiores)</div>
+                  <hr style="margin: 4px 0;" />
+                  ${linhas.join('')}
+                </div>
+              `;
             }
           }
         }

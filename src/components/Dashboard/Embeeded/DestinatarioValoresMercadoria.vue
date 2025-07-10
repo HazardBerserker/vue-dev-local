@@ -1,10 +1,10 @@
 <template>
   <v-card class="pa-4 border-t-md border-s-sm border-e-sm" elevation="2">
     <v-card-title class="text-body-1 font-weight-bold mb-4 text-center text-wrap">
-      {{ acessoDeCliente ? 'Evolução Faturamento' : 'Evolução Faturamento CT-es - Top 10 Clientes'}}
+      Evolução Mercadoria
     </v-card-title>
     <v-card-text>
-      <apexchart type="line" height="350" :options="chartOptions" :series="series" />
+      <apexchart height="350" :options="chartOptions" :series="series" />
     </v-card-text>
   </v-card>
 </template>
@@ -13,7 +13,7 @@
 import ApexCharts from 'vue3-apexcharts';
 
 export default {
-  name: 'Top10ClientesFaturamentoLinha',
+  name: 'DestinatarioValoresMercadoria',
   components: {
     apexchart: ApexCharts
   },
@@ -31,61 +31,42 @@ export default {
     return {
       chartOptions: {
         chart: {
-          type: 'line',
+          type: 'area',
           zoom: { enabled: false }
+        },
+        dataLabels: {
+          enabled: false
         },
         stroke: {
           curve: 'smooth',
           width: 2
         },
-        legend: {
-          position: 'right',
-          formatter: (seriesName) => {
-            const limiteCaracteres = 18;
-            return seriesName.length > limiteCaracteres
-              ? seriesName.slice(0, limiteCaracteres) + '...'
-              : seriesName;
-          },
-        },
-        dataLabels: { enabled: false },
+        legend: { show: false },
         xaxis: {
-          categories: this.dados.labels,
+          categories: this.dados.labels
         },
-         colors: [
-          '#3498db', // azul
-          '#2ecc71', // verde
-          '#e67e22', // laranja
-          '#9b59b6', // roxo
-          '#f1c40f', // amarelo
-          '#1abc9c', // turquesa
-          '#e74c3c', // vermelho
-          '#34495e', // azul escuro
-          '#95a5a6', // cinza
-          '#d35400', // laranja escuro
+        colors: [
+          '#3498db', '#2ecc71', '#e67e22', '#9b59b6', '#f1c40f',
+          '#1abc9c', '#e74c3c', '#34495e', '#95a5a6', '#d35400'
         ],
         tooltip: {
           custom: ({ series, dataPointIndex, w }) => {
             const nomes = w.globals.seriesNames;
             const cores = w.globals.colors;
 
-            // Combina nome, valor e cor para cada série no ponto do gráfico
             const pares = series.map((serie, i) => ({
               nome: nomes[i],
               valor: serie[dataPointIndex] || 0,
               cor: cores[i % cores.length] || '#000'
             }));
 
-            // Ordena do maior para o menor valor
             const paresOrdenados = pares.sort((a, b) => b.valor - a.valor);
+            const top10 = paresOrdenados.slice(0, 10);
 
-            // Calcula o total dos valores para o ponto atual
-            const total = pares.reduce((acc, item) => acc + item.valor, 0);
-
-            // Formata o total com 2 casas decimais
+            const total = paresOrdenados.reduce((acc, item) => acc + item.valor, 0);
             const totalFormatado = total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
-            // Monta as linhas de tooltip, com cor e valor formatado
-            const linhas = paresOrdenados.map(({ nome, valor, cor }) => {
+            const linhas = top10.map(({ nome, valor, cor }) => {
               const valorFormatado = valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
               return `<div style="color: ${cor}; font-size: 13px;"><strong>${nome}:</strong> R$ ${valorFormatado}</div>`;
             });
@@ -99,6 +80,10 @@ export default {
               </div>
             `;
           }
+        },
+        fill: {
+          type: 'solid',
+          opacity: 0.3
         }
       },
       series: this.dados.series
