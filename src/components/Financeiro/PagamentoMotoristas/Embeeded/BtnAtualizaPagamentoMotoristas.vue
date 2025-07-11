@@ -367,7 +367,7 @@ export default {
         ],
 
         campoObrigatorio: [
-          (v) => !!v || 'Este campo é obrigatório',
+          (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
         ],
         regraRazaoSocial: [
           (v) => !!v || 'A Razão social é obrigatória',
@@ -437,42 +437,10 @@ export default {
       },
 
       limpaCampos() {
-        this.id_frete = this.item.id_frete
-        this.data_cotacao = this.item.data_cotacao
-        this.id_remetente = this.item.id_remetente
-        this.remetente = this.item.remetente
-        this.cnpj_remetente = this.item.cnpj_remetente
-        this.nome_destinatario = this.item.nome_destinatario
-        this.cidade_destinatario = this.item.cidade_destinatario
-        this.uf_destinatario = this.item.uf_destinatario
-        this.valor_motorista = Number(this.item.valor_motorista)
-        this.cnpj_destinatario = this.item.cnpj_destinatario
-        this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
-        this.cep_destinatario = this.item.cep_destinatario
-        this.endereco_destinatario = this.item.endereco_destinatario
-        this.numero_destinatario = this.item.numero_destinatario
-        this.observacoes = this.item.observacoes
-        this.valor_notafiscal = this.item.valor_notafiscal
-        this.coeficiente_margem = this.item.coeficiente_margem
-        this.advalorem = this.item.advalorem
-        this.status = this.item.status
-        this.forma_pagamento = this.item.forma_pagamento
         this.adiantamento = this.item.adiantamento
         this.saldo = this.item.saldo
         this.integral = this.item.integral
-        this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
-        this.valor_cobrado = this.item.valor_cobrado
-        this.prazo = this.item.prazo
-        this.coleta_efetiva = null
-        this.adiantamento = null
-        this.saldo = null
-        this.integral = null
-        this.obs_financeiro = null
-        this.arquivo_comprovante = null
-        this.entrega_efetiva = null
-        this.motorista = null
-        this.cte = null
-        this.imposto_considerado = null
+        this.obs_financeiro = this.item.obs_financeiro
       },
 
       desativaModoEdicao() {

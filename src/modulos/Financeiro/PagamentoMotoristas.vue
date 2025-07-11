@@ -209,7 +209,7 @@
               <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ formataMoeda(numeroDePagamentosEmAberto()) }}
+                    {{ formataMoeda(datatable.fretes_a_pagar) }}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -235,7 +235,7 @@
               <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ formataMoeda(numeroDePagamentosRealizados()) }}
+                    {{ formataMoeda(datatable.fretes_pagos) }}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -436,6 +436,8 @@ export default {
         }
       ],
       datatable: {
+        fretes_pagos: null,
+        fretes_a_pagar: null,
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -673,50 +675,6 @@ export default {
       return formatDate(date, 'dd/MM/yyyy');
     },
 
-    numeroDePagamentosEmAberto() {
-      const total =  this.datatable.itens.reduce((acumulador, item) => {
-        let valorAdicional = 0
-
-        if(item.adiantamento == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
-          valorAdicional += item.valor_motorista_efetivo * 0.70
-        }
-
-        if(item.saldo == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
-          valorAdicional += item.valor_motorista_efetivo * 0.30
-        }
-
-        if(item.integral == StatusPagamentoEnumDescricao.PAGAMENTO_PENDENTE && item.forma_pagamento == FormaPagamentoEnumDescricao.INTEGRAL) {
-          valorAdicional += item.valor_motorista_efetivo
-        }
-
-        return acumulador + valorAdicional;
-      }, 0);
-
-      return total
-    },
-
-    numeroDePagamentosRealizados() {
-      const total =  this.datatable.itens.reduce((acumulador, item) => {
-        let valorAdicional = 0
-
-        if(item.adiantamento == StatusPagamentoEnumDescricao.OK && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
-          valorAdicional += item.valor_motorista_efetivo * 0.70
-        }
-
-        if(item.saldo == StatusPagamentoEnumDescricao.OK && item.forma_pagamento == FormaPagamentoEnumDescricao.ADIANTAMENTO_SALDO) {
-          valorAdicional += item.valor_motorista_efetivo * 0.30
-        }
-
-        if(item.integral == StatusPagamentoEnumDescricao.OK && item.forma_pagamento == FormaPagamentoEnumDescricao.INTEGRAL) {
-          valorAdicional += item.valor_motorista_efetivo
-        }
-
-        return acumulador + valorAdicional;
-      }, 0);
-
-      return total
-    },
-
     abrirDialogDetalhesFrete(frete) {
       this.$refs.dialogFrete.abrir(frete);
     },
@@ -814,6 +772,8 @@ export default {
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
+          this.datatable.fretes_pagos = resposta.data.data.fretes_pagos;
+          this.datatable.fretes_a_pagar = resposta.data.data.fretes_a_pagar;
         }
 
       } catch (error) {
@@ -836,6 +796,15 @@ export default {
 
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
       const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_frete == itemAtualizado.id_frete);
+
+      const adiantamentoNaoMudou = itemQueSeraAtualizado.adiantamento == itemAtualizado.adiantamento
+      const saldoNaoMudou = itemQueSeraAtualizado.saldo == itemAtualizado.saldo
+      const integralNaoMudou = itemQueSeraAtualizado.integral == itemAtualizado.integral
+
+      // ATUALIZANDO OS DADOS DOS CARDS
+      if( !adiantamentoNaoMudou || !saldoNaoMudou || !integralNaoMudou) {
+        this.atualizaDadoDosCardsLocalmente(itemQueSeraAtualizado, itemAtualizado)
+      }
 
       if (itemQueSeraAtualizado) {
         itemQueSeraAtualizado.id_frete = itemAtualizado.id_frete
@@ -879,6 +848,50 @@ export default {
         itemQueSeraAtualizado.id_usuario_ultima_alteracao = itemAtualizado.id_usuario_ultima_alteracao
         itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
       }
+    },
+
+    atualizaDadoDosCardsLocalmente(itemQueSeraAtualizado, itemAtualizado) {
+      const valorEfetivo = itemAtualizado.valor_motorista_efetivo ?? 0;
+      if (valorEfetivo <= 0) return;
+
+      if (itemQueSeraAtualizado.adiantamento != itemAtualizado.adiantamento) {
+        if (itemAtualizado.adiantamento == StatusPagamentoEnumDescricao.OK) {
+          // Agora é pago o adiantamento
+          const valor = valorEfetivo * 0.70;
+          this.datatable.fretes_pagos += valor;
+          this.datatable.fretes_a_pagar -= valor;
+        } else {
+          // Agora voltou a não estar pago
+          const valor = valorEfetivo * 0.70;
+          this.datatable.fretes_pagos -= valor;
+          this.datatable.fretes_a_pagar += valor;
+        }
+      }
+
+      if (itemQueSeraAtualizado.saldo != itemAtualizado.saldo) {
+        if (itemAtualizado.saldo ==  StatusPagamentoEnumDescricao.OK) {
+          const valor = valorEfetivo * 0.30;
+          this.datatable.fretes_pagos += valor;
+          this.datatable.fretes_a_pagar -= valor;
+        } else {
+          const valor = valorEfetivo * 0.30;
+          this.datatable.fretes_pagos -= valor;
+          this.datatable.fretes_a_pagar += valor;
+        }
+      }
+
+      if (itemQueSeraAtualizado.integral != itemAtualizado.integral) {
+        if (itemAtualizado.integral == StatusPagamentoEnumDescricao.OK) {
+          const valor = valorEfetivo;
+          this.datatable.fretes_pagos += valor;
+          this.datatable.fretes_a_pagar -= valor;
+        } else {
+          const valor = valorEfetivo;
+          this.datatable.fretes_pagos -= valor;
+          this.datatable.fretes_a_pagar += valor;
+        }
+      }
+
     },
 
     async exportarExcel() {

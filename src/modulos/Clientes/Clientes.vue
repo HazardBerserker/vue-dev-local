@@ -76,7 +76,7 @@
           <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
             <v-fade-transition mode="out-in">
               <span v-if="!datatable.carregando">
-                <strong>{{ numeroDeClientesAtivos() }}</strong>
+                <strong>{{ datatable.clientes_ativos?.SIM }}</strong>
               </span>
               <span v-else>
                 <v-progress-circular indeterminate color="primary" size="15" />
@@ -100,7 +100,7 @@
           <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4">
             <v-fade-transition mode="out-in">
               <span v-if="!datatable.carregando">
-                <strong>{{ numeroDeClientesInativos() }}</strong>
+                <strong>{{ datatable.clientes_ativos?.NAO }}</strong>
               </span>
               <span v-else>
                 <v-progress-circular indeterminate color="red" size="15" />
@@ -273,6 +273,7 @@ export default {
         }
       ],
       datatable: {
+        clientes_ativos: {},
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -451,20 +452,6 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeClientesInativos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.NAO
-      })
-      return itensAtivos.length
-    },
-
-    numeroDeClientesAtivos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.SIM
-      })
-      return itensAtivos.length
-    },
-
     async buscaCliente( options = {} ) {
       this.datatable.carregando = true;
       if(!this.permissao) {
@@ -497,6 +484,7 @@ export default {
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
+          this.datatable.clientes_ativos = resposta.data.data.clientes_ativos;
         }
 
       } catch (error) {
@@ -592,6 +580,13 @@ export default {
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
       const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_cliente == itemAtualizado.id_cliente);
 
+      const statusDeAtivoNaoMudou = itemQueSeraAtualizado.ativo == itemAtualizado.ativo
+
+      // ATUALIZANDO OS DADOS DOS CARDS
+      if(!statusDeAtivoNaoMudou) {
+        this.atualizaDadoDosCardsLocalmente(itemAtualizado)
+      }
+
       if (itemQueSeraAtualizado) {
         itemQueSeraAtualizado.id_cliente = itemAtualizado.id_cliente
         itemQueSeraAtualizado.razao_social = itemAtualizado.razao_social
@@ -608,6 +603,18 @@ export default {
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
         itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
+      }
+    },
+
+    atualizaDadoDosCardsLocalmente(itemAtualizado) {
+      if(itemAtualizado.ativo == SimENaoEnumDescricao.NAO) {
+        this.datatable.clientes_ativos['SIM'] -= 1
+        this.datatable.clientes_ativos['NAO'] += 1
+      }
+
+      if(itemAtualizado.ativo == SimENaoEnumDescricao.SIM) {
+        this.datatable.clientes_ativos['NAO'] -= 1
+        this.datatable.clientes_ativos['SIM'] += 1
       }
     },
 

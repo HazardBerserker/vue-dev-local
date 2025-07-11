@@ -237,7 +237,7 @@
                               v-else-if="index === 2"
                               class="text-overline text-grey-darken-3 mx-2"
                             >
-                              +{{ arquivos_comprovante.length - 2 }} Arquivo(s)
+                              +{{ arquivos_comprovante?.length - 2 }} Arquivo(s)
                             </span>
                           </template>
                         </template>
@@ -376,7 +376,7 @@ export default {
         ],
 
         campoObrigatorio: [
-          (v) => !!v || 'Este campo é obrigatório',
+          (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
         ],
         regraRazaoSocial: [
           (v) => !!v || 'A Razão social é obrigatória',
@@ -649,7 +649,7 @@ export default {
 
         appendIfValid('cte_vinculado', this.cte?.Id_CTe);
 
-        if (this.arquivos_comprovante.length > 0) {
+        if (this.arquivos_comprovante?.length > 0) {
         this.arquivos_comprovante.forEach((arquivo) => {
           formData.append('arquivo_comprovante[]', arquivo)
         })
@@ -690,10 +690,16 @@ export default {
 
           alertStore.addAlert(resposta?.data.message, 'success')
 
+          console.log(this.motorista);
+
+
+          let itemAtualizado = resposta?.data?.data
+          itemAtualizado.nome_motorista = this.motorista?.nome_completo
+
           this.limpaCampos()
           this.closeDialog()
 
-          const itemAtualizado = resposta?.data?.data
+
           this.$emit('atualizaODadoNoArrayLocalmente', itemAtualizado)
         } catch (erro) {
           alertStore.addAlert(erro.response?.data?.message, 'error')

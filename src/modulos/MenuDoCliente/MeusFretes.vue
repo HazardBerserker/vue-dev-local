@@ -20,7 +20,7 @@
                   <v-fade-transition mode="out-in">
                       <span v-if="!datatable.carregando">
                       <strong :key="'inativos'">
-                        {{ numeroDeFretesEntregues() }}
+                        {{ datatable.fretes_entregues }}
                       </strong>
                     </span>
                       <span v-else>
@@ -46,7 +46,7 @@
                   <v-fade-transition mode="out-in">
                     <span v-if="!datatable.carregando">
                       <strong :key="'inativos'">
-                        {{ numeroDeFretesEmViagem() }}
+                        {{ datatable.fretes_em_viagem }}
                       </strong>
                     </span>
                     <span v-else>
@@ -504,6 +504,8 @@ export default {
         }
       ],
       datatable: {
+        fretes_entregues: null,
+        fretes_em_viagem: null,
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -840,20 +842,6 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeFretesEntregues() {
-      const fretesEntregues = this.datatable.itens.filter(item => {
-        return item.entrega_efetiva != null
-      })
-      return fretesEntregues.length
-    },
-
-    numeroDeFretesEmViagem() {
-      const fretesEntregues = this.datatable.itens.filter(item => {
-        return item.entrega_efetiva == null
-      })
-      return fretesEntregues.length
-    },
-
     async buscaFretes( options = {} ) {
       this.datatable.carregando = true;
       if(!this.permissao) {
@@ -888,6 +876,8 @@ export default {
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
+          this.datatable.fretes_entregues = resposta.data.data.fretes_entregues;
+          this.datatable.fretes_em_viagem = resposta.data.data.fretes_em_viagem;
         }
 
       } catch (error) {

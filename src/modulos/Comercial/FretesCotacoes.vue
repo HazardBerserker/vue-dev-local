@@ -218,7 +218,7 @@
               <v-card class="mt-3 h-100 rounded-xl bg-blue-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ numeroDeCotacoesFreteEmAberto() }}
+                    {{ datatable.fretes_status?.EM_ABERTO}}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -243,7 +243,7 @@
               <v-card class="mt-3 h-100 rounded-xl bg-green-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ numeroDeCotacoesFreteAceitas() }}
+                    {{ datatable.fretes_status?.ACEITA }}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -268,7 +268,7 @@
               <v-card class="mt-3 h-100 rounded-xl bg-red-darken-2 w-100 text-white text-h5 d-flex align-center justify-center" variant="flat">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    {{ numeroDeCotacoesFreteRejeitadas() }}
+                    {{ datatable.fretes_status?.REJEITADA }}
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -484,6 +484,7 @@ export default {
         },
       ],
       datatable: {
+        fretes_status: {},
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -657,26 +658,6 @@ export default {
       return formatDate(date, 'dd/MM/yyyy');
     },
 
-    numeroDeCotacoesFreteEmAberto() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO
-      })
-      return itensAtivos.length
-    },
-    numeroDeCotacoesFreteRejeitadas() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == StatusFreteCotacaoEnumDescricao.REJEITADA
-      })
-      return itensAtivos.length
-    },
-    numeroDeCotacoesFreteAceitas() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.status == StatusFreteCotacaoEnumDescricao.ACEITA
-      })
-      return itensAtivos.length
-    },
-
-
     selecionaCorDoStatus(status) {
       switch (status) {
         case 0:
@@ -786,6 +767,7 @@ export default {
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
+          this.datatable.fretes_status = resposta.data.data.fretes_status;
         }
 
       } catch (error) {
@@ -809,11 +791,16 @@ export default {
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
       const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_frete == itemAtualizado.id_frete);
 
+      const statusDeAtivoNaoMudou = itemQueSeraAtualizado.status == itemAtualizado.status
+
+      // ATUALIZANDO OS DADOS DOS CARDS
+      if(!statusDeAtivoNaoMudou) {
+        this.atualizaDadoDosCardsLocalmente(itemQueSeraAtualizado, itemAtualizado)
+      }
+
       if (itemQueSeraAtualizado) {
         itemQueSeraAtualizado.id_frete = itemAtualizado.id_frete
         itemQueSeraAtualizado.data_cotacao = formataDataSomenteData(itemAtualizado.data_cotacao)
-        itemQueSeraAtualizado.id_usuario_responsavel = itemAtualizado.id_usuario_responsavel
-        itemQueSeraAtualizado.nome_usuario_responsavel = itemAtualizado.nome_usuario_responsavel
         itemQueSeraAtualizado.id_remetente = itemAtualizado.id_remetente
         itemQueSeraAtualizado.cnpj_destinatario = itemAtualizado.cnpj_destinatario
         itemQueSeraAtualizado.nome_destinatario = itemAtualizado.nome_destinatario
@@ -836,6 +823,7 @@ export default {
         itemQueSeraAtualizado.motivo = itemAtualizado.motivo
         itemQueSeraAtualizado.obs_financeiro = itemAtualizado.obs_financeiro
         itemQueSeraAtualizado.cpf_motorista = itemAtualizado.cpf_motorista
+        itemQueSeraAtualizado.nome_motorista = itemAtualizado.nome_motorista
         itemQueSeraAtualizado.prazo = itemAtualizado.prazo
         itemQueSeraAtualizado.cte_vinculado = itemAtualizado.cte_vinculado
         itemQueSeraAtualizado.adiantamento = itemAtualizado.adiantamento
@@ -851,6 +839,43 @@ export default {
         itemQueSeraAtualizado.data_criacao = formataData(itemAtualizado.data_criacao)
         itemQueSeraAtualizado.id_usuario_ultima_alteracao = itemAtualizado.id_usuario_ultima_alteracao
         itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
+      }
+    },
+
+    atualizaDadoDosCardsLocalmente(itemQueSeraAtualizado, itemAtualizado) {
+      if(itemAtualizado.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO) {
+        this.datatable.fretes_status.EM_ABERTO += 1
+
+        if(itemQueSeraAtualizado.status == StatusFreteCotacaoEnumDescricao.REJEITADA) {
+          this.datatable.fretes_status.REJEITADA -= 1
+        }
+        if(itemQueSeraAtualizado.status == StatusFreteCotacaoEnumDescricao.ACEITA) {
+          this.datatable.fretes_status.ACEITA -= 1
+        }
+        return
+      }
+
+      if(itemAtualizado.status == StatusFreteCotacaoEnumDescricao.ACEITA) {
+        this.datatable.fretes_status.ACEITA += 1
+
+        if(itemQueSeraAtualizado.status == StatusFreteCotacaoEnumDescricao.REJEITADA) {
+          this.datatable.fretes_status.REJEITADA -= 1
+        }
+        if(itemQueSeraAtualizado.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO) {
+          this.datatable.fretes_status.EM_ABERTO -= 1
+        }
+        return
+      }
+
+      if(itemAtualizado.status == StatusFreteCotacaoEnumDescricao.REJEITADA) {
+        this.datatable.fretes_status.REJEITADA += 1
+
+        if(itemQueSeraAtualizado.status == StatusFreteCotacaoEnumDescricao.EM_ABERTO) {
+          this.datatable.fretes_status.EM_ABERTO -= 1
+        }
+        if(itemQueSeraAtualizado.status == StatusFreteCotacaoEnumDescricao.ACEITA) {
+          this.datatable.fretes_status.ACEITA -= 1
+        }
       }
     },
 

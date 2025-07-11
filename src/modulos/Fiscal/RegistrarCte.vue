@@ -20,7 +20,7 @@
                   <v-fade-transition mode="out-in">
                       <span v-if="!datatable.carregando">
                       <strong :key="'inativos'">
-                        {{ numeroDeCtesAutorizados() }}
+                        {{ datatable.ctes_autorizados }}
                       </strong>
                     </span>
                       <span v-else>
@@ -46,7 +46,7 @@
                   <v-fade-transition mode="out-in">
                     <span v-if="!datatable.carregando">
                       <strong :key="'inativos'">
-                        {{ numeroDeCtesCancelados() }}
+                        {{ datatable.ctes_cancelados }}
                       </strong>
                     </span>
                     <span v-else>
@@ -462,6 +462,8 @@ export default {
         }
       ],
       datatable: {
+        ctes_autorizados: null,
+        ctes_cancelados: null,
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -701,20 +703,6 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeCtesCancelados() {
-      const itensCancelados = this.datatable.itens.filter(item => {
-        return item.status == StatusCteEnumDescricao.CANCELADO
-      })
-      return itensCancelados.length
-    },
-
-    numeroDeCtesAutorizados() {
-      const itensAutorizados = this.datatable.itens.filter(item => {
-        return item.status == StatusCteEnumDescricao.AUTORIZADO
-      })
-      return itensAutorizados.length
-    },
-
     async buscaCte( options = {} ) {
       this.datatable.carregando = true;
       if(!this.permissao) {
@@ -749,6 +737,8 @@ export default {
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
+          this.datatable.ctes_autorizados = resposta.data.data.ctes_autorizados;
+          this.datatable.ctes_cancelados = resposta.data.data.ctes_cancelados;
         }
 
       } catch (error) {
@@ -815,6 +805,8 @@ export default {
         );
 
         this.itemSelecionado.status = StatusCteEnumDescricao.CANCELADO
+        this.datatable.ctes_autorizados -= 1
+        this.datatable.ctes_cancelados += 1
 
         this.datatable.itensSelecionados = [];
         this.itemSelecionado = {};
@@ -867,6 +859,8 @@ export default {
         );
 
         this.itemSelecionado.status = StatusCteEnumDescricao.AUTORIZADO
+        this.datatable.ctes_autorizados += 1
+        this.datatable.ctes_cancelados -= 1
 
         this.datatable.itensSelecionados = [];
         this.itemSelecionado = {};

@@ -76,7 +76,7 @@
               <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    <strong>{{ numeroDeMotoristasAtivos() }}</strong>
+                    <strong>{{ datatable.motoristas_ativos?.SIM }}</strong>
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="primary" size="15" />
@@ -100,7 +100,7 @@
               <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4">
                 <v-fade-transition mode="out-in">
                   <span v-if="!datatable.carregando">
-                    <strong>{{ numeroDeMotoristasInativos() }}</strong>
+                    <strong>{{ datatable.motoristas_ativos?.NAO }}</strong>
                   </span>
                   <span v-else>
                     <v-progress-circular indeterminate color="red" size="15" />
@@ -308,6 +308,7 @@ export default {
         }
       ],
       datatable: {
+        motoristas_ativos: {},
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -502,20 +503,6 @@ export default {
       return `?${queryParams.toString()}`;
     },
 
-    numeroDeMotoristasInativos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.NAO
-      })
-      return itensAtivos.length
-    },
-
-    numeroDeMotoristasAtivos() {
-      const itensAtivos = this.datatable.itens.filter(item => {
-        return item.ativo == SimENaoEnumDescricao.SIM
-      })
-      return itensAtivos.length
-    },
-
     async buscaMotorista( options = {} ) {
       this.datatable.carregando = true;
       if(!this.permissao) {
@@ -548,6 +535,7 @@ export default {
         if(resposta?.data) {
           this.datatable.itens = resposta.data.data.itens;
           this.datatable.totalRegistros = resposta.data.data.total;
+          this.datatable.motoristas_ativos = resposta.data.data.motoristas_ativos;
         }
 
       } catch (error) {
@@ -650,6 +638,13 @@ export default {
     onAtualizaODadoNoArrayLocalmente(itemAtualizado) {
       const itemQueSeraAtualizado = this.datatable.itens.find(i => i.id_motorista == itemAtualizado.id_motorista);
 
+      const statusDeAtivoNaoMudou = itemQueSeraAtualizado.ativo == itemAtualizado.ativo
+
+      // ATUALIZANDO OS DADOS DOS CARDS
+      if(!statusDeAtivoNaoMudou) {
+        this.atualizaDadoDosCardsLocalmente(itemAtualizado)
+      }
+
       if (itemQueSeraAtualizado) {
         itemQueSeraAtualizado.id_motorista = itemAtualizado.id_motorista
         itemQueSeraAtualizado.nome_completo = itemAtualizado.nome_completo
@@ -673,6 +668,18 @@ export default {
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
         itemQueSeraAtualizado.data_ultima_alteracao = formataData(itemAtualizado.data_ultima_alteracao)
+      }
+    },
+
+    atualizaDadoDosCardsLocalmente(itemAtualizado) {
+      if(itemAtualizado.ativo == SimENaoEnumDescricao.NAO) {
+        this.datatable.motoristas_ativos['SIM'] -= 1
+        this.datatable.motoristas_ativos['NAO'] += 1
+      }
+
+      if(itemAtualizado.ativo == SimENaoEnumDescricao.SIM) {
+        this.datatable.motoristas_ativos['NAO'] -= 1
+        this.datatable.motoristas_ativos['SIM'] += 1
       }
     },
 

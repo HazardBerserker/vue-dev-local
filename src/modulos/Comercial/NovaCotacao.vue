@@ -443,7 +443,7 @@ export default {
 
       // regras coleta
       regraGeralCampoObrigatorio: [
-        (v) => !!v || 'Este campo é obrigatório',
+        (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
       ]
     }
   },
