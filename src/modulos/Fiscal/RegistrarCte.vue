@@ -221,12 +221,34 @@
                   </v-select>
                 </v-col>
 
-                <v-col cols="12" md="3">
+                <v-col cols="12" md="2">
                   <InputTextMoeda v-model="filtros.vCarga" prefix="R$" label="Nota:" clearable/>
                 </v-col>
 
-                <v-col cols="12" md="3">
-                  <InputTextMoeda v-model="filtros.vTPrest" prefix="R$" label="Frete:" clearable/>
+                <v-col cols="12" md="2">
+                   <v-text-field
+                    v-model="filtros.tomador"
+                    label="Tomador"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <InputText label="Tom. CNPJ" v-model="filtros.tomador_cnpj" mask="##.###.###/####-##" :rules="regraCNPJ" counter="18" density="compact"/>
+                </v-col>
+
+                <v-col cols="12" md="4">
+                 <v-text-field
+                    v-model="filtros.xObs"
+                    label="Observação"
+                    variant="outlined"
+                    density="compact"
+                    clearable
+                    hide-details
+                  ></v-text-field>
                 </v-col>
               </v-row>
 
@@ -351,6 +373,9 @@
             <template #[`item.vTPrest`]="{ item }">
               {{ formataMoeda(item.vTPrest) }}
             </template>
+            <template #[`item.tomador_cnpj`]="{ item }">
+              {{ formataCNPJ(item.tomador_cnpj) }}
+            </template>
             <template #[`footer.prepend`]>
               <div class="d-flex w-100 align-center my-auto ps-4">
                 <div
@@ -384,6 +409,7 @@ import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteE
 import { inject } from 'vue'
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
+import InputText from '@/components/Form/InputText.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 import { estadosBrasileiros } from '@/helpers/estadosHelper';
 
@@ -392,7 +418,8 @@ export default {
   components: {
     GlobalAlertFixed,
     BtnCreateCte,
-    InputTextMoeda
+    InputTextMoeda,
+    InputText
   },
   created() {
     this.dialog = inject('dialog')
@@ -525,7 +552,7 @@ export default {
             width: '350',
           },
           {
-            title: 'Cidade',
+            title: 'Dest. Cidade',
             key: 'dest_xMun',
             width: '200',
             align:'start',
@@ -534,10 +561,34 @@ export default {
             },
           },
           {
-            title: 'UF',
+            title: 'Dest. UF',
             key: 'dest_UF',
-            width: '300',
+            width: '200',
             align:'center',
+          },
+          {
+            title: 'Tomador',
+            key: 'tomador',
+            align: 'start',
+            cellProps: {
+              class: 'text-start'
+            },
+            width: '350',
+          },
+          {
+            title: 'Tom. CNPJ',
+            key: 'tomador_cnpj',
+            align: 'center',
+            width: '250',
+          },
+          {
+            title: 'Observação',
+            key: 'xObs',
+            align: 'start',
+            cellProps: {
+              class: 'text-start'
+            },
+            width: '350',
           },
           {
             title: 'Nota',
