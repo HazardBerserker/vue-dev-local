@@ -250,7 +250,7 @@
     </v-card>
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
-        <div class="d-flex align-center ga-2">
+        <div class="d-flex align-center ga-2 flex-md-row flex-column ">
 
           <v-btn
             color="grey-darken-3"
@@ -301,7 +301,7 @@
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
             @update:options="buscaFrete"
-            height="45vh"
+            height="62vh"
             density="comfortable"
             no-data-text="Nenhum Frete encontrado, tente alterar o(s) filtro(s)"
           >

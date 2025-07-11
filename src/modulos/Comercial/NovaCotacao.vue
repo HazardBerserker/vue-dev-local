@@ -35,7 +35,7 @@
             <span class="text-h6 text-grey-darken-1">Coleta</span>
           </template>
           <v-row class="mt-2">
-            <v-col>
+            <v-col cols="12" md="6">
               <v-combobox
                 :loading="comboBoxRemetenteLoading"
                 @keyup="(event) => {
@@ -55,26 +55,26 @@
                 :rules="regraGeralCampoObrigatorio"
               ></v-combobox>
             </v-col>
-            <v-col>
+            <v-col cols="12" md="6">
               <InputText label="CNPJ" v-model="coleta_cnpj" :rules="regraGeralCampoObrigatorio" mask="##.###.###/####-##" density="compact" bg-color="white" readonly :clearable="false"/>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <InputText label="CEP" v-model="coleta_cep" :rules="regraGeralCampoObrigatorio" mask="#####-###" density="compact" bg-color="white" readonly :clearable="false"/>
             </v-col>
-            <v-col cols="8">
+            <v-col cols="12" md="8">
               <v-text-field v-model="coleta_endereco" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Endereço" readonly bg-color="white" placeholder="Digite o Endereço"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="3">
+            <v-col cols="12" md="3">
               <v-text-field v-model="coleta_numero" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Número" readonly bg-color="white" placeholder="Digite o Número"></v-text-field>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="12" md="5">
               <v-text-field v-model="coleta_cidade" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Cidade" readonly bg-color="white" placeholder="Digite a cidade"></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <v-select
                 v-model="coleta_uf"
                 variant="outlined"
@@ -101,29 +101,29 @@
             <span class="text-h6 text-grey-darken-1">Entrega</span>
           </template>
           <v-row class="mt-2">
-            <v-col>
+            <v-col cols="12" md="6">
               <InputText label="CNPJ" v-model="cnpj_destinatario" mask="##.###.###/####-##" :clearable="false" density="compact" class="bg-white" counter="18"/>
             </v-col>
-            <v-col>
+            <v-col cols="12" md="6">
               <v-text-field v-model="nome_destinatario" density="compact" variant="outlined" label="Destinatário" bg-color="white" placeholder="Digite o nome do destinatário"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <InputText label="CEP" v-model="cep_destinatario" mask="#####-###" :clearable="false"  counter="9" density="compact" class="bg-white"/>
             </v-col>
-            <v-col cols="8">
+            <v-col cols="12" md="8">
               <v-text-field v-model="endereco_destinatario" density="compact" variant="outlined" label="Endereço" bg-color="white" placeholder="Digite o endereço"></v-text-field>
             </v-col>
           </v-row>
           <v-row class="mt-2">
-            <v-col cols="3">
+            <v-col cols="12" md="3">
               <v-text-field v-model="numero_destinatario" density="compact" variant="outlined" label="Número" bg-color="white" placeholder="Digite o Número"></v-text-field>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="12" md="5">
               <v-text-field v-model="cidade_destinatario" :rules="regraGeralCampoObrigatorio" density="compact" variant="outlined" label="Cidade"  bg-color="white" placeholder="Digite a cidade"></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <v-select
                 v-model="uf_destinatario"
                 variant="outlined"
@@ -139,7 +139,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <v-text-field v-model="prazo_entrega" :rules="regraGeralCampoObrigatorio" min="1" type="number" density="compact" variant="outlined" label="Prazo de Entrega" bg-color="white" placeholder="Digite o prazo em dias"></v-text-field>
             </v-col>
           </v-row>
@@ -149,13 +149,13 @@
             </v-col>
           </v-row>
           <v-row class="my-2">
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <InputTextMoeda v-model="valor_motorista" prefix="R$" label="Valor do Motorista:" :rules="regraGeralCampoObrigatorio" bg-color="white"/>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <InputTextMoeda v-model="valor_notafiscal" prefix="R$" label="Valor da NF:" :rules="regraGeralCampoObrigatorio" bg-color="white"/>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="12" md="4">
               <v-text-field v-model="coeficiente_margem" :rules="regraGeralCampoObrigatorio" type="number" density="compact" variant="outlined" label="Coeficiente de Margem:" bg-color="white" placeholder="Gerado automaticamente" min="0">
                 <template #append-inner>
                   %
@@ -166,7 +166,7 @@
           <v-btn block class="mb-10" variant="flat" color="blue" :disabled="!coeficiente_margem || !valor_notafiscal || !valor_motorista" @click="calculaFrete">
             Calcular Frete
           </v-btn>
-          <div class="d-flex justify-space-between mt-4 ga-2">
+          <div class="d-flex justify-space-between mt-4 ga-2 flex-column flex-md-row">
             <v-card class="fill-height pa-2 w-100" color="blue-darken-4" variant="tonal">
               <template #title>
                 <div class="text-center">

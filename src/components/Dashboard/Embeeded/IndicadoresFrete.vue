@@ -4,7 +4,7 @@
       Indicadores Gerais
     </v-card-title>
     <v-row dense class="mt-2">
-      <v-col cols="6" :md="acessoDeCliente ? 4 : 3" v-for="(indicador, index) in indicadores()" :key="index">
+      <v-col cols="12" :md="acessoDeCliente ? 4 : 3" v-for="(indicador, index) in indicadores()" :key="index">
         <v-sheet
           rounded="lg"
           class="pa-3 d-flex flex-column align-center justify-center"

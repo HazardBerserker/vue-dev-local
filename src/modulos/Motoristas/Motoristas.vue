@@ -4,113 +4,119 @@
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
-    <v-card class="pa-2 ps-4 rounded-xl justify-space-between elevation-4 d-flex" color="grey-lighten-3" variant="tonal" v-if="permissao">
-      <div class="d-flex flex-column w-100">
-        <h5 class="text-subtitle-1 font-weight-bold text-grey-darken-3 ps-1">Filtros:</h5>
-        <div class="d-flex my-auto ga-2">
+    <v-card class="pa-4 rounded-xl elevation-4" color="grey-lighten-3" v-if="permissao">
+
+      <!-- Filtros -->
+      <v-row class="mb-4" align="center" >
+        <v-col cols="12" sm="6" md="5" lg="4">
           <v-text-field
             v-model="busca_geral"
-            hide-details
             label="Busca Geral..."
-            width="500"
+            hide-details
             variant="solo-filled"
             density="compact"
             bg-color="white"
             clearable
-            flat
             rounded
-          ></v-text-field>
+            dense
+          />
+        </v-col>
+
+        <v-col cols="12" sm="4" md="3">
           <v-select
             v-model="filtros.ativo"
-            hide-details
-            label="Busca pelo Status de Ativo"
-            width="300"
-            variant="solo-filled"
-            density="compact"
             :items="opcoesAtivo"
             item-value="value"
             item-title="label"
+            label="Busca pelo Status de Ativo"
+            hide-details
+            variant="solo-filled"
+            density="compact"
             bg-color="white"
             clearable
-            flat
             rounded
-          ></v-select>
+            dense
+          />
+        </v-col>
+
+        <v-col cols="12" sm="2" md="2" class="d-flex justify-md-start justify-center">
           <v-btn
             color="blue-darken-3"
             variant="flat"
-            class="text-white fill-height"
+            class="text-white"
             @click="buscaMotorista"
             rounded="pill"
+            prepend-icon="mdi-magnify"
           >
-            <v-icon>
-              mdi-magnify
-            </v-icon>
+            Buscar
           </v-btn>
-        </div>
-        <span class="text-caption text-grey-darken-1 ps-2 pt-2">Remova todos os acentos e sinais para buscar os dados corretamente</span>
-      </div>
+        </v-col>
+
+        <v-col cols="12">
+          <span class="text-caption text-grey-darken-1 ps-2 pt-2 d-block">
+            Remova todos os Símbolos e pontuações para busca correta
+          </span>
+        </v-col>
+      </v-row>
 
       <v-divider></v-divider>
 
       <!-- KPIs -->
-      <div class="d-flex ga-2 my-auto">
-        <!-- Motoristas Ativos -->
-        <v-card
-          width="250"
-          class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-          color="blue-darken-4"
-        >
+      <v-row class="mt-4" dense>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-card
+            class="pa-3 pe-5 rounded-xl elevation-2 d-flex align-center"
+            color="blue-darken-4"
+          >
             <v-avatar size="40" class="me-4 bg-white text-blue-darken-4">
-                <v-icon>mdi-account</v-icon>
+              <v-icon>mdi-account</v-icon>
             </v-avatar>
-            <div class="d-flex flex-column">
-                <span class="text-body-2 text-white">Motoristas Ativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
-                    <v-fade-transition mode="out-in">
-                        <span v-if="!datatable.carregando">
-                        <strong :key="'inativos'">
-                          {{ numeroDeMotoristasAtivos() }}
-                        </strong>
-                      </span>
-                        <span v-else>
-                          <v-progress-circular indeterminate color="primary" size="15"></v-progress-circular>
-                        </span>
-                    </v-fade-transition>
-                </v-chip>
+            <div class="d-flex justify-space-between w-100 align-center">
+              <span class="text-body-2 text-white">Motoristas Ativos</span>
+              <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
+                <v-fade-transition mode="out-in">
+                  <span v-if="!datatable.carregando">
+                    <strong>{{ numeroDeMotoristasAtivos() }}</strong>
+                  </span>
+                  <span v-else>
+                    <v-progress-circular indeterminate color="primary" size="15" />
+                  </span>
+                </v-fade-transition>
+              </v-chip>
             </div>
-        </v-card>
+          </v-card>
+        </v-col>
 
-        <!-- Motoristas Inativos -->
-        <v-card
-            width="250"
-            class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-card
+            class="pa-3 pe-5 rounded-xl elevation-2 d-flex align-center"
             color="red-darken-4"
-        >
+          >
             <v-avatar size="40" class="me-4 bg-white text-red-darken-4">
-                <v-icon>mdi-account-off</v-icon>
+              <v-icon>mdi-account-off</v-icon>
             </v-avatar>
-            <div class="d-flex flex-column justify-center">
+            <div class="d-flex justify-space-between w-100 align-center">
               <span class="text-body-2 text-white">Motoristas Inativos</span>
-                <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4" loading="true">
-                    <v-fade-transition mode="out-in">
-                      <span v-if="!datatable.carregando">
-                        <strong :key="'inativos'">
-                          {{ numeroDeMotoristasInativos() }}
-                        </strong>
-                      </span>
-                      <span v-else>
-                        <v-progress-circular indeterminate color="red" size="15"></v-progress-circular>
-                      </span>
-                    </v-fade-transition>
-                </v-chip>
+              <v-chip variant="flat" size="small" color="white" class="mt-1 text-red-darken-4">
+                <v-fade-transition mode="out-in">
+                  <span v-if="!datatable.carregando">
+                    <strong>{{ numeroDeMotoristasInativos() }}</strong>
+                  </span>
+                  <span v-else>
+                    <v-progress-circular indeterminate color="red" size="15" />
+                  </span>
+                </v-fade-transition>
+              </v-chip>
             </div>
-        </v-card>
-      </div>
+          </v-card>
+        </v-col>
+
+        <!-- Pode adicionar mais KPIs aqui com colunas iguais -->
+      </v-row>
 
     </v-card>
-
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
-        <div class="d-flex align-center ga-2">
+        <div class="d-flex align-center ga-2 flex-md-row flex-column ">
 
           <BtnCreateMotorista :loading="datatable.carregando" @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
@@ -177,7 +183,7 @@
             loading-text="Buscando, aguarde..."
             class="elevation-3 class-on-data-table hoverable-row"
             @update:options="buscaMotorista"
-            height="54vh"
+            height="66vh"
             density="comfortable"
             no-data-text="Nenhum Motorista encontrado, tente alterar o(s) filtro(s)"
           >

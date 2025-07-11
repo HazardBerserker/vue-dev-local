@@ -65,7 +65,7 @@
 
               <v-row dense>
 
-                <v-col cols="12" md="4">
+                <v-col cols="12" lg="4">
                   <v-row>
                     <v-col cols="12">
                       <div class="d-flex flex-column">
@@ -167,59 +167,59 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="4" v-if="acessoDeAdminAoDashboard()">
+        <v-col md="4" v-if="acessoDeAdminAoDashboard()">
           <GanhosEPerdasCotacoes :dados="dadosganhosEPerdasCotacoes"/>
         </v-col>
-        <v-col :cols="!acessoDeAdminAoDashboard() ? 6 : 4">
+        <v-col :md="!acessoDeAdminAoDashboard() ? 6 : 4">
           <FretesFracionadosDedicados :dados="dadosFretesFracionadosEDedicados"/>
         </v-col>
-        <v-col :cols="!acessoDeAdminAoDashboard() ? 6 : 4">
+        <v-col :md="!acessoDeAdminAoDashboard() ? 6 : 4">
           <FretesOTD :dados="dadosFretesOTD"/>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col md="12">
           <FreteVsMercadoria :dados="dadosFreteVsMercadoria"/>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
+        <v-col md="6" v-if="acessoDeAdminAoDashboard()">
           <Top10ClientesFaturamentoLinha :dados="dadosTop10ClientesFaturamentoLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
         </v-col>
-        <v-col cols="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+        <v-col md="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
           <DestinatarioValoresMercadoria :dados="dadosDestinatarioValoresMercadoria"/>
         </v-col>
-        <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
+        <v-col md="6" v-if="acessoDeAdminAoDashboard()">
           <ParticipacaoClientesFaturamentoDonut :dados="dadosClientesFaturamentoDonut"/>
         </v-col>
-        <v-col cols="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+        <v-col md="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
           <DestinatarioParticipacaoFaturamento :dados="dadosDestinatariosFaturamento"/>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
+        <v-col md="6">
           <Top10ClientesQuantidadeCteLinha :dados="dadosTop10ClientesQuantidadeCteLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
         </v-col>
-        <v-col cols="6" v-if="acessoDeAdminAoDashboard()">
+        <v-col md="6" v-if="acessoDeAdminAoDashboard()">
           <DistribuicaoPeriodoClientesQuantidadeCteDonut :dados="quantidadeCtePorClienteDonut"/>
         </v-col>
-        <v-col cols="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+        <v-col md="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
           <DestinatarioDistribuicaoPeriodoCte :dados="dadosDestinatariosDistribuicaoPeriodo"/>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
+        <v-col md="6">
           <QuantidadeCtePorUF :dados="dadosPorUfQuantidadeCte"/>
         </v-col>
-        <v-col cols="6">
+        <v-col md="6">
           <FaturamentoPorUF :dados="dadosPorUfFaturamento"/>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
+        <v-col md="6">
           <MapaQuantidadeCtePorUf :dados="dadosPorUfQuantidadeCte"/>
         </v-col>
-        <v-col cols="6">
+        <v-col md="6">
           <MapaFaturamentoPorUf :dados="dadosPorUfFaturamento"/>
         </v-col>
       </v-row>

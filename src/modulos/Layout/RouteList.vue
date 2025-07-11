@@ -108,7 +108,7 @@ export default {
     },
 
     acessoDeCliente() {
-      const usuarioEhCliente = this.usuario.id_cliente != null
+      const usuarioEhCliente = this.usuario?.id_cliente != null
       return usuarioEhCliente
     },
 

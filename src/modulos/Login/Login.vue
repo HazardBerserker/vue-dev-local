@@ -1,6 +1,6 @@
 <template>
    <div class="d-flex h-screen w-100">
-      <div class="d-flex w-100 fill-height justify-center align-center dynamic-background d-flex flex-column">
+      <div class="d-flex w-100 fill-height justify-center align-center dynamic-background d-flex flex-column px-6">
          <!-- <img src="@/assets/logo.png" alt="Logo da empresa" class="logo" /> -->
 
          <v-card class="d-flex flex-column ga-3 w-100 justify-center align-start content py-16 px-8 elevation-0" rounded="lg">
@@ -11,7 +11,7 @@
               </div>
             </v-scroll-y-reverse-transition>
 
-          <span class="text-subtitle-2 text-start font-weight-medium slogan-text">Logistica inteligente, frete eficiente!</span>
+            <span class="text-subtitle-2 text-start font-weight-medium slogan-text">Logistica inteligente, frete eficiente!</span>
             <form @submit.prevent="login" class="w-100 d-flex flex-column ga-3 w-100 justify-center align-start elevation-0" rounded="lg">
               <v-text-field
                 name="email"
@@ -102,7 +102,7 @@
       </div>
 
       <!-- Lado direito: Formulário -->
-      <div class="d-flex fill-height bg-white w-100">
+      <div class="d-none d-md-flex fill-height bg-white w-100">
         <div class="w-50 ma-auto">
           <v-img
             src="/logo/neveah_logo_transp.png"
