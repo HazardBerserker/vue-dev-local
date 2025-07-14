@@ -188,6 +188,7 @@
                         clearable
                         variant="outlined"
                         :disabled="!modoEdicao"
+                        :rules="arquivos_comprovante ? regraEntregaEfetiva : []"
                       ></v-date-input>
                     </v-col>
                     <v-col>
@@ -209,7 +210,7 @@
                         v-model="arquivos_comprovante"
                         accept="image/*"
                         multiple
-                        density="comfortable"
+                        density="compact"
                         clearable
                         prepend-icon="mdi-camera"
                         label="Selecione o(s) comprovantes(s)"
@@ -377,6 +378,9 @@ export default {
 
         campoObrigatorio: [
           (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
+        ],
+        regraEntregaEfetiva: [
+          (v) => v !== null && v !== undefined && v !== '' || 'A Entrega é obrigatória quando comprovante é enviado'
         ],
         regraRazaoSocial: [
           (v) => !!v || 'A Razão social é obrigatória',
@@ -640,14 +644,13 @@ export default {
         appendIfValid('prazo', this.prazo);
         appendIfValid('imposto_considerado', this.imposto_considerado);
 
-        appendIfValid('coleta_efetiva', this.coleta_efetiva ? formatDate(this.coleta_efetiva, 'yyyy-MM-dd') : null);
+        appendIfValid('coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva, 'yyyy-MM-dd') : null);
         appendIfValid('adiantamento', this.adiantamento);
         appendIfValid('saldo', this.saldo);
         appendIfValid('integral', this.integral);
         appendIfValid('obs_financeiro', this.obs_financeiro);
         appendIfValid('cpf_motorista', this.motorista?.cpf);
-
-        appendIfValid('cte_vinculado', this.cte?.Id_CTe);
+        appendIfValid('cte_vinculado', typeof this.cte === 'object' && this.cte?.Id_CTe ? this.cte.Id_CTe : this.cte);
 
         if (this.arquivos_comprovante?.length > 0) {
         this.arquivos_comprovante.forEach((arquivo) => {
@@ -655,12 +658,23 @@ export default {
         })
       }
 
-        appendIfValid('entrega_efetiva', this.entrega_efetiva ? formatDate(this.entrega_efetiva, 'yyyy-MM-dd') : null);
+        appendIfValid('entrega_efetiva', this.entrega_efetiva ? this.formatarDataParaEnvio(this.entrega_efetiva, 'yyyy-MM-dd') : null);
 
         // Método PUT, se necessário
         formData.append('_method', 'PUT');
 
         return formData;
+      },
+
+      formatarDataParaEnvio(data) {
+        if (!data || typeof data !== 'string') return null;
+
+        // Se já estiver no formato ISO (yyyy-MM-dd), retorna direto
+        if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+          return data;
+        }
+
+        formatDate(data, 'yyyy-MM-dd')
       },
 
       async atualizaFreteCotacao() {
@@ -674,7 +688,13 @@ export default {
           return;
         }
 
+        if (this.motorista && typeof this.motorista !== 'object') {
+          alertStore.addAlert('Selecione um motorista da lista que aparece ao digitar', 'warning')
+          return
+        }
+
         const dadosParaEnvio = this.formataDadosParaEnvio();
+
         const url = `${endpoints.freteCotacao.atualiza}/${this.item.id_frete}`;
 
         try {
@@ -690,7 +710,6 @@ export default {
 
           alertStore.addAlert(resposta?.data.message, 'success')
 
-          console.log(this.motorista);
 
 
           let itemAtualizado = resposta?.data?.data
@@ -763,7 +782,7 @@ export default {
       },
 
       format(date) {
-        return formatDate(date, 'dd/MM/yy')
+        return formatDate(date, 'dd/MM/yyyy')
       },
 
       formatarParaISO(dataBr) {

@@ -830,8 +830,8 @@ export default {
         itemQueSeraAtualizado.saldo = itemAtualizado.saldo
         itemQueSeraAtualizado.integral = itemAtualizado.integral
         itemQueSeraAtualizado.status_pagamento = itemAtualizado.status_pagamento
-        itemQueSeraAtualizado.coleta_efetiva = itemAtualizado.coleta_efetiva
-        itemQueSeraAtualizado.entrega_efetiva = itemAtualizado.entrega_efetiva
+        itemQueSeraAtualizado.coleta_efetiva = formataDataSomenteData(itemAtualizado.coleta_efetiva)
+        itemQueSeraAtualizado.entrega_efetiva = formataDataSomenteData(itemAtualizado.entrega_efetiva)
         itemQueSeraAtualizado.arquivo_comprovante = itemAtualizado.arquivo_comprovante
         itemQueSeraAtualizado.usuario_criacao = itemAtualizado.usuario_criacao
         itemQueSeraAtualizado.usuario_ultima_alteracao = itemAtualizado.usuario_ultima_alteracao
