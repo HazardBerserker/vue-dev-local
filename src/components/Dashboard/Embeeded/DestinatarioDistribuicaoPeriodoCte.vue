@@ -40,20 +40,12 @@ export default {
                   fontSize: '24px',
                   fontWeight: 600,
                   color: '#333',
-                  formatter: val => Number(val).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) // ⬅️ Aqui limita as casas decimais
                 },
                 total: {
                   show: true,
                   label: 'Total',
                   fontSize: '16px',
                   color: '#666',
-                  formatter: function (w) {
-                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0)
-                    return total.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    })
-                  }
                 }
               }
             }
