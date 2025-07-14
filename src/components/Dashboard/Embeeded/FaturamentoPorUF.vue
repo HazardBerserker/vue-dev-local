@@ -4,17 +4,17 @@
       Dados por UF - Faturamento
     </v-card-title>
     <v-card-text>
-      <apexchart type="bar" height="600" :options="options" :series="series" />
+      <apexchart type="bar" height="506" :options="options" :series="series" />
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import ApexChart from 'vue3-apexcharts';
+import ApexCharts from 'vue3-apexcharts';
 
 export default {
   name: 'FaturamentoPorUF',
-  components: { apexchart: ApexChart },
+  components: { apexchart: ApexCharts },
   props: {
     dados: { type: Array, required: true }
   },
@@ -46,12 +46,21 @@ export default {
           categories: this.dados.map(uf => uf.uf)
         },
         colors: [
-          '#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B',
-          '#2b908f', '#f9a3a4', '#90ee7e', '#f48024', '#69d2e7',
-          '#ffb703', '#023047', '#219ebc', '#8ecae6', '#ff6700',
-          '#d4a373', '#3a86ff', '#8338ec', '#ff006e', '#fb5607',
-          '#ffbe0b', '#06d6a0', '#118ab2', '#073b4c', '#9b5de5',
-          '#f15bb5', '#fee440'
+          '#2c3e50', // azul petróleo escuro
+          '#27ae60', // verde escuro vibrante
+          '#d35400', // laranja queimado
+          '#8e44ad', // roxo profundo
+          '#f39c12', // amarelo queimado
+          '#16a085', // verde água escuro
+          '#c0392b', // vermelho escuro
+          '#1f2d3d', // azul grafite
+          '#7f8c8d', // cinza escuro
+          '#e84393', // rosa vibrante
+          '#2980b9', // azul forte
+          '#2d3436', // cinza grafite
+          '#6c5ce7', // violeta neon
+          '#e67e22', // laranja vibrante
+          '#00b894'  // verde menta escuro
         ],
         dataLabels: {
           enabled: true,

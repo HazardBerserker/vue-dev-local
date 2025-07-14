@@ -4,17 +4,17 @@
       Quantidade de CT-es por UF
     </v-card-title>
     <v-card-text>
-      <apexchart type="bar" height="600" :options="chartOptions" :series="series" />
+      <apexchart type="bar" height="506" :options="chartOptions" :series="series" />
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import ApexChart from 'vue3-apexcharts';
+import ApexCharts from 'vue3-apexcharts';
 
 export default {
   name: 'QuantidadeCtePorUF.vue',
-  components: { apexchart: ApexChart },
+  components: { apexchart: ApexCharts },
   props: {
     dados: {
       type: Array,

@@ -4,7 +4,7 @@
       Distribuição Período - Quantidade CT-es
     </v-card-title>
     <v-card-text>
-      <apexchart type="donut" height="362" :options="chartOptions" :series="series" />
+      <apexchart type="donut" height="517" :options="chartOptions" :series="series" />
     </v-card-text>
   </v-card>
 </template>
@@ -24,11 +24,44 @@ export default {
   computed: {
     chartOptions() {
       return {
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '80%',
+              labels: {
+                show: true,
+                name: {
+                  show: false
+                },
+                value: {
+                  show: true,
+                  fontSize: '24px',
+                  fontWeight: 600,
+                  color: '#333',
+                  formatter: val => Number(val).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) // ⬅️ Aqui limita as casas decimais
+                },
+                total: {
+                  show: true,
+                  label: 'Total',
+                  fontSize: '16px',
+                  color: '#666',
+                  formatter: function (w) {
+                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+                    return total.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL'
+                    })
+                  }
+                }
+              }
+            }
+          }
+        },
         chart: {
           toolbar: { show: true },
           zoom: { enabled: false }
         },
-        labels: this.label,
+        labels: this.labels,
         colors: [
           '#3498db', // azul
           '#2ecc71', // verde
@@ -55,7 +88,7 @@ export default {
         legend: false
       };
     },
-    label() {
+    labels() {
       return this.dados.labels
     },
     series() {

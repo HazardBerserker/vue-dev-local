@@ -33,6 +33,31 @@ export default {
   computed: {
     chartOptions() {
       return {
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '60%',
+              labels: {
+                show: true,
+                name: {
+                  show: false
+                },
+                value: {
+                  show: true,
+                  fontSize: '24px',
+                  fontWeight: 600,
+                  color: '#333',
+                },
+                total: {
+                  show: true,
+                  label: 'Total',
+                  fontSize: '16px',
+                  color: '#666',
+                }
+              }
+            }
+          }
+        },
         chart: {
           toolbar: { show: true },
           zoom: { enabled: false }

@@ -6,7 +6,7 @@
     <v-card-text>
       <apexchart
         type="area"
-        height="300"
+        height="350"
         :options="options"
         :series="series"
       />

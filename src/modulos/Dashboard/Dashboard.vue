@@ -4,6 +4,8 @@
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
+    <teste :isAdmin="true"></teste>
+
     <v-card class="pa-4 rounded-xl elevation-2 bg-grey-lighten-5 d-flex flex-column mb-3" width="100%" v-if="permissao">
 
     <div class="d-flex justify-space-between">
@@ -183,36 +185,40 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col md="6" v-if="acessoDeAdminAoDashboard()">
+        <v-col md="12" v-if="acessoDeAdminAoDashboard()">
           <Top10ClientesFaturamentoLinha :dados="dadosTop10ClientesFaturamentoLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
         </v-col>
-        <v-col md="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
+      </v-row>
+      <v-row>
+        <v-col md="12" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
           <DestinatarioValoresMercadoria :dados="dadosDestinatarioValoresMercadoria"/>
         </v-col>
+      </v-row>
+      <v-row>
+        <v-col md="12">
+          <Top10ClientesQuantidadeCteLinha :dados="dadosTop10ClientesQuantidadeCteLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col md="6" v-if="acessoDeAdminAoDashboard()">
           <ParticipacaoClientesFaturamentoDonut :dados="dadosClientesFaturamentoDonut"/>
         </v-col>
         <v-col md="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
           <DestinatarioParticipacaoFaturamento :dados="dadosDestinatariosFaturamento"/>
         </v-col>
+        <v-col md="6">
+          <FaturamentoPorUF :dados="dadosPorUfFaturamento"/>
+        </v-col>
       </v-row>
       <v-row>
-        <v-col md="6">
-          <Top10ClientesQuantidadeCteLinha :dados="dadosTop10ClientesQuantidadeCteLinha" :acessoDeCliente="acessoDeClienteAoDashboard()"/>
-        </v-col>
         <v-col md="6" v-if="acessoDeAdminAoDashboard()">
           <DistribuicaoPeriodoClientesQuantidadeCteDonut :dados="quantidadeCtePorClienteDonut"/>
         </v-col>
         <v-col md="6" v-if="!acessoDeAdminAoDashboard() && acessoDeClienteAoDashboard()">
           <DestinatarioDistribuicaoPeriodoCte :dados="dadosDestinatariosDistribuicaoPeriodo"/>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col md="6">
           <QuantidadeCtePorUF :dados="dadosPorUfQuantidadeCte"/>
-        </v-col>
-        <v-col md="6">
-          <FaturamentoPorUF :dados="dadosPorUfFaturamento"/>
         </v-col>
       </v-row>
       <v-row>
