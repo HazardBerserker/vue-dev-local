@@ -13,7 +13,7 @@ export const useAlertStore = defineStore('alert', () => {
     message,
     type = 'info',
     duration = 4000,
-    width = 400,
+    width = 450,
     progressColor = 'white'
   ) {
     const id = ++idCounter

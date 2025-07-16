@@ -1,5 +1,6 @@
 import { Mask } from 'maska';
 import dayjs from 'dayjs';
+import { formatDate } from 'date-fns';
 
 function aplicarMascara(valor, padrao) {
   if (!valor) return '';
@@ -25,12 +26,24 @@ export function formataTelefone(telefone) {
   return aplicarMascara(telefone, padrao);
 }
 
+// ele formata pro padrao BR datas que vem no padrão do BD yyyy-mm-dd
 export function formataData(data) {
   return dayjs(data).format('DD/MM/YYYY HH:mm:ss');
 }
 
+// ele formata pro padrao BR datas que vem no padrão do BD yyyy-mm-dd
 export function formataDataSomenteData(data) {
   return dayjs(data).format('DD/MM/YYYY');
+}
+
+// ele formata dataas 20/10/2025 para padrao banco yyyy-mm-dd
+export function formataDataBRParaPadraoBanco(dataBr) {
+  const [dia, mes, ano] = dataBr.split('/');
+  return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+}
+
+export function formataDataISOParaPadraoBanco(data) {
+  return formatDate(new Date(data), 'yyyy-MM-dd');
 }
 
 export function formataMoeda(valor) {
