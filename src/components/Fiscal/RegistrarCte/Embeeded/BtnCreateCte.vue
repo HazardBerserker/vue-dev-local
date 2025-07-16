@@ -2,7 +2,7 @@
   <div>
     <v-btn
       color="light-green-darken-2"
-      prepend-icon="mdi-plus"
+      prepend-icon="mdi-file-import"
       variant="tonal"
       density="comfortable"
       class="text-white"

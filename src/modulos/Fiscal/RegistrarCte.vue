@@ -237,7 +237,7 @@
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <InputText label="Tom. CNPJ" v-model="filtros.tomador_cnpj" mask="##.###.###/####-##" :rules="regraCNPJ" counter="18" density="compact"/>
+                  <InputText label="Tom. CNPJ" v-model="filtros.tomador_cnpj" mask="##.###.###/####-##" counter="18" density="compact"/>
                 </v-col>
 
                 <v-col cols="12" md="4">
@@ -274,22 +274,25 @@
 
     <div class="py-3 justify-space-between mt-6" v-if="permissao">
       <div class="d-flex align-center ga-2 flex-md-row flex-column ">
-          <v-btn
-            color="grey-darken-3"
-            prepend-icon="mdi-reload"
-            variant="tonal"
-            density="comfortable"
-            class="text-white"
-            rounded="pill"
-            :disabled="datatable.carregando"
-            @click="buscaCte"
-          >
-            Atualizar
-          </v-btn>
+        <v-btn
+          color="grey-darken-3"
+          prepend-icon="mdi-reload"
+          variant="tonal"
+          density="comfortable"
+          class="text-white"
+          rounded="pill"
+          :disabled="datatable.carregando"
+          @click="buscaCte"
+        >
+          Atualizar
+        </v-btn>
 
-          <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
-          <v-btn
+        <BtnEmiteCte/>
+
+        <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
+
+        <v-btn
           color="green-darken-3"
           prepend-icon="mdi-check"
           variant="tonal"
@@ -298,7 +301,7 @@
           rounded="pill"
           :disabled="datatable.carregando || desativaInputDeAutorizar"
           @click="autorizaCte"
-          >
+        >
           Autorizar
         </v-btn>
 
@@ -403,6 +406,7 @@ import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnCreateCte.vue';
+import BtnEmiteCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnEmiteCte.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteEnum';
@@ -418,6 +422,7 @@ export default {
   components: {
     GlobalAlertFixed,
     BtnCreateCte,
+    BtnEmiteCte,
     InputTextMoeda,
     InputText
   },
