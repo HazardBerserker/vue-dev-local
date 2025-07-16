@@ -390,7 +390,8 @@ export default {
   },
   data () {
     const hoje = new Date();
-    const diaAtualMaisUm = new Date(hoje + 1);
+    const diaAtualMaisUm = new Date(hoje);
+    diaAtualMaisUm.setDate(hoje.getDate() + 1);
 
     const noventaDiasAtras = new Date();
     noventaDiasAtras.setDate(hoje.getDate() - 90);
