@@ -48,38 +48,39 @@
       <v-tabs-window v-model="tab">
 
         <v-tabs-window-item :value="1" eager>
-          <v-container fluid>
+          <v-container fluid class="bg-grey-lighten-4">
             <v-form ref="formDados">
-              <v-row class="mb-3">
+              <v-row class="my-3">
                 <v-col cols="6" class="py-0">
-                  <v-text-field variant="outlined" label="Nome Completo" density="comfortable" v-model="nome_completo" :rules="regraNomeCompleto" clearable/>
+                  <v-text-field bg-color="white" variant="outlined" label="Nome Completo" density="comfortable" v-model="nome_completo" :rules="regraNomeCompleto" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
-                  <InputText label="CPF" v-model="cpf" mask="###.###.###-##" :rules="regraCPF" counter="14"/>
-                </v-col>
-              </v-row>
-              <v-row class="mb-3">
-                <v-col cols="6" class="py-0">
-                  <InputText label="Telefone" v-model="telefone" mask="(##) #####.####" :rules="regraTelefone" counter="15"/>
-                </v-col>
-                <v-col cols="6" class="py-0">
-                  <InputText label="Placa Carro" v-model="placa_carro"  :rules="regraPlaca" counter="7"/>
+                  <InputText bg-color="white" label="CPF" v-model="cpf" mask="###.###.###-##" :rules="regraCPF" counter="14"/>
                 </v-col>
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="6" class="py-0">
-                  <InputText label="Placa Carreta" v-model="placa_carreta"  :rules="regraPlaca" counter="7"/>
+                  <InputText bg-color="white" label="Telefone" v-model="telefone" mask="(##) #####.####" :rules="regraTelefone" counter="15"/>
                 </v-col>
                 <v-col cols="6" class="py-0">
-                  <InputText label="Tipo Veículo" v-model="tipo_veiculo"  :rules="regraTipoVeiculo"/>
+                  <InputText bg-color="white" label="Placa Carro" v-model="placa_carro"  :rules="regraPlaca" counter="7"/>
                 </v-col>
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="6" class="py-0">
-                  <v-text-field variant="outlined" label="Chave Pix" density="comfortable" v-model="pix" :rules="regraPix" clearable/>
+                  <InputText bg-color="white" label="Placa Carreta" v-model="placa_carreta" counter="7"/>
+                </v-col>
+                <v-col cols="6" class="py-0">
+                  <InputText bg-color="white" label="Tipo Veículo" v-model="tipo_veiculo"  :rules="regraTipoVeiculo"/>
+                </v-col>
+              </v-row>
+              <v-row class="mb-3">
+                <v-col cols="6" class="py-0">
+                  <v-text-field bg-color="white" variant="outlined" label="Chave Pix" density="comfortable" v-model="pix" :rules="regraPix" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
                   <v-select
+                    bg-color="white"
                     v-model="uf_residencia"
                     variant="outlined"
                     density="comfortable"
@@ -94,15 +95,16 @@
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="6" class="py-0">
-                  <v-text-field variant="outlined" label="Cidade Residência" density="comfortable" v-model="cidade_residencia" :rules="regraCidade" clearable/>
+                  <v-text-field bg-color="white" variant="outlined" label="Cidade Residência" density="comfortable" v-model="cidade_residencia" :rules="regraCidade" clearable/>
                 </v-col>
                 <v-col cols="6" class="py-0">
-                  <InputText label="CEP" v-model="cep_residencia" mask="#####-###" :rules="regraCEP" counter="9"/>
+                  <InputText bg-color="white" label="CEP" v-model="cep_residencia" mask="#####-###" :rules="regraCEP" counter="9"/>
                 </v-col>
               </v-row>
               <v-row class="mb-3">
                 <v-col cols="12" class="py-0">
                   <v-select
+                    bg-color="white"
                     ref="ativo"
                     v-model="ativo"
                     variant="outlined"
@@ -119,6 +121,7 @@
               <v-row class="mb-3">
                 <v-col cols="12" class="py-0">
                   <v-textarea
+                    bg-color="white"
                     v-model="observacoes"
                     label="Observações"
                     density="comfortable"
@@ -132,11 +135,12 @@
         </v-tabs-window-item>
 
         <v-tabs-window-item :value="2" eager>
-          <v-container fluid>
+          <v-container fluid class="bg-grey-lighten-4">
             <v-form ref="formArquivos">
-              <v-row>
+              <v-row class="my-1">
                 <v-col>
                   <v-file-input
+                    bg-color="white"
                     v-model="arquivo_cnh"
                     accept="image/*"
                     density="comfortable"
@@ -174,6 +178,7 @@
                 </v-col>
                 <v-col>
                   <v-file-input
+                    bg-color="white"
                     v-model="arquivo_comprovante_residencia"
                     accept="image/*"
                     density="comfortable"
@@ -213,6 +218,7 @@
               <v-row>
                 <v-col>
                   <v-file-input
+                    bg-color="white"
                     v-model="arquivo_documento_carro"
                     accept="image/*"
                     density="comfortable"
@@ -250,6 +256,7 @@
                 </v-col>
                 <v-col>
                   <v-file-input
+                    bg-color="white"
                     v-model="arquivo_antt"
                     accept="image/*"
                     density="comfortable"
@@ -289,6 +296,7 @@
               <v-row>
                 <v-col>
                   <v-file-input
+                    bg-color="white"
                     v-model="arquivo_foto_veiculo"
                     accept="image/*"
                     density="comfortable"
@@ -347,6 +355,7 @@ import { endpoints } from '@/utils/apiEndpoints';
 import InputText from '@/components/Form/InputText.vue';
 import { estadosBrasileiros } from '@/helpers/estadosHelper'
 import { useLoadingStore } from '@/stores/loading';
+import { appendIfValid } from '@/helpers/formHelpers';
 // import { useAlertStore } from '@/stores/alertStore'
 // import ApiService from '@/services/ApiService.js';
 
@@ -389,6 +398,9 @@ export default {
         { valor: 1, descricao: 'Sim' },
         { valor: 0, descricao: 'Não' }
       ],
+      regraPlaca: [
+        (v) => !!v || 'A Placa é obrigatória',
+      ],
       regraNomeCompleto: [
         (v) => !!v || 'O Nome é obrigatório',
       ],
@@ -398,9 +410,6 @@ export default {
       regraCPF: [
         (v) => !!v || 'O CPF é obrigatório',
         (v) => (v && v.length === 14) || 'O CPF deve ter 14 caracteres (incluindo pontos e traço)',
-      ],
-      regraPlaca: [
-        (v) => !!v || 'A Placa é obrigatória',
       ],
       regraCEP: [
         (v) => !!v || 'O CEP é obrigatório',
@@ -476,35 +485,36 @@ export default {
     formataDadosParaEnvio() {
       const formData = new FormData();
 
-      formData.append('nome_completo', this.nome_completo);
-      formData.append('cpf', this.cpf);
-      formData.append('telefone', this.telefone);
-      formData.append('placa_carro', this.placa_carro);
-      formData.append('placa_carreta', this.placa_carreta);
-      formData.append('tipo_veiculo', this.tipo_veiculo);
-      formData.append('pix', this.pix);
-      formData.append('uf_residencia', this.uf_residencia.toUpperCase());
-      formData.append('cidade_residencia', this.cidade_residencia);
-      formData.append('cep_residencia', this.cep_residencia);
-      formData.append('ativo', this.ativo);
-      formData.append('observacoes', this.observacoes);
+      appendIfValid(formData, 'nome_completo', this.nome_completo);
+      appendIfValid(formData, 'cpf', this.cpf);
+      appendIfValid(formData, 'telefone', this.telefone);
+      appendIfValid(formData, 'placa_carro', this.placa_carro);
+      appendIfValid(formData, 'placa_carreta', this.placa_carreta);
+      appendIfValid(formData, 'tipo_veiculo', this.tipo_veiculo);
+      appendIfValid(formData, 'pix', this.pix);
+      appendIfValid(formData, 'uf_residencia', this.uf_residencia.toUpperCase());
+      appendIfValid(formData, 'cidade_residencia', this.cidade_residencia);
+      appendIfValid(formData, 'cep_residencia', this.cep_residencia);
+      appendIfValid(formData, 'ativo', this.ativo);
+      appendIfValid(formData, 'observacoes', this.observacoes);
 
       // Adiciona os arquivos, se existirem
       if (this.arquivo_cnh) {
-        formData.append('arquivo_cnh', this.arquivo_cnh);
+        appendIfValid(formData, 'arquivo_cnh', this.arquivo_cnh);
       }
       if (this.arquivo_comprovante_residencia) {
-        formData.append('arquivo_comprovante_residencia', this.arquivo_comprovante_residencia);
+        appendIfValid(formData, 'arquivo_comprovante_residencia', this.arquivo_comprovante_residencia);
       }
       if (this.arquivo_documento_carro) {
-        formData.append('arquivo_documento_carro', this.arquivo_documento_carro);
+        appendIfValid(formData, 'arquivo_documento_carro', this.arquivo_documento_carro);
       }
       if (this.arquivo_antt) {
-        formData.append('arquivo_antt', this.arquivo_antt);
+        appendIfValid(formData, 'arquivo_antt', this.arquivo_antt);
       }
       if (this.arquivo_foto_veiculo) {
-        formData.append('arquivo_foto_veiculo', this.arquivo_foto_veiculo);
+        appendIfValid(formData, 'arquivo_foto_veiculo', this.arquivo_foto_veiculo);
       }
+
       return formData;
     },
 
@@ -516,7 +526,8 @@ export default {
       const formValidado = await this.validarTudo();
 
       if(!formValidado) {
-          return;
+        alertStore.addAlert('Preencha os campos em Vermelho', 'warning')
+        return;
       }
 
       const dadosParaEnvio = this.formataDadosParaEnvio();

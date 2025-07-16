@@ -4,9 +4,9 @@
       <v-card class="rounded-xl">
         <v-card-title class="d-flex justify-space-between align-center">
             <div class="text-h6 text-medium-emphasis ps-2">
-                <slot name="title">
+              <slot name="title">
 
-                </slot>
+              </slot>
             </div>
 
             <v-btn
