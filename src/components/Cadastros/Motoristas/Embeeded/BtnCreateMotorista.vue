@@ -142,7 +142,7 @@
                   <v-file-input
                     bg-color="white"
                     v-model="arquivo_cnh"
-                    accept="image/*"
+                    accept="image/*,.pdf"
                     density="comfortable"
                     clearable
                     prepend-icon="mdi-camera"
@@ -180,7 +180,7 @@
                   <v-file-input
                     bg-color="white"
                     v-model="arquivo_comprovante_residencia"
-                    accept="image/*"
+                    accept="image/*,.pdf"
                     density="comfortable"
                     clearable
                     prepend-icon="mdi-camera"
@@ -220,7 +220,7 @@
                   <v-file-input
                     bg-color="white"
                     v-model="arquivo_documento_carro"
-                    accept="image/*"
+                    accept="image/*,.pdf"
                     density="comfortable"
                     clearable
                     prepend-icon="mdi-camera"
@@ -258,7 +258,7 @@
                   <v-file-input
                     bg-color="white"
                     v-model="arquivo_antt"
-                    accept="image/*"
+                    accept="image/*,.pdf"
                     density="comfortable"
                     clearable
                     prepend-icon="mdi-camera"

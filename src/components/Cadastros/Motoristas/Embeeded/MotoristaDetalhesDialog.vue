@@ -27,17 +27,19 @@
         <v-row dense>
           <v-col cols="6" v-for="(url, campo) in camposImagem" :key="campo">
             <v-btn
-              :color="imagensVisiveis[campo] ? 'red-darken-1' : 'blue-darken-2'"
+              :color="arquivosEhPdf[campo] ? 'blue-darken-2' : (imagensVisiveis[campo] ? 'red-darken-1' : 'blue-darken-2')"
               class="rounded-lg hover-scale mb-2"
               variant="flat"
               block
-              @click="toggleImagem(campo)"
+              @click="handleCliqueArquivo(campo)"
               size="small"
             >
-              {{ imagensVisiveis[campo] ? 'Ocultar' : 'Exibir' }} {{ formatLabel(campo) }}
+              {{ arquivosEhPdf[campo] ? 'Abrir Documento' : (imagensVisiveis[campo] ? 'Ocultar' : 'Exibir') }}
+              {{ formatLabel(campo) }}
             </v-btn>
 
-            <v-expand-transition>
+            <!-- Exibe imagem se não for PDF -->
+            <v-expand-transition v-if="!arquivosEhPdf[campo]">
               <div
                 v-if="imagensVisiveis[campo]"
                 class="image-container elevation-1 rounded-lg pa-1"
@@ -107,8 +109,46 @@ export default {
         arquivo_foto_veiculo: this.motorista.arquivo_foto_veiculo,
       };
     },
+    arquivosEhPdf() {
+      const resultado = {};
+      for (const [campo, url] of Object.entries(this.camposImagem)) {
+        resultado[campo] = typeof url === 'string' && url.toLowerCase().endsWith('.pdf');
+      }
+      return resultado;
+    },
   },
   methods: {
+    async handleCliqueArquivo(campo) {
+      const loading = useLoadingStore();
+
+      if (this.arquivosEhPdf[campo]) {
+        loading.show('Abrindo PDF...');
+        await this.exibePdf(campo);
+      }
+
+      if(!this.arquivosEhPdf[campo]) {
+        loading.show('Carregando imagem...');
+        await this.toggleImagem(campo);
+      }
+
+      loading.hide()
+    },
+
+    async exibePdf(campo) {
+
+      const urlOriginal = this.camposImagem[campo];
+
+      if (!urlOriginal) return;
+
+       let urlFinal = urlOriginal;
+
+      if (urlEDaS3(urlOriginal)) {
+        urlFinal = await geraUrlTemporariaParaImagemS3(urlOriginal);
+      }
+
+      window.open(urlFinal, '_blank');
+    },
+
     abrir(motorista) {
       this.motorista = motorista;
       this.open = true;
@@ -119,6 +159,7 @@ export default {
     fechar() {
       this.open = false;
     },
+
     async toggleImagem(campo) {
       const estavaVisivel = this.imagensVisiveis[campo];
 
@@ -130,12 +171,7 @@ export default {
 
       // Se vai exibir e ainda não tem URL resolvida
       if (!this.imagensTemporarias[campo]) {
-        const loading = useLoadingStore();
-        loading.show('Carregando imagem...');
-
         await this.carregarUrlTemporaria(campo);
-
-        loading.hide();
       }
 
       this.imagensVisiveis[campo] = true;
