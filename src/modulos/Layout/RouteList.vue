@@ -85,8 +85,8 @@ export default {
   },
   data() {
     return {
-      valorAtualDoRail: false,
-      rail: false,
+      valorAtualDoRail: true,
+      rail: true,
       open: [],
     }
   },

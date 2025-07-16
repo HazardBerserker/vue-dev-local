@@ -296,11 +296,12 @@ import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import { useLoadingStore } from '@/stores/loading';
-import { formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/masks';
+import { formataDataBRParaPadraoBanco, formataDataISOParaPadraoBanco, formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
+import { appendIfValid } from '@/helpers/formHelpers';
 
 export default {
     name: 'BtnAtualizaFreteCotacoes',
@@ -380,7 +381,7 @@ export default {
           (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
         ],
         regraEntregaEfetiva: [
-          (v) => v !== null && v !== undefined && v !== '' || 'A Entrega é obrigatória quando comprovante é enviado'
+          (v) => v !== null && v !== undefined && v !== '' || 'A Data de Entrega é obrigatória quando comprovante é enviado'
         ],
         regraRazaoSocial: [
           (v) => !!v || 'A Razão social é obrigatória',
@@ -508,64 +509,13 @@ export default {
       },
 
       limpaCampos() {
-        this.id_frete = this.item.id_frete
-        this.data_cotacao = this.item.data_cotacao
-        this.id_remetente = this.item.id_remetente
-        this.remetente = this.item.remetente
-        this.cnpj_remetente = this.item.cnpj_remetente
-        this.nome_destinatario = this.item.nome_destinatario
-        this.cidade_destinatario = this.item.cidade_destinatario
-        this.uf_destinatario = this.item.uf_destinatario
-        this.valor_motorista = Number(this.item.valor_motorista)
-        this.cnpj_destinatario = this.item.cnpj_destinatario
-        this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
-        this.cep_destinatario = this.item.cep_destinatario
-        this.endereco_destinatario = this.item.endereco_destinatario
-        this.numero_destinatario = this.item.numero_destinatario
-        this.observacoes = this.item.observacoes
-        this.valor_notafiscal = this.item.valor_notafiscal
-        this.coeficiente_margem = this.item.coeficiente_margem
-        this.advalorem = this.item.advalorem
-        this.status = this.item.status
-        this.forma_pagamento = this.item.forma_pagamento
-        this.adiantamento = this.item.adiantamento
-        this.saldo = this.item.saldo
-        this.integral = this.item.integral
-        this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
-        this.valor_cobrado = this.item.valor_cobrado
-        this.prazo = this.item.prazo
-        this.coleta_efetiva = null
-        this.adiantamento = null
-        this.saldo = null
-        this.integral = null
-        this.obs_financeiro = null
-        this.arquivos_comprovante = null
-        this.entrega_efetiva = null
-        this.motorista = null
-        this.cte = null
-        this.imposto_considerado = null
-      },
-
-      desativaModoEdicao() {
-        this.limpaCampos();
-        this.modoEdicao = false
-      },
-
-      closeDialog() {
-        this.$refs.dialogAtualiza.onCloseDialog();
-      },
-      openDialog() {
-        this.$refs.dialogAtualiza.onOpenDialog();
-
         const objetoMotorista = {
           cpf: this.item.cpf_motorista,
           nome_completo: this.item.nome_motorista
         }
-
         const objetoCte = {
           Id_CTe: this.item.cte_vinculado,
         }
-
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
         this.id_remetente = this.item.id_remetente
@@ -592,7 +542,64 @@ export default {
         this.imposto_considerado = this.item.imposto_considerado
         this.entrega_efetiva = this.item.entrega_efetiva ? formatarDataParaInputVuetify(this.item.entrega_efetiva) : null
         this.coleta_efetiva = this.item.coleta_efetiva ? formatarDataParaInputVuetify(this.item.coleta_efetiva) : null
-        this.cte = this.item.cte_vinculado
+        if(this.item.cte_vinculado) {
+          this.cte = objetoCte
+        }
+        if(this.item.cpf_motorista && this.item.nome_motorista) {
+          this.motorista = objetoMotorista
+        }
+        this.imagem_que_sera_exibida = this.item.arquivo_comprovante
+        this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
+        this.valor_cobrado = this.item.valor_cobrado
+        this.prazo = this.item.prazo
+      },
+
+      desativaModoEdicao() {
+        this.limpaCampos();
+        this.modoEdicao = false
+      },
+
+      closeDialog() {
+        this.$refs.dialogAtualiza.onCloseDialog();
+      },
+      openDialog() {
+        this.$refs.dialogAtualiza.onOpenDialog();
+
+        const objetoMotorista = {
+          cpf: this.item.cpf_motorista,
+          nome_completo: this.item.nome_motorista
+        }
+
+        const objetoCte = {
+          Id_CTe: this.item.cte_vinculado,
+        }
+        
+        this.id_frete = this.item.id_frete
+        this.data_cotacao = this.item.data_cotacao
+        this.id_remetente = this.item.id_remetente
+        this.remetente = this.item.remetente
+        this.cnpj_remetente = this.item.cnpj_remetente
+        this.nome_destinatario = this.item.nome_destinatario
+        this.cidade_destinatario = this.item.cidade_destinatario
+        this.uf_destinatario = this.item.uf_destinatario
+        this.valor_motorista = Number(this.item.valor_motorista)
+        this.cnpj_destinatario = this.item.cnpj_destinatario
+        this.valor_motorista_efetivo = this.item.valor_motorista_efetivo
+        this.cep_destinatario = this.item.cep_destinatario
+        this.endereco_destinatario = this.item.endereco_destinatario
+        this.numero_destinatario = this.item.numero_destinatario
+        this.observacoes = this.item.observacoes
+        this.valor_notafiscal = this.item.valor_notafiscal
+        this.coeficiente_margem = this.item.coeficiente_margem
+        this.advalorem = this.item.advalorem
+        this.status = this.item.status
+        this.forma_pagamento = this.item.forma_pagamento
+        this.adiantamento = this.item.adiantamento
+        this.saldo = this.item.saldo
+        this.integral = this.item.integral
+        this.imposto_considerado = this.item.imposto_considerado
+        this.entrega_efetiva = this.item.entrega_efetiva ? formatarDataParaInputVuetify(this.item.entrega_efetiva) : null
+        this.coleta_efetiva = this.item.coleta_efetiva ? formatarDataParaInputVuetify(this.item.coleta_efetiva) : null
 
         if(this.item.cte_vinculado) {
           this.cte = objetoCte
@@ -614,51 +621,46 @@ export default {
       formataDadosParaEnvio() {
         const formData = new FormData();
 
-        const appendIfValid = (key, value) => {
-          if (value !== undefined && value !== null && value !== 'undefined' && value !== 'null') {
-            formData.append(key, value);
-          }
-        };
+        appendIfValid(formData, 'id_frete', this.id_frete);
+        appendIfValid(formData, 'data_cotacao', this.data_cotacao ? formataDataBRParaPadraoBanco(this.data_cotacao) : null);
+        appendIfValid(formData, 'id_remetente', this.id_remetente);
+        appendIfValid(formData, 'remetente', this.remetente);
+        appendIfValid(formData, 'cnpj_remetente', this.cnpj_remetente);
+        appendIfValid(formData, 'cnpj_destinatario', this.cnpj_destinatario);
+        appendIfValid(formData, 'nome_destinatario', this.nome_destinatario);
+        appendIfValid(formData, 'cidade_destinatario', this.cidade_destinatario);
+        appendIfValid(formData, 'uf_destinatario', this.uf_destinatario?.toUpperCase());
+        appendIfValid(formData, 'cep_destinatario', this.cep_destinatario);
+        appendIfValid(formData, 'endereco_destinatario', this.endereco_destinatario);
+        appendIfValid(formData, 'numero_destinatario', this.numero_destinatario);
+        appendIfValid(formData, 'observacoes', this.observacoes);
+        appendIfValid(formData, 'valor_notafiscal', this.valor_notafiscal);
+        appendIfValid(formData, 'coeficiente_margem', this.coeficiente_margem);
+        appendIfValid(formData, 'advalorem', this.advalorem);
+        appendIfValid(formData, 'status', this.status);
+        appendIfValid(formData, 'forma_pagamento', this.forma_pagamento);
+        appendIfValid(formData, 'valor_motorista', this.valor_motorista);
+        appendIfValid(formData, 'valor_motorista_efetivo', this.valor_motorista_efetivo);
+        appendIfValid(formData, 'valor_cobrado', this.valor_cobrado);
+        appendIfValid(formData, 'valor_cobrado_efetivo', this.valor_cobrado_efetivo);
+        appendIfValid(formData, 'prazo', this.prazo);
+        appendIfValid(formData, 'imposto_considerado', this.imposto_considerado);
 
-        appendIfValid('id_frete', this.id_frete);
-        appendIfValid('data_cotacao', this.data_cotacao ? this.formatarParaISO(this.data_cotacao) : null);
-        appendIfValid('id_remetente', this.id_remetente);
-        appendIfValid('remetente', this.remetente);
-        appendIfValid('cnpj_remetente', this.cnpj_remetente);
-        appendIfValid('nome_destinatario', this.nome_destinatario);
-        appendIfValid('cidade_destinatario', this.cidade_destinatario);
-        appendIfValid('uf_destinatario', this.uf_destinatario?.toUpperCase());
-        appendIfValid('cep_destinatario', this.cep_destinatario);
-        appendIfValid('endereco_destinatario', this.endereco_destinatario);
-        appendIfValid('numero_destinatario', this.numero_destinatario);
-        appendIfValid('observacoes', this.observacoes);
-        appendIfValid('valor_notafiscal', this.valor_notafiscal);
-        appendIfValid('coeficiente_margem', this.coeficiente_margem);
-        appendIfValid('advalorem', this.advalorem);
-        appendIfValid('status', this.status);
-        appendIfValid('forma_pagamento', this.forma_pagamento);
-        appendIfValid('valor_motorista', this.valor_motorista);
-        appendIfValid('valor_motorista_efetivo', this.valor_motorista_efetivo);
-        appendIfValid('valor_cobrado', this.valor_cobrado);
-        appendIfValid('valor_cobrado_efetivo', this.valor_cobrado_efetivo);
-        appendIfValid('prazo', this.prazo);
-        appendIfValid('imposto_considerado', this.imposto_considerado);
-
-        appendIfValid('coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva, 'yyyy-MM-dd') : null);
-        appendIfValid('adiantamento', this.adiantamento);
-        appendIfValid('saldo', this.saldo);
-        appendIfValid('integral', this.integral);
-        appendIfValid('obs_financeiro', this.obs_financeiro);
-        appendIfValid('cpf_motorista', this.motorista?.cpf);
-        appendIfValid('cte_vinculado', typeof this.cte === 'object' && this.cte?.Id_CTe ? this.cte.Id_CTe : this.cte);
+        appendIfValid(formData, 'coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva) : null);
+        appendIfValid(formData, 'adiantamento', this.adiantamento);
+        appendIfValid(formData, 'saldo', this.saldo);
+        appendIfValid(formData, 'integral', this.integral);
+        appendIfValid(formData, 'obs_financeiro', this.obs_financeiro);
+        appendIfValid(formData, 'cpf_motorista', this.motorista?.cpf);
+        appendIfValid(formData, 'cte_vinculado', typeof this.cte === 'object' && this.cte?.Id_CTe ? this.cte.Id_CTe : this.cte);
 
         if (this.arquivos_comprovante?.length > 0) {
-        this.arquivos_comprovante.forEach((arquivo) => {
-          formData.append('arquivo_comprovante[]', arquivo)
-        })
-      }
+          this.arquivos_comprovante.forEach((arquivo) => {
+            formData.append('arquivo_comprovante[]', arquivo)
+          })
+        }
 
-        appendIfValid('entrega_efetiva', this.entrega_efetiva ? this.formatarDataParaEnvio(this.entrega_efetiva, 'yyyy-MM-dd') : null);
+        appendIfValid(formData, 'entrega_efetiva', this.entrega_efetiva ? this.formatarDataParaEnvio(this.entrega_efetiva) : null);
 
         // Método PUT, se necessário
         formData.append('_method', 'PUT');
@@ -667,14 +669,11 @@ export default {
       },
 
       formatarDataParaEnvio(data) {
-        if (!data || typeof data !== 'string') return null;
-
         // Se já estiver no formato ISO (yyyy-MM-dd), retorna direto
         if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
           return data;
         }
-
-        formatDate(data, 'yyyy-MM-dd')
+        return formataDataISOParaPadraoBanco(data)
       },
 
       async atualizaFreteCotacao() {
@@ -783,11 +782,6 @@ export default {
 
       format(date) {
         return formatDate(date, 'dd/MM/yyyy')
-      },
-
-      formatarParaISO(dataBr) {
-        const [dia, mes, ano] = dataBr.split('/');
-        return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
       },
 
       desabilitaCampoSeHouverPagamento() {
