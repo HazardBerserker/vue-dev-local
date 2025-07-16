@@ -390,13 +390,13 @@ export default {
   },
   data () {
     const hoje = new Date();
-    const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    const diaAtualMaisUm = new Date(hoje + 1);
 
     const noventaDiasAtras = new Date();
     noventaDiasAtras.setDate(hoje.getDate() - 90);
 
     return {
-      ultimoDiaDoMes,
+      diaAtualMaisUm,
       noventaDiasAtras,
       opcoesSImENao: [
         { valor: 0, descricao: 'Não' },
@@ -425,7 +425,7 @@ export default {
       filtrosAplicadosDepoisDaBusca: 0,
       filtros: {
         data_inicial_criacao: noventaDiasAtras,
-        data_final_criacao: ultimoDiaDoMes,
+        data_final_criacao: diaAtualMaisUm,
       },
       opcoesAtivo: [
         {
@@ -684,7 +684,7 @@ export default {
     limpaFiltros() {
       this.filtros = {
         data_inicial_criacao: this.noventaDiasAtras,
-        data_final_criacao: this.ultimoDiaDoMes,
+        data_final_criacao: this.diaAtualMaisUm,
       }
     },
 

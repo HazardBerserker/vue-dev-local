@@ -202,7 +202,7 @@
                         placeholder="dd/mm/yy"
                         clearable
                         variant="outlined"
-                        :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                        :disabled="!modoEdicao"
                       ></v-date-input>
                     </v-col>
                     <v-col>
@@ -573,7 +573,7 @@ export default {
         const objetoCte = {
           Id_CTe: this.item.cte_vinculado,
         }
-        
+
         this.id_frete = this.item.id_frete
         this.data_cotacao = this.item.data_cotacao
         this.id_remetente = this.item.id_remetente

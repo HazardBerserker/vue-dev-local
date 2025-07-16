@@ -426,14 +426,14 @@ export default {
   },
   data () {
     const hoje = new Date();
-    const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    const diaAtualMaisUm = new Date(hoje + 1);
 
     const noventaDiasAtras = new Date();
     noventaDiasAtras.setDate(hoje.getDate() - 90);
 
     return {
       estadosBrasileiros,
-      ultimoDiaDoMes,
+      diaAtualMaisUm,
       noventaDiasAtras,
       formataData,
       formataDataSomenteData,
@@ -453,7 +453,7 @@ export default {
 
       filtros: {
         data_inicial_criacao: noventaDiasAtras,
-        data_final_criacao: ultimoDiaDoMes,
+        data_final_criacao: diaAtualMaisUm,
       },
       busca_geral: null,
       filtrosDaBuscaGeral: {
@@ -678,7 +678,7 @@ export default {
     limpaFiltros() {
       this.filtros = {
         data_inicial_criacao: this.noventaDiasAtras,
-        data_final_criacao: this.ultimoDiaDoMes,
+        data_final_criacao: this.diaAtualMaisUm,
       }
     },
 
