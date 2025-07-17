@@ -353,7 +353,7 @@ import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import InputText from '@/components/Form/InputText.vue';
-import { estadosBrasileiros } from '@/helpers/estadosHelper'
+import { estadosBrasileiros } from '@/Enums/estadosEnum'
 import { useLoadingStore } from '@/stores/loading';
 import { appendIfValid } from '@/helpers/formHelpers';
 // import { useAlertStore } from '@/stores/alertStore'

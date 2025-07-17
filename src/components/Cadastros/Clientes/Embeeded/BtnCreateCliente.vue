@@ -117,7 +117,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
-import { estadosBrasileiros } from '@/helpers/estadosHelper';
+import { estadosBrasileiros } from '@/Enums/estadosEnum';
 
 export default {
     name: 'BtnCreateCliente',

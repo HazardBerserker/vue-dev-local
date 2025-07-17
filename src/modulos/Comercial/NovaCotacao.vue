@@ -353,7 +353,7 @@ import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { formataCNPJ, formataCEP } from '@/utils/masks';
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
-import { estadosBrasileiros } from '@/helpers/estadosHelper';
+import { estadosBrasileiros } from '@/Enums/estadosEnum';
 
 export default {
   components: {

@@ -256,7 +256,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { format } from 'date-fns';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
-import { estadosBrasileiros } from '@/helpers/estadosHelper';
+import { estadosBrasileiros } from '@/Enums/estadosEnum';
 import dayjs from 'dayjs'
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { useAuthStore } from '@/stores/auth';

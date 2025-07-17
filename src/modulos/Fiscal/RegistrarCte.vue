@@ -415,7 +415,7 @@ import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import InputText from '@/components/Form/InputText.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
-import { estadosBrasileiros } from '@/helpers/estadosHelper';
+import { estadosBrasileiros } from '@/Enums/estadosEnum';
 
 export default {
   name: 'CtesScreen',

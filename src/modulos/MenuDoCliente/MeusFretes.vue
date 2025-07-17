@@ -430,7 +430,7 @@ import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import MeuFreteDetalhesDialog from '@/components/MenuDoCliente/Embeeded/MeuFreteDetalhesDialog.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
-import { estadosBrasileiros } from '@/helpers/estadosHelper';
+import { estadosBrasileiros } from '@/Enums/estadosEnum';
 
 export default {
   name: 'CtesScreen',
