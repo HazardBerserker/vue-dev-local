@@ -52,7 +52,7 @@
             variant="outlined"
             density="compact"
             bg-color="white"
-            label="Inscrição Estadual (IE) *"
+            label="Inscrição Estadual (IE)"
             v-model="dadosFormAtoresRemetenteLocal.ie"
           >
           </v-text-field>
@@ -171,7 +171,7 @@ import InputText from '@/components/Form/InputText.vue'
 import { buscaDadosDoClientePeloCNPJ } from '@/helpers/buscaDadosDoClientePeloCNPJ'
 
 export default {
-  name: 'FormDadosAtores',
+  name: 'FormDadosRemetente',
   components: {
     InputText
   },
@@ -214,16 +214,21 @@ export default {
     },
 
     preencheDadosEncontrados(clienteEncontrado) {
-      this.dadosFormAtoresRemetenteLocal.bairro = clienteEncontrado.bairro
-      this.dadosFormAtoresRemetenteLocal.cep = clienteEncontrado.cep
-      this.dadosFormAtoresRemetenteLocal.logradouro = clienteEncontrado.logradouro
       this.dadosFormAtoresRemetenteLocal.nome_razao = clienteEncontrado.nome
+      this.dadosFormAtoresRemetenteLocal.nome_fantasia = clienteEncontrado.nome_fantasia ?? null
+      this.dadosFormAtoresRemetenteLocal.cep = clienteEncontrado.cep
+      this.dadosFormAtoresRemetenteLocal.endereco = clienteEncontrado.logradouro // redundante, mas ok se precisar dos dois
+      this.dadosFormAtoresRemetenteLocal.bairro = clienteEncontrado.bairro
       this.dadosFormAtoresRemetenteLocal.numero = clienteEncontrado.numero
-      this.dadosFormAtoresRemetenteLocal.uf = clienteEncontrado.uf
-      this.dadosFormAtoresRemetenteLocal.endereco = clienteEncontrado.logradouro
-      this.dadosFormAtoresRemetenteLocal.cidade = clienteEncontrado.municipio
+      this.dadosFormAtoresRemetenteLocal.estado = clienteEncontrado.estado
+      this.dadosFormAtoresRemetenteLocal.cidade = clienteEncontrado.cidade // fallback
       this.dadosFormAtoresRemetenteLocal.complemento = clienteEncontrado.complemento ?? null
+      this.dadosFormAtoresRemetenteLocal.uf = clienteEncontrado.uf
       this.dadosFormAtoresRemetenteLocal.telefone = clienteEncontrado.telefone ?? null
+      this.dadosFormAtoresRemetenteLocal.email = clienteEncontrado.email ?? null
+      this.dadosFormAtoresRemetenteLocal.ie = clienteEncontrado.ie ?? null
+      // this.dadosFormAtoresRemetenteLocal.estado_inscricao_estadual = clienteEncontrado.estado_inscricao_estadual ?? null
+      // this.dadosFormAtoresRemetenteLocal.situacao_cadastral = clienteEncontrado.situacao_cadastral ?? null
     },
   }
 }

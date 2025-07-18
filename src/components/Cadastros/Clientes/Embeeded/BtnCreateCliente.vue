@@ -232,10 +232,11 @@ export default {
           this.bairro = clienteEncontrado.bairro
           this.cep = clienteEncontrado.cep
           this.logradouro = clienteEncontrado.logradouro
+          this.complemento = clienteEncontrado.complemento
           this.razao_social = clienteEncontrado.nome
           this.numero = clienteEncontrado.numero
           this.uf = clienteEncontrado.uf
-          this.cidade = clienteEncontrado.municipio
+          this.cidade = clienteEncontrado.cidade
           this.pais = 'Brasil'
         },
 

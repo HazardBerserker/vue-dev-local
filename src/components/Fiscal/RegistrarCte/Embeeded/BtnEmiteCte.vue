@@ -162,14 +162,14 @@
                     <div>
                       <v-fade-transition mode="out-in">
                         <template v-if="formAtorAtual == 1">
-                          <FormDadosAtores
+                          <FormDadosRemetente
                             :dadosFormAtoresRemetente="dadosFormAtores.remetente"
                             v-if="formAtorAtual == 1"
                           />
                         </template>
                         <template v-if="formAtorAtual == 2">
-                          <FormDadosAtores
-                            :dadosFormAtoresRemetente="dadosFormAtores.destinatario"
+                          <FormDadosDestinatario
+                            :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
                             v-if="formAtorAtual == 2"
                           />
                         </template>
@@ -235,13 +235,15 @@ import { useAlertStore } from '@/stores/alertStore'
 import { useLoadingStore } from '@/stores/loading'
 import { endpoints } from '@/utils/apiEndpoints'
 import FormDadosGeral from './Forms/FormDadosGeral.vue'
-import FormDadosAtores from './Forms/FormDadosAtores.vue'
+import FormDadosRemetente from './Forms/FormDadosRemetente.vue'
+import FormDadosDestinatario from './Forms/FormDadosDestinatario.vue'
 
 export default {
   name: 'BtnEmiteCte',
   components: {
     FormDadosGeral,
-    FormDadosAtores
+    FormDadosRemetente,
+    FormDadosDestinatario
   },
   data() {
     return {
