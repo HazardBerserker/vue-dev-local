@@ -645,8 +645,6 @@ export default {
         appendIfValid(formData, 'valor_cobrado_efetivo', this.valor_cobrado_efetivo);
         appendIfValid(formData, 'prazo', this.prazo);
         appendIfValid(formData, 'imposto_considerado', this.imposto_considerado);
-
-        appendIfValid(formData, 'coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva) : null);
         appendIfValid(formData, 'adiantamento', this.adiantamento);
         appendIfValid(formData, 'saldo', this.saldo);
         appendIfValid(formData, 'integral', this.integral);
@@ -661,6 +659,8 @@ export default {
         }
 
         appendIfValid(formData, 'entrega_efetiva', this.entrega_efetiva ? this.formatarDataParaEnvio(this.entrega_efetiva) : null);
+
+        appendIfValid(formData, 'coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva) : null);
 
         // Método PUT, se necessário
         formData.append('_method', 'PUT');

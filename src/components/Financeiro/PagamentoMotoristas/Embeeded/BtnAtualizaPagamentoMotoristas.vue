@@ -288,11 +288,12 @@ import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { endpoints } from '@/utils/apiEndpoints';
 import { useLoadingStore } from '@/stores/loading';
-import { formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/masks';
+import { formataDataBRParaPadraoBanco, formataDataISOParaPadraoBanco, formataDataSomenteData, formatarDataParaInputVuetify } from '@/utils/masks';
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import { SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
 import { FormaPagamentoEnumDescricao } from '@/Enums/Financeiro/FormaPagamentoEnum';
+import { appendIfValid } from '@/helpers/formHelpers';
 
 export default {
     name: 'BtnAtualizaPagamentoMotoristas',
@@ -503,6 +504,9 @@ export default {
         this.valor_cobrado_efetivo = this.item.valor_cobrado_efetivo
         this.valor_cobrado = this.item.valor_cobrado
         this.prazo = this.item.prazo
+
+        console.log(this.item);
+
       },
       validateForm() {
         return this.$refs.form.validate();
@@ -510,52 +514,59 @@ export default {
       formataDadosParaEnvio() {
         const formData = new FormData();
 
-        const appendIfValid = (key, value) => {
-          if (value !== undefined && value !== null && value !== 'undefined' && value !== 'null') {
-            formData.append(key, value);
-          }
-        };
+        appendIfValid(formData, 'id_frete', this.id_frete);
+        appendIfValid(formData, 'data_cotacao', this.data_cotacao ? formataDataBRParaPadraoBanco(this.data_cotacao) : null);
+        appendIfValid(formData, 'id_remetente', this.id_remetente);
+        appendIfValid(formData, 'remetente', this.remetente);
+        appendIfValid(formData, 'cnpj_remetente', this.cnpj_remetente);
+        appendIfValid(formData, 'nome_destinatario', this.nome_destinatario);
+        appendIfValid(formData, 'cidade_destinatario', this.cidade_destinatario);
+        appendIfValid(formData, 'uf_destinatario', this.uf_destinatario?.toUpperCase());
+        appendIfValid(formData, 'cep_destinatario', this.cep_destinatario);
+        appendIfValid(formData, 'cnpj_destinatario', this.cnpj_destinatario);
+        appendIfValid(formData, 'endereco_destinatario', this.endereco_destinatario);
+        appendIfValid(formData, 'numero_destinatario', this.numero_destinatario);
+        appendIfValid(formData, 'observacoes', this.observacoes);
+        appendIfValid(formData, 'valor_notafiscal', this.valor_notafiscal);
+        appendIfValid(formData, 'coeficiente_margem', this.coeficiente_margem);
+        appendIfValid(formData, 'advalorem', this.advalorem);
+        appendIfValid(formData, 'status', this.status);
+        appendIfValid(formData, 'forma_pagamento', this.forma_pagamento);
+        appendIfValid(formData, 'valor_motorista', this.valor_motorista);
+        appendIfValid(formData, 'valor_motorista_efetivo', this.valor_motorista_efetivo);
+        appendIfValid(formData, 'valor_cobrado', this.valor_cobrado);
+        appendIfValid(formData, 'valor_cobrado_efetivo', this.valor_cobrado_efetivo);
+        appendIfValid(formData, 'prazo', this.prazo);
+        appendIfValid(formData, 'imposto_considerado', this.imposto_considerado);
 
-        appendIfValid('id_frete', this.id_frete);
-        appendIfValid('data_cotacao', this.data_cotacao ? this.formatarParaISO(this.data_cotacao) : null);
-        appendIfValid('id_remetente', this.id_remetente);
-        appendIfValid('remetente', this.remetente);
-        appendIfValid('cnpj_remetente', this.cnpj_remetente);
-        appendIfValid('nome_destinatario', this.nome_destinatario);
-        appendIfValid('cidade_destinatario', this.cidade_destinatario);
-        appendIfValid('uf_destinatario', this.uf_destinatario?.toUpperCase());
-        appendIfValid('cep_destinatario', this.cep_destinatario);
-        appendIfValid('endereco_destinatario', this.endereco_destinatario);
-        appendIfValid('numero_destinatario', this.numero_destinatario);
-        appendIfValid('observacoes', this.observacoes);
-        appendIfValid('valor_notafiscal', this.valor_notafiscal);
-        appendIfValid('coeficiente_margem', this.coeficiente_margem);
-        appendIfValid('advalorem', this.advalorem);
-        appendIfValid('status', this.status);
-        appendIfValid('forma_pagamento', this.forma_pagamento);
-        appendIfValid('valor_motorista', this.valor_motorista);
-        appendIfValid('valor_motorista_efetivo', this.valor_motorista_efetivo);
-        appendIfValid('valor_cobrado', this.valor_cobrado);
-        appendIfValid('valor_cobrado_efetivo', this.valor_cobrado_efetivo);
-        appendIfValid('prazo', this.prazo);
-        appendIfValid('imposto_considerado', this.imposto_considerado);
-        appendIfValid('coleta_efetiva', this.coleta_efetiva ? formatDate(this.coleta_efetiva, 'yyyy-MM-dd') : null);
-        appendIfValid('adiantamento', this.adiantamento);
-        appendIfValid('saldo', this.saldo);
-        appendIfValid('integral', this.integral);
-        appendIfValid('obs_financeiro', this.obs_financeiro);
-        appendIfValid('cpf_motorista', this.motorista?.cpf);
+        appendIfValid(formData, 'coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva) : null);
 
-        appendIfValid('cte_vinculado', this.cte?.Id_CTe);
+        appendIfValid(formData, 'adiantamento', this.adiantamento);
+        appendIfValid(formData, 'saldo', this.saldo);
+        appendIfValid(formData, 'integral', this.integral);
+        appendIfValid(formData, 'obs_financeiro', this.obs_financeiro);
+        appendIfValid(formData, 'cpf_motorista', this.motorista?.cpf);
 
-        appendIfValid('arquivo_comprovante', this.arquivo_comprovante);
+        appendIfValid(formData, 'cte_vinculado', this.cte?.Id_CTe);
 
-        appendIfValid('entrega_efetiva', this.entrega_efetiva ? formatDate(this.entrega_efetiva, 'yyyy-MM-dd') : null);
+        appendIfValid(formData, 'arquivo_comprovante', this.arquivo_comprovante);
+
+        appendIfValid(formData, 'entrega_efetiva', this.entrega_efetiva ? this.formatarDataParaEnvio(this.entrega_efetiva) : null);
+
+        appendIfValid(formData, 'coleta_efetiva', this.coleta_efetiva ? this.formatarDataParaEnvio(this.coleta_efetiva) : null);
 
         // Método PUT, se necessário
         formData.append('_method', 'PUT');
 
         return formData;
+      },
+
+      formatarDataParaEnvio(data) {
+        // Se já estiver no formato ISO (yyyy-MM-dd), retorna direto
+        if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+          return data;
+        }
+        return formataDataISOParaPadraoBanco(data)
       },
 
       async atualizaFreteCotacao() {
@@ -652,7 +663,7 @@ export default {
       },
 
       format(date) {
-        return formatDate(date, 'dd/MM/yy')
+        return formatDate(date, 'dd/MM/yyyy')
       },
 
       formatarParaISO(dataBr) {
