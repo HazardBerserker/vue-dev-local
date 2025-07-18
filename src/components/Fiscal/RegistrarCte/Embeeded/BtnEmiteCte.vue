@@ -177,7 +177,7 @@
 
                       <v-sheet
                         class="d-flex align-center px-4 mt-8 w-100"
-                        max-width="250"
+                        max-width="550"
                         rounded="lg"
                       >
                         <v-progress-linear
@@ -193,7 +193,13 @@
                           model-value="2"
                           rounded
                         ></v-progress-linear>
-                        <div class="ms-4 text-h6">2/5</div>
+                        <div class="d-flex w-100 align-center">
+                          <div class="ms-4 text-h6">2/5</div>
+                          <div class="ms-4 text-body-2">(Atores Preenchidos)</div>
+                          <v-icon class="ms-2">
+                            mdi-check
+                          </v-icon>
+                        </div>
                       </v-sheet>
                     </div>
                   </v-col>
