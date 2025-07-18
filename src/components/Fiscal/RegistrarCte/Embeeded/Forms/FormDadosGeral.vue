@@ -218,6 +218,10 @@ export default {
       }
       return this.estadosESeusMunicipios[uf]
     },
+
+    validate() {
+      return this.$refs?.formDadosGeral.validate()
+    }
   }
 }
 </script>

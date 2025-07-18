@@ -16,11 +16,15 @@ export async function buscaDadosDoClientePeloCNPJ(cnpj) {
       url: url,
     });
 
+    console.log(resposta);
+
+
     alertStore.addAlert('Dados preenchidos automaticamente', 'info')
     return resposta?.data?.data
 
   } catch (erro) {
-    alertStore.addAlert(erro.message, 'error')
+
+    alertStore.addAlert(erro?.response?.data?.message, 'error')
   } finally {
     loading.hide()
   }

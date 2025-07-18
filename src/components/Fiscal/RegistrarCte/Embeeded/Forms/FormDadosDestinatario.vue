@@ -44,6 +44,7 @@
             label="Razão Social *"
             v-model="dadosFormAtoresDestinatarioLocal.nome_razao"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -52,8 +53,9 @@
             variant="outlined"
             density="compact"
             bg-color="white"
-            label="Inscrição Estadual (IE) *"
+            label="Inscrição Estadual (IE)"
             v-model="dadosFormAtoresDestinatarioLocal.ie"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -78,6 +80,7 @@
             label="Endereço *"
             v-model="dadosFormAtoresDestinatarioLocal.endereco"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -89,6 +92,7 @@
             label="Número *"
             v-model="dadosFormAtoresDestinatarioLocal.numero"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -99,6 +103,7 @@
             bg-color="white"
             label="Complemento"
             v-model="dadosFormAtoresDestinatarioLocal.complemento"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -112,6 +117,7 @@
             label="Bairro *"
             v-model="dadosFormAtoresDestinatarioLocal.bairro"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -123,6 +129,7 @@
             label="Cidade *"
             v-model="dadosFormAtoresDestinatarioLocal.cidade"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -147,10 +154,8 @@
             label="Telefone *"
             v-model="dadosFormAtoresDestinatarioLocal.telefone"
             :mask="dadosFormAtoresDestinatarioLocal?.telefone?.length > 10 ? '(##) #####-####' : '(##) ####-####'"
-            :rules="rules.campoObrigatorio"
             counter="15"
           />
-          {{ dadosFormAtoresDestinatarioLocal?.telefone?.length }}
         </v-col>
       </v-row>
       <v-card class="border pa-4 text-body-2 mt-2" variant="tonal" color="redNeveah">
@@ -204,26 +209,34 @@ export default {
       set(novosDados) {
         this.$emit('update:dadosFormAtores', novosDados)
       }
-
     }
   },
   methods: {
+
     async preencheDadosDoClienteAutomaticamente() {
       const dadosDoCliente = await buscaDadosDoClientePeloCNPJ(this.dadosFormAtoresDestinatarioLocal?.cnpj)
       this.preencheDadosEncontrados(dadosDoCliente)
     },
 
     preencheDadosEncontrados(clienteEncontrado) {
-      this.dadosFormAtoresDestinatarioLocal.bairro = clienteEncontrado.bairro
-      this.dadosFormAtoresDestinatarioLocal.cep = clienteEncontrado.cep
-      this.dadosFormAtoresDestinatarioLocal.logradouro = clienteEncontrado.logradouro
+
+      if(!clienteEncontrado) return;
+
       this.dadosFormAtoresDestinatarioLocal.nome_razao = clienteEncontrado.nome
-      this.dadosFormAtoresDestinatarioLocal.numero = clienteEncontrado.numero
-      this.dadosFormAtoresDestinatarioLocal.uf = clienteEncontrado.uf
+      this.dadosFormAtoresDestinatarioLocal.nome_fantasia = clienteEncontrado.nome_fantasia ?? null
+      this.dadosFormAtoresDestinatarioLocal.cep = clienteEncontrado.cep
       this.dadosFormAtoresDestinatarioLocal.endereco = clienteEncontrado.logradouro
-      this.dadosFormAtoresDestinatarioLocal.cidade = clienteEncontrado.municipio
+      this.dadosFormAtoresDestinatarioLocal.bairro = clienteEncontrado.bairro
+      this.dadosFormAtoresDestinatarioLocal.numero = clienteEncontrado.numero
+      this.dadosFormAtoresDestinatarioLocal.estado = clienteEncontrado.estado
+      this.dadosFormAtoresDestinatarioLocal.cidade = clienteEncontrado.cidade
       this.dadosFormAtoresDestinatarioLocal.complemento = clienteEncontrado.complemento ?? null
+      this.dadosFormAtoresDestinatarioLocal.uf = clienteEncontrado.uf
       this.dadosFormAtoresDestinatarioLocal.telefone = clienteEncontrado.telefone ?? null
+      this.dadosFormAtoresDestinatarioLocal.email = clienteEncontrado.email ?? null
+      this.dadosFormAtoresDestinatarioLocal.ie = clienteEncontrado.ie ?? null
+      // this.dadosFormAtoresDestinatarioLocal.estado_inscricao_estadual = clienteEncontrado.estado_inscricao_estadual ?? null
+      // this.dadosFormAtoresDestinatarioLocal.situacao_cadastral = clienteEncontrado.situacao_cadastral ?? null
     },
   }
 }

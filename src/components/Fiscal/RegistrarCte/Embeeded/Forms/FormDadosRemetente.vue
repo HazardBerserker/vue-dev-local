@@ -44,6 +44,7 @@
             label="Razão Social *"
             v-model="dadosFormAtoresRemetenteLocal.nome_razao"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -54,6 +55,7 @@
             bg-color="white"
             label="Inscrição Estadual (IE)"
             v-model="dadosFormAtoresRemetenteLocal.ie"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -68,6 +70,7 @@
             mask="#####-###"
             :rules="rules.campoObrigatorio"
             counter="8"
+            clearable
           />
         </v-col>
         <v-col cols="12" md="5" class="py-2">
@@ -78,6 +81,7 @@
             label="Endereço *"
             v-model="dadosFormAtoresRemetenteLocal.endereco"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -89,6 +93,7 @@
             label="Número *"
             v-model="dadosFormAtoresRemetenteLocal.numero"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -99,6 +104,7 @@
             bg-color="white"
             label="Complemento"
             v-model="dadosFormAtoresRemetenteLocal.complemento"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -112,6 +118,7 @@
             label="Bairro *"
             v-model="dadosFormAtoresRemetenteLocal.bairro"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -123,6 +130,7 @@
             label="Cidade *"
             v-model="dadosFormAtoresRemetenteLocal.cidade"
             :rules="rules.campoObrigatorio"
+            clearable
           >
           </v-text-field>
         </v-col>
@@ -147,10 +155,8 @@
             label="Telefone *"
             v-model="dadosFormAtoresRemetenteLocal.telefone"
             :mask="dadosFormAtoresRemetenteLocal?.telefone?.length > 10 ? '(##) #####-####' : '(##) ####-####'"
-            :rules="rules.campoObrigatorio"
             counter="15"
           />
-          {{ dadosFormAtoresRemetenteLocal?.telefone?.length }}
         </v-col>
       </v-row>
       <v-card class="border pa-4 text-body-2 mt-2" variant="tonal" color="redNeveah">
@@ -214,14 +220,17 @@ export default {
     },
 
     preencheDadosEncontrados(clienteEncontrado) {
+
+      if(!clienteEncontrado) return;
+
       this.dadosFormAtoresRemetenteLocal.nome_razao = clienteEncontrado.nome
       this.dadosFormAtoresRemetenteLocal.nome_fantasia = clienteEncontrado.nome_fantasia ?? null
       this.dadosFormAtoresRemetenteLocal.cep = clienteEncontrado.cep
-      this.dadosFormAtoresRemetenteLocal.endereco = clienteEncontrado.logradouro // redundante, mas ok se precisar dos dois
+      this.dadosFormAtoresRemetenteLocal.endereco = clienteEncontrado.logradouro
       this.dadosFormAtoresRemetenteLocal.bairro = clienteEncontrado.bairro
       this.dadosFormAtoresRemetenteLocal.numero = clienteEncontrado.numero
       this.dadosFormAtoresRemetenteLocal.estado = clienteEncontrado.estado
-      this.dadosFormAtoresRemetenteLocal.cidade = clienteEncontrado.cidade // fallback
+      this.dadosFormAtoresRemetenteLocal.cidade = clienteEncontrado.cidade
       this.dadosFormAtoresRemetenteLocal.complemento = clienteEncontrado.complemento ?? null
       this.dadosFormAtoresRemetenteLocal.uf = clienteEncontrado.uf
       this.dadosFormAtoresRemetenteLocal.telefone = clienteEncontrado.telefone ?? null

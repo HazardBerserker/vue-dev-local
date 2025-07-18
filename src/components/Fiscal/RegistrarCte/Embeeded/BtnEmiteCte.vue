@@ -29,9 +29,10 @@
             <v-col>
               <v-card
                 :class="classeBaseDosCards"
-                min-width="160" color="redNeveah"
-                :variant="stepAtual == 1 ? 'flat' : 'tonal'"
-                @click="avancaStep(1)"
+                min-width="160"
+                :color="stepsValidos['1'] ? 'green' : 'redNeveah'"
+                :variant="stepAtual == 1 || stepsValidos['1'] ? 'flat' : 'tonal'"
+                @click="avancaOuVoltaStep(1)"
               >
                 <v-icon>
                   mdi-car
@@ -42,9 +43,10 @@
             <v-col >
               <v-card
                 :class="classeBaseDosCards"
-                min-width="160" color="redNeveah"
-                :variant="stepAtual == 2 ? 'flat' : 'tonal'"
-                @click="avancaStep(2)"
+                min-width="160"
+                :color="stepsValidos['2'] ? 'green' : 'redNeveah'"
+                :variant="stepAtual == 2 || stepsValidos['2'] ? 'flat' : 'tonal'"
+                @click="avancaOuVoltaStep(2)"
               >
                 <v-icon>
                   mdi-car
@@ -55,9 +57,10 @@
             <v-col >
               <v-card
                 :class="classeBaseDosCards"
-                min-width="160" color="redNeveah"
-                :variant="stepAtual == 4 ? 'flat' : 'tonal'"
-                @click="avancaStep(3)"
+                min-width="160"
+                :color="stepsValidos['3'] ? 'green' : 'redNeveah'"
+                :variant="stepAtual == 3 || stepsValidos['3'] ? 'flat' : 'tonal'"
+                @click="avancaOuVoltaStep(3)"
               >
                 <v-icon>
                   mdi-car
@@ -68,9 +71,10 @@
             <v-col>
               <v-card
                 :class="classeBaseDosCards"
-                min-width="160" color="redNeveah"
-                :variant="stepAtual == 4 ? 'flat' : 'tonal'"
-                @click="avancaStep(4)"
+                min-width="160"
+                :color="stepsValidos['4'] ? 'green' : 'redNeveah'"
+                :variant="stepAtual == 4 || stepsValidos['4'] ? 'flat' : 'tonal'"
+                @click="avancaOuVoltaStep(4)"
               >
                 <v-icon>
                   mdi-car
@@ -82,9 +86,10 @@
               <v-card
                 class="d-flex flex-column justify-center align-center ga-2 pa-2"
                 :class="classeBaseDosCards"
-                min-width="160" color="redNeveah"
-                :variant="stepAtual == 5 ? 'flat' : 'tonal'"
-                @click="avancaStep(5)"
+                min-width="160"
+                :color="stepsValidos['5'] ? 'green' : 'redNeveah'"
+                :variant="stepAtual == 5 || stepsValidos['5'] ? 'flat' : 'tonal'"
+                @click="avancaOuVoltaStep(5)"
               >
                 <v-icon>
                   mdi-car
@@ -99,116 +104,193 @@
 
           <div class="w-100 ma-6">
 
-            <v-fade-transition>
-              <FormDadosGeral
-                :dadosFormGeral="dadosFormGeral"
-                :estadosESeusMunicipios="estadosESeusMunicipios"
-                v-if="stepAtual == 1"
-              />
-            </v-fade-transition>
+            <v-fade-transition mode="out-in">
+              <template v-if="stepAtual == 1">
+                <FormDadosGeral
+                  ref="formDadosGeral"
+                  :dadosFormGeral="dadosFormGeral"
+                  :estadosESeusMunicipios="estadosESeusMunicipios"
+                />
+              </template>
 
-            <v-fade-transition>
-              <div v-if="stepAtual == 2">
-                <v-row>
-                  <v-col cols="2">
-                    <div class="text-body-2 mb-4 px-1">
-                      <em>Preencha os Autores</em>
-                    </div>
+              <template v-if="stepAtual == 2">
+                <div class="mt-6">
+                  <v-row>
+                    <v-col cols="2">
+                      <div class="text-body-2 mb-4 px-1">
+                        <em>Preencha os Autores</em>
+                      </div>
 
-                    <div class="d-flex flex-column ga-2">
-                      <v-card
-                        title="Remetente"
-                        subtitle="Selecionado"
-                        prepend-icon="mdi-account-eye"
-                        color="redNeveah"
-                        :variant="formAtorAtual == 1 ? 'flat': 'tonal'"
-                        @click="formAtorAtual = 1"
-                      />
-                      <v-card
-                        title="Destinatário"
-                        subtitle="Selecionado"
-                        prepend-icon="mdi-account-eye"
-                        color="redNeveah"
-                        :variant="formAtorAtual == 2 ? 'flat': 'tonal'"
-                        @click="formAtorAtual = 2"
-                      />
-                      <v-card
-                        title="Expedidor"
-                        subtitle="Selecionado"
-                        prepend-icon="mdi-account-eye"
-                        color="redNeveah"
-                        :variant="formAtorAtual == 3 ? 'flat': 'tonal'"
-                        @click="formAtorAtual = 3"
-                      />
-                      <v-card
-                        title="Recebedor"
-                        subtitle="Selecionado"
-                        prepend-icon="mdi-account-eye"
-                        color="redNeveah"
-                        :variant="formAtorAtual == 4 ? 'flat': 'tonal'"
-                        @click="formAtorAtual = 4"
-                      />
-                      <v-card
-                        title="Tomador"
-                        subtitle="Selecionado"
-                        prepend-icon="mdi-account-eye"
-                        color="redNeveah"
-                        :variant="formAtorAtual == 5 ? 'flat': 'tonal'"
-                        @click="formAtorAtual = 5"
-                      />
-                    </div>
-                  </v-col>
-                  <v-col cols="10">
-                    <div>
-                      <v-fade-transition mode="out-in">
-                        <template v-if="formAtorAtual == 1">
-                          <FormDadosRemetente
-                            :dadosFormAtoresRemetente="dadosFormAtores.remetente"
-                            v-if="formAtorAtual == 1"
-                          />
-                        </template>
-                        <template v-if="formAtorAtual == 2">
-                          <FormDadosDestinatario
-                            :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
-                            v-if="formAtorAtual == 2"
-                          />
-                        </template>
-                      </v-fade-transition>
-
-                      <v-sheet
-                        class="d-flex align-center px-4 mt-8 w-100"
-                        max-width="550"
-                        rounded="lg"
-                      >
-                        <v-progress-linear
-                          :location="null"
-                          bg-color="#92aed9"
-                          buffer-color="#6a3e0b"
-                          buffer-opacity="1"
-                          buffer-value="0"
+                      <div class="d-flex flex-column ga-2">
+                        <v-card
+                          title="Remetente"
+                          :subtitle="formAtorAtual == 1 ? 'Selecionado': 'Selecione'"
+                          :prepend-icon="formAtorAtual == 1 ? 'mdi-account-eye': 'mdi-account'"
                           color="redNeveah"
-                          height="12"
-                          max="5"
-                          min="0"
-                          model-value="2"
-                          rounded
-                        ></v-progress-linear>
-                        <div class="d-flex w-100 align-center">
-                          <div class="ms-4 text-h6">2/5</div>
-                          <div class="ms-4 text-body-2">(Atores Preenchidos)</div>
-                          <v-icon class="ms-2">
-                            mdi-check
-                          </v-icon>
-                        </div>
-                      </v-sheet>
-                    </div>
-                  </v-col>
-                </v-row>
-              </div>
+                          :variant="formAtorAtual == 1 ? 'flat': 'tonal'"
+                          @click="formAtorAtual = 1"
+                        >
+                          <template #append>
+                            <v-fade-transition>
+                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.remetente)" color="green">
+                                mdi-check-circle
+                              </v-icon>
+                            </v-fade-transition>
+                          </template>
+                        </v-card>
+                        <v-card
+                          title="Destinatário"
+                          :subtitle="formAtorAtual == 2 ? 'Selecionado': 'Selecione'"
+                          :prepend-icon="formAtorAtual == 2 ? 'mdi-account-eye': 'mdi-account'"
+                          color="redNeveah"
+                          :variant="formAtorAtual == 2 ? 'flat': 'tonal'"
+                          @click="formAtorAtual = 2"
+                        >
+                          <template #append>
+                            <v-fade-transition>
+                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.destinatario)" color="green">
+                                mdi-check-circle
+                              </v-icon>
+                            </v-fade-transition>
+                          </template>
+                        </v-card>
+                        <v-card
+                          title="Expedidor"
+                          :subtitle="formAtorAtual == 3 ? 'Selecionado': 'Selecione'"
+                          :prepend-icon="formAtorAtual == 3 ? 'mdi-account-eye': 'mdi-account'"
+                          color="redNeveah"
+                          :variant="formAtorAtual == 3 ? 'flat': 'tonal'"
+                          @click="formAtorAtual = 3"
+                        >
+                          <template #append>
+                            <v-fade-transition>
+                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.expedidor) || dadosFormAtoresComplementar.sem_expedidor" color="green">
+                                mdi-check-circle
+                              </v-icon>
+                            </v-fade-transition>
+                          </template>
+                        </v-card>
+                        <v-card
+                          title="Recebedor"
+                          :subtitle="formAtorAtual == 4 ? 'Selecionado': 'Selecione'"
+                          :prepend-icon="formAtorAtual == 4 ? 'mdi-account-eye': 'mdi-account'"
+                          color="redNeveah"
+                          :variant="formAtorAtual == 4 ? 'flat': 'tonal'"
+                          @click="formAtorAtual = 4"
+                        >
+                          <template #append>
+                            <v-fade-transition>
+                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.recebedor) || dadosFormAtoresComplementar.sem_recebedor" color="green">
+                                mdi-check-circle
+                              </v-icon>
+                            </v-fade-transition>
+                          </template>
+                        </v-card>
+                        <v-card
+                          title="Tomador"
+                          :subtitle="formAtorAtual == 5 ? 'Selecionado': 'Selecione'"
+                          :prepend-icon="formAtorAtual == 5 ? 'mdi-account-eye': 'mdi-account'"
+                          color="redNeveah"
+                          :variant="formAtorAtual == 5 ? 'flat': 'tonal'"
+                          @click="formAtorAtual = 5"
+                        >
+                          <template #append>
+                            <v-fade-transition>
+                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.tomador) || tomadorPreenchido" color="green">
+                                mdi-check-circle
+                              </v-icon>
+                            </v-fade-transition>
+                          </template>
+                        </v-card>
+                      </div>
+                    </v-col>
+                    <v-col cols="10">
+                      <div>
+                        <v-fade-transition mode="out-in">
+                          <template v-if="formAtorAtual == 1">
+                            <FormDadosRemetente
+                              :dadosFormAtoresRemetente="dadosFormAtores.remetente"
+                              v-if="formAtorAtual == 1"
+                            />
+                          </template>
+                          <template v-if="formAtorAtual == 2">
+                            <FormDadosDestinatario
+                              :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
+                              v-if="formAtorAtual == 2"
+                            />
+                          </template>
+                          <template v-if="formAtorAtual == 3">
+                            <FormDadosExpedidor
+                              :dadosFormAtoresExpedidor="dadosFormAtores.expedidor"
+                              :dadosFormAtoresRemetente="dadosFormAtores.remetente"
+                              v-model:expedidorEhIgualRemetente="expedidorEhIgualRemetente"
+                              v-model:semExpedidor="dadosFormAtoresComplementar.sem_expedidor"
+                              :remetenteTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.remetente)"
+                              v-if="formAtorAtual == 3"
+                            />
+                          </template>
+                          <template v-if="formAtorAtual == 4">
+                            <FormDadosRecebedor
+                              :dadosFormAtoresRecebedor="dadosFormAtores.recebedor"
+                              :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
+                              v-model:recebedorEhIgualDestinatario="recebedorEhIgualDestinatario"
+                              v-model:semRecebedor="dadosFormAtoresComplementar.sem_recebedor"
+                              :remetenteTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.destinatario)"
+                              v-if="formAtorAtual == 4"
+                            />
+                          </template>
+                          <template v-if="formAtorAtual == 5">
+                            <FormDadosTomador
+                              :dadosFormAtoresTomador="dadosFormAtores.tomador"
+                              v-model:tomadorEhIgualRemetente="tomadorEhIgualRemetente"
+                              v-model:tomadorEhIgualDestinatario="tomadorEhIgualDestinatario"
+                              v-model:tomadorEhIgualRecebedor="tomadorEhIgualRecebedor"
+                              v-model:tomadorEhIgualExpedidor="tomadorEhIgualExpedidor"
+                              v-model:contribuicaoTomador="dadosFormAtoresComplementar.contribuicao_tomador"
+                              v-model:tomadorPreenchido="tomadorPreenchido"
+                              v-if="formAtorAtual == 5"
+                            />
+                          </template>
+                        </v-fade-transition>
+
+                        <v-sheet
+                          class="d-flex align-center px-4 mt-8 w-100"
+                          max-width="750"
+                          rounded="lg"
+                          @click="progressoDoPreenchimentoDosAtores() "
+                        >
+                          <v-fade-transition>
+                            <v-progress-linear
+                              :location="null"
+                              bg-color="#92aed9"
+                              buffer-color="#6a3e0b"
+                              buffer-opacity="1"
+                              buffer-value="0"
+                              color="redNeveah"
+                              height="12"
+                              max="5"
+                              min="0"
+                              :model-value="progressoDoPreenchimentoDosAtores()"
+                              rounded
+                            ></v-progress-linear>
+                          </v-fade-transition>
+                          <div class="d-flex w-100 align-center">
+                            <div class="ms-4 text-h6">{{progressoDoPreenchimentoDosAtores()}}/5</div>
+                            <div class="ms-4 text-body-2">(Formulários corretamente Preenchidos)</div>
+                            <v-icon class="ms-2">
+                              mdi-check
+                            </v-icon>
+                          </div>
+                        </v-sheet>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </div>
+              </template>
             </v-fade-transition>
 
             <div class="d-flex justify-end mt-2">
-              <v-btn variant="text" append-icon="mdi-chevron-right"  @click="avancaStep(stepAtual + 1)" color="grey-darken-2">
+              <v-btn variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
                 Avançar
               </v-btn>
             </div>
@@ -237,13 +319,31 @@ import { endpoints } from '@/utils/apiEndpoints'
 import FormDadosGeral from './Forms/FormDadosGeral.vue'
 import FormDadosRemetente from './Forms/FormDadosRemetente.vue'
 import FormDadosDestinatario from './Forms/FormDadosDestinatario.vue'
+import FormDadosExpedidor from './Forms/FormDadosExpedidor.vue'
+import FormDadosRecebedor from './Forms/FormDadosRecebedor.vue'
+import FormDadosTomador from './Forms/FormDadosTomador.vue'
 
 export default {
   name: 'BtnEmiteCte',
   components: {
     FormDadosGeral,
     FormDadosRemetente,
-    FormDadosDestinatario
+    FormDadosDestinatario,
+    FormDadosExpedidor,
+    FormDadosRecebedor,
+    FormDadosTomador
+  },
+  watch: {
+    'dadosFormGeral.local_inicio_prestacao.uf'(newValue, oldValue) {
+      if(newValue != oldValue) {
+        this.dadosFormGeral.local_inicio_prestacao.cidade = null
+      }
+    },
+    'dadosFormGeral.local_termino_prestacao.uf'(newValue, oldValue) {
+      if(newValue != oldValue) {
+        this.dadosFormGeral.local_termino_prestacao.cidade = null
+      }
+    },
   },
   data() {
     return {
@@ -281,7 +381,7 @@ export default {
 
       // dadosformGeral
       dadosFormGeral: {
-        cfop: null,
+        cfop: '5353',
         natureza_operacao:  {
           // preencher depois
         },
@@ -303,11 +403,11 @@ export default {
         },
         observacoes_gerais: null,
       },
-
       // dadosFormAtores
       dadosFormAtores: {
         remetente: {
           nome_razao: null,
+          nome_fantasia: null,
           cnpj: null,
           telefone: null,
           endereco: null,
@@ -321,6 +421,7 @@ export default {
         },
         destinatario: {
           nome_razao: null,
+          nome_fantasia: null,
           cnpj: null,
           telefone: null,
           endereco: null,
@@ -334,6 +435,7 @@ export default {
         },
         expedidor: {
           nome_razao: null,
+          nome_fantasia: null,
           cnpj: null,
           telefone: null,
           endereco: null,
@@ -347,6 +449,7 @@ export default {
         },
         recebedor: {
           nome_razao: null,
+          nome_fantasia: null,
           cnpj: null,
           telefone: null,
           endereco: null,
@@ -360,6 +463,7 @@ export default {
         },
         tomador: {
           nome_razao: null,
+          nome_fantasia: null,
           cnpj: null,
           telefone: null,
           endereco: null,
@@ -373,17 +477,120 @@ export default {
         },
       },
 
+      dadosFormAtoresComplementar: {
+        contribuicao_tomador: 1,
+        sem_expedidor: true,
+        sem_recebedor: true,
+      },
+
+      camposObrigatoriosDosAtores: [
+        'nome_razao',
+        'cnpj',
+        'endereco',
+        'numero',
+        'bairro',
+        'cep',
+        'cidade',
+        'uf',
+      ],
+
       estadosESeusMunicipios: {},
 
       stepAtual: 2,
       formAtorAtual: 1,
+      expedidorEhIgualRemetente: false,
+      recebedorEhIgualDestinatario: false,
+
+      tomadorEhIgualRemetente: true,
+      tomadorEhIgualDestinatario: false,
+      tomadorEhIgualRecebedor: false,
+      tomadorEhIgualExpedidor: false,
+      tomadorPreenchido: true,
+
       classeBaseDosCards: 'd-flex flex-column justify-center align-center ga-2 pa-2'
     }
   },
   methods: {
 
-    async avancaStep(novoStep) {
+    progressoDoPreenchimentoDosAtores() {
+      let numero = 0
 
+      const {
+        expedidorNaoDeveSerPreenchido,
+        recebedorNaoDeveSerPreenchido
+      } = this.verificaSeOExpedidorOuRecebedorNaoDeveSerPreenchido()
+
+      for (const dadosForm in this.dadosFormAtores) {
+
+        if(dadosForm == 'expedidor' && expedidorNaoDeveSerPreenchido) {
+          numero += 1
+          continue
+        }
+
+        if(dadosForm == 'recebedor' && recebedorNaoDeveSerPreenchido) {
+          numero += 1
+          continue
+        }
+
+        if(dadosForm == 'tomador' && this.tomadorPreenchido) {
+          numero += 1
+          continue
+        }
+
+        if(this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores[dadosForm])) {
+          numero += 1
+        }
+      }
+      return numero
+    },
+
+    verificaSeOExpedidorOuRecebedorNaoDeveSerPreenchido() {
+      let expedidorNaoDeveSerPreenchido = false
+      let recebedorNaoDeveSerPreenchido = false
+
+      for (const dadoComplementar in this.dadosFormAtoresComplementar) {
+        if(dadoComplementar == 'contibuicao_tomador') continue
+
+        if(dadoComplementar == 'sem_expedidor' && this.dadosFormAtoresComplementar[dadoComplementar]) {
+          expedidorNaoDeveSerPreenchido = true
+        }
+        if(dadoComplementar == 'sem_recebedor' && this.dadosFormAtoresComplementar[dadoComplementar]) {
+          recebedorNaoDeveSerPreenchido = true
+        }
+      }
+
+      return {
+        expedidorNaoDeveSerPreenchido: expedidorNaoDeveSerPreenchido,
+        recebedorNaoDeveSerPreenchido: recebedorNaoDeveSerPreenchido,
+      }
+    },
+
+    verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosAtor) {
+      let atorTemTodosOsCamposObrigatoriosPreenchidos = true
+
+      for (const campo in dadosAtor) {
+        if(!this.camposObrigatoriosDosAtores.includes(campo)) {
+          continue
+        }
+
+        if(dadosAtor[campo] == null || dadosAtor[campo] == undefined || dadosAtor[campo] == '') {
+          atorTemTodosOsCamposObrigatoriosPreenchidos = false
+        }
+      }
+
+      return atorTemTodosOsCamposObrigatoriosPreenchidos
+    },
+
+    async avancaOuVoltaStep(novoStep) {
+      if (novoStep >= this.stepAtual + 1 || !this.stepsValidos[novoStep]) {
+        this.avancaStepSeEstiverTudoOkay(novoStep)
+        return
+      }
+
+      this.stepAtual = novoStep;
+    },
+
+    async avancaStepSeEstiverTudoOkay(novoStep) {
       const alertStore = useAlertStore()
       const formRefAtual = this.refsForms[this.stepAtual];
       const form = this.$refs[formRefAtual];
@@ -404,19 +611,7 @@ export default {
       // Marca como válido o step atual
       this.stepsValidos[this.stepAtual] = true;
 
-      // Permite ir pro próximo step ou qualquer anterior já validado
-      const podeIr = novoStep <= this.stepAtual + 1 || this.stepsValidos[novoStep];
-
-      if (podeIr) {
-        this.stepAtual = novoStep;
-      }
-    },
-
-    voltaStep(novoStep) {
-      // Permite voltar livremente para steps anteriores
-      if (novoStep < this.stepAtual) {
-        this.stepAtual = novoStep;
-      }
+      this.stepAtual = novoStep;
     },
 
     validaRegrasParaEmissao(alertStore) {
