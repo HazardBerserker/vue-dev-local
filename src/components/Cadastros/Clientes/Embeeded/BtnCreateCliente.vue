@@ -118,6 +118,7 @@ import { endpoints } from '@/utils/apiEndpoints';
 import InputText from '@/components/Form/InputText.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { estadosBrasileiros } from '@/Enums/estadosEnum';
+import { buscaDadosDoClientePeloCNPJ } from '@/helpers/buscaDadosDoClientePeloCNPJ';
 
 export default {
     name: 'BtnCreateCliente',
@@ -223,30 +224,10 @@ export default {
         },
 
         async preencheDadosDoClienteAutomaticamente() {
-
-          const loading = useLoadingStore()
-          const alertStore = useAlertStore()
-
-          const url = `${endpoints.cliente.buscaClienteNaApiDoGoverno}/${this.cnpj}`;
-
-          try {
-            loading.show('Buscando dados...')
-            const resposta =  await ApiService({
-              method: 'post',
-              url: url,
-            });
-
-            this.preencheDadosEncontrados(resposta?.data?.data)
-            alertStore.addAlert('Dados preenchidos automaticamente', 'info')
-
-
-          } catch (erro) {
-            alertStore.addAlert(erro.response?.data?.message, 'error')
-          } finally {
-            loading.hide()
-          }
-
+          const dadosDoCliente = await buscaDadosDoClientePeloCNPJ(this.cnpj)
+          this.preencheDadosEncontrados(dadosDoCliente)
         },
+
         preencheDadosEncontrados(clienteEncontrado) {
           this.bairro = clienteEncontrado.bairro
           this.cep = clienteEncontrado.cep
