@@ -28,71 +28,89 @@
           <v-row dense>
             <v-col>
               <v-card
-                :class="classeBaseDosCards"
+                :class="[
+                  classeBaseDosCards,
+                  stepAtual === 1 ? 'elevation-12' : ''
+                ]"
                 min-width="160"
                 :color="stepsValidos['1'] ? 'green' : 'redNeveah'"
                 :variant="stepAtual == 1 || stepsValidos['1'] ? 'flat' : 'tonal'"
                 @click="avancaOuVoltaStep(1)"
               >
                 <v-icon>
-                  mdi-car
+                  mdi-tune
                 </v-icon>
                 GERAL
               </v-card>
             </v-col>
-            <v-col >
+
+            <v-col>
               <v-card
-                :class="classeBaseDosCards"
+                :class="[
+                  classeBaseDosCards,
+                  stepAtual === 2 ? 'elevation-12' : ''
+                ]"
                 min-width="160"
                 :color="stepsValidos['2'] ? 'green' : 'redNeveah'"
                 :variant="stepAtual == 2 || stepsValidos['2'] ? 'flat' : 'tonal'"
                 @click="avancaOuVoltaStep(2)"
               >
                 <v-icon>
-                  mdi-car
+                  mdi-account-multiple
                 </v-icon>
                 ATORES
               </v-card>
             </v-col>
-            <v-col >
+
+            <v-col>
               <v-card
-                :class="classeBaseDosCards"
+                :class="[
+                  classeBaseDosCards,
+                  stepAtual === 3 ? 'elevation-12' : ''
+                ]"
                 min-width="160"
                 :color="stepsValidos['3'] ? 'green' : 'redNeveah'"
                 :variant="stepAtual == 3 || stepsValidos['3'] ? 'flat' : 'tonal'"
                 @click="avancaOuVoltaStep(3)"
               >
                 <v-icon>
-                  mdi-car
+                  mdi-truck-trailer
                 </v-icon>
                 CARGA
               </v-card>
             </v-col>
+
             <v-col>
               <v-card
-                :class="classeBaseDosCards"
+                :class="[
+                  classeBaseDosCards,
+                  stepAtual === 4 ? 'elevation-12' : ''
+                ]"
                 min-width="160"
                 :color="stepsValidos['4'] ? 'green' : 'redNeveah'"
                 :variant="stepAtual == 4 || stepsValidos['4'] ? 'flat' : 'tonal'"
                 @click="avancaOuVoltaStep(4)"
               >
                 <v-icon>
-                  mdi-car
+                  mdi-file-document-multiple
                 </v-icon>
                 DOCUMENTOS
               </v-card>
             </v-col>
+
             <v-col>
               <v-card
-                class="d-flex flex-column justify-center align-center ga-2 pa-2"
-                :class="classeBaseDosCards"
+                :class="[
+                  classeBaseDosCards,
+                  stepAtual === 5 ? 'elevation-12' : ''
+                ]"
                 min-width="160"
                 :color="stepsValidos['5'] ? 'green' : 'redNeveah'"
                 :variant="stepAtual == 5 || stepsValidos['5'] ? 'flat' : 'tonal'"
                 @click="avancaOuVoltaStep(5)"
               >
                 <v-icon>
-                  mdi-car
+                  mdi-clipboard-check
                 </v-icon>
                 RECAPITULAÇÃO
               </v-card>
@@ -110,6 +128,7 @@
                   ref="formDadosGeral"
                   :dadosFormGeral="dadosFormGeral"
                   :estadosESeusMunicipios="estadosESeusMunicipios"
+                  :valorTotalCalculado="valorTotalCalculado"
                 />
               </template>
 
@@ -320,9 +339,22 @@
               </template>
             </v-fade-transition>
 
+            {{ dadosFormGeral }}
+            {{ dadosFormAtores }}
+            {{ dadosFormAtoresComplementar }}
+            {{ dadosFormCarga }}
+            {{ dadosFormDocumento }}
+
+            <v-btn @click="formataDadosParaEnvio">
+              teste
+            </v-btn>
+
             <div class="d-flex justify-end mt-2">
-              <v-btn variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
+              <v-btn v-if="stepAtual != 5" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
                 Avançar
+              </v-btn>
+              <v-btn v-if="stepAtual == 5" variant="flat" @click="emiteCte" color="grey-darken-3" size="large">
+                EMITIR
               </v-btn>
             </div>
           </div>
@@ -341,7 +373,7 @@
 import { estadosBrasileiros } from '@/Enums/estadosEnum'
 import { FinalidadeCteEnum } from '@/Enums/Fiscal/FinalidadeCteEnum'
 import { ModalidadeEntregaEnum } from '@/Enums/Fiscal/ModalidadeEntregaEnum'
-import { NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
+import { NaturezaOperacaoDescricao, NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
 import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import ApiService from '@/services/ApiService'
 import { useAlertStore } from '@/stores/alertStore'
@@ -356,6 +388,8 @@ import FormDadosTomador from './Forms/FormDeAtores/FormDadosTomador.vue'
 import FormDadosCarga from './Forms/FormDadosCarga.vue'
 import FormDadosDocumentos from './Forms/FormDadosDocumento.vue'
 import RecapitulacaoDados from './Forms/RecapitulacaoDados.vue'
+import { limparCamposVazios } from '@/helpers/limpaCamposVazio'
+import { IndicadorTomadorEnumDescricao } from '@/Enums/Fiscal/IndicadorTomadorEnum'
 
 export default {
   name: 'BtnEmiteCte',
@@ -380,6 +414,20 @@ export default {
       if(newValue != oldValue) {
         this.dadosFormGeral.local_termino_prestacao.cidade = null
       }
+    },
+  },
+  computed: {
+    valorTotalCalculado() {
+      const fretePeso = parseFloat(this.dadosFormGeral?.servico?.componentes?.FRETE_PESO)
+      const advalorem = parseFloat(this.dadosFormGeral?.servico?.componentes?.advalorem)
+
+      if(!fretePeso || !advalorem) {
+        return null
+      }
+
+      const valorTotal = fretePeso + advalorem
+
+      return valorTotal
     },
   },
   data() {
@@ -419,9 +467,9 @@ export default {
       // dadosformGeral
       dadosFormGeral: {
         cfop: '5353',
-        natureza_operacao:  {
-          // preencher depois
-        },
+        classificacao_tributaria: 'SN',
+        natureza_operacao:  null,
+        rntrc: null,
         finalidade: { value: '0', text: '0 - Normal' },
         tipo: { value: '0', text: '0 - Normal' },
         modalidade: { value: '1', text: '1 - Rodoviário' },
@@ -555,6 +603,130 @@ export default {
     }
   },
   methods: {
+
+    async emiteCte() {
+      const alertStore = useAlertStore()
+      const loading = useLoadingStore()
+
+      const dadosParaEnvio = this.formataDadosParaEnvio();
+
+      const url = endpoints.cte.emite;
+
+      try {
+        loading.show('Emitindo CT-e...')
+        const resposta =  await ApiService({
+          method: 'post',
+          url: url,
+          data: dadosParaEnvio
+        });
+
+        console.log(resposta);
+
+        alertStore.addAlert(resposta?.data.message, 'success')
+
+        // this.limpaCampos()
+        // this.closeDialog()
+
+      } catch (erro) {
+        alertStore.addAlert(erro.response?.data?.message, 'error')
+      } finally {
+        loading.hide()
+      }
+    },
+
+    formataDadosParaEnvio() {
+      const textoNaturezaOperacao = this.limitarTamanhoTextoParaNaturezaOperacao(NaturezaOperacaoDescricao[this.dadosFormGeral.cfop])
+      const fretePeso = parseFloat(this.dadosFormGeral?.servico?.componentes?.FRETE_PESO)
+      const advalorem = parseFloat(this.dadosFormGeral?.servico?.componentes?.advalorem)
+
+      let valorTotal = fretePeso + advalorem
+
+      if(!fretePeso || !advalorem) {
+        valorTotal = 0
+      }
+
+      const dados = {
+        ambiente: 2,
+        natureza_operacao: textoNaturezaOperacao,
+        modalidade: Number(this.dadosFormGeral?.modalidade.value),
+        modelo: "cte",
+        finalidade: this.dadosFormGeral?.finalidade?.value,
+        local_inicio_prestacao: {...this.dadosFormGeral?.local_inicio_prestacao},
+        local_termino_prestacao: {...this.dadosFormGeral?.local_termino_prestacao},
+        contribuicao_tomador: this.dadosFormAtoresComplementar?.contribuicao_tomador,
+        indicador_tomador: this.defineIndicadorTomador(),
+        impostos: {
+          cfop: this.dadosFormGeral.cfop,
+          classificacao_tributaria: this.dadosFormGeral.classificacao_tributaria,
+        },
+        servico: {
+          ...this.dadosFormGeral?.servico,
+          valor_total: valorTotal,
+          valor_recebido: valorTotal
+        },
+        valores_servico: {
+          valor_total: valorTotal,
+          valor_recebido: valorTotal
+        },
+        carga: {
+          ...this.dadosFormCarga,
+        },
+        documentos_fiscais:[...this.dadosFormDocumento],
+        rodoviario: {
+          rntrc: this.dadosFormGeral.rntrc
+        },
+        remetente: {...this.dadosFormAtores.remetente},
+        destinatario: {...this.dadosFormAtores.destinatario},
+        recebedor: {...this.dadosFormAtores.recebedor},
+        expedidor: {...this.dadosFormAtores.expedidor},
+        tomador: this.defineDadosTomador(),
+      }
+
+
+
+      const dadosTratados = limparCamposVazios(dados)
+      console.log(dadosTratados);
+
+      return dadosTratados
+    },
+
+    defineIndicadorTomador() {
+      if(this.tomadorEhIgualRemetente) {
+        return IndicadorTomadorEnumDescricao.REMETENTE
+      }
+      if(this.tomadorEhIgualDestinatario) {
+        return IndicadorTomadorEnumDescricao.DESTINATARIO
+      }
+      if(this.tomadorEhIgualRecebedor) {
+        return IndicadorTomadorEnumDescricao.RECEBEDOR
+      }
+      if(this.tomadorEhIgualExpedidor) {
+        return IndicadorTomadorEnumDescricao.EXPEDIDOR
+      }
+
+      return IndicadorTomadorEnumDescricao.OUTROS
+    },
+
+    defineDadosTomador() {
+      if(this.tomadorEhIgualRemetente) {
+        return {...this.dadosFormAtores.remetente}
+      }
+      if(this.tomadorEhIgualDestinatario) {
+        return {...this.dadosFormAtores.destinatario}
+      }
+      if(this.tomadorEhIgualRecebedor) {
+        return {...this.dadosFormAtores.recebedor}
+      }
+      if(this.tomadorEhIgualExpedidor) {
+        return {...this.dadosFormAtores.expedidor}
+      }
+      return  {...this.dadosFormAtores.tomador}
+    },
+
+    limitarTamanhoTextoParaNaturezaOperacao(texto) {
+      if (!texto) return "";
+      return texto.length > 60 ? texto.slice(0, 60) : texto;
+    },
 
     progressoDoPreenchimentoDosAtores() {
       let numero = 0
@@ -747,10 +919,11 @@ export default {
 
       try {
         loadingStore.show('Buscando Municípios...');
-          await this.buscaEstadosESeusMunicipios()
-        loadingStore.hide();
+        await this.buscaEstadosESeusMunicipios()
       } catch {
         alertStore.addAlert('Erro ao Carregar Municípios', 'error')
+      } finally {
+        loadingStore.hide();
       }
     },
   }

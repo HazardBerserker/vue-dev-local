@@ -91,17 +91,17 @@
                 >
                   <v-radio
                     label="Contribuinte ICMS"
-                    :value="1"
+                    :value="ContribuicaoTomadorEnumDescricao.CONTRIBUINTE_ICMS"
                   ></v-radio>
 
                   <v-radio
                     label="Contribuinte isento de inscrição"
-                    :value="2"
+                    :value="ContribuicaoTomadorEnumDescricao.CONTRIBUINTE_ISENTO_INSCRICAO"
                   ></v-radio>
 
                   <v-radio
                     label="Não Contribuinte"
-                    :value="9"
+                    :value="ContribuicaoTomadorEnumDescricao.NAO_CONTRIBUINTE"
                   ></v-radio>
                 </v-radio-group>
               </div>
@@ -277,6 +277,7 @@ import { NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
 import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import InputText from '@/components/Form/InputText.vue'
 import { buscaDadosDoClientePeloCNPJ } from '@/helpers/buscaDadosDoClientePeloCNPJ'
+import { ContribuicaoTomadorEnumDescricao } from '@/Enums/Fiscal/ContribuicaoTomadorEnum'
 
 export default {
   name: 'FormDadosTomador',
@@ -356,6 +357,7 @@ export default {
   data() {
     return {
       estadosBrasileiros,
+      ContribuicaoTomadorEnumDescricao,
       FinalidadeCteEnum,
       ModalidadeEntregaEnum,
       TipoDeEmissaoCteEnum,
@@ -503,7 +505,6 @@ export default {
       this.dadosFormAtoresTomadorLocal.endereco = clienteEncontrado.logradouro
       this.dadosFormAtoresTomadorLocal.bairro = clienteEncontrado.bairro
       this.dadosFormAtoresTomadorLocal.numero = clienteEncontrado.numero
-      this.dadosFormAtoresTomadorLocal.estado = clienteEncontrado.estado
       this.dadosFormAtoresTomadorLocal.cidade = clienteEncontrado.cidade
       this.dadosFormAtoresTomadorLocal.complemento = clienteEncontrado.complemento ?? null
       this.dadosFormAtoresTomadorLocal.uf = clienteEncontrado.uf

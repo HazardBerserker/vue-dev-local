@@ -4,7 +4,7 @@
       <v-col md="4">
         <div class="d-flex justify-center align-center ga-2 align-end w-100">
           <v-icon color="redNeveah" size="large">
-            mdi-archive-check
+            mdi-file-document-multiple
           </v-icon>
           <div class="text-red-lighten-4 text-redNeveah mb-2 text-body-1 pt-2">
             Documentos Vinculados <strong>({{dadosFormDocumentoLocal.length}})</strong>

@@ -1,7 +1,7 @@
 <template>
   <v-form class="bg-grey-lighten-4 border elevation-2 pa-6" ref="formDadosGeral">
     <v-row class="my-3">
-      <v-col cols="12" class="py-2">
+      <v-col cols="8" class="py-2">
         <v-select
           v-model="dadosFormGeralLocal.cfop"
           bg-color="white"
@@ -10,6 +10,20 @@
           item-title="text"
           variant="outlined"
           label="CFOP *"
+          density="compact"
+          :rules="rules.campoObrigatorio"
+          clearable
+        />
+      </v-col>
+      <v-col cols="4" class="py-2">
+        <v-select
+          v-model="dadosFormGeralLocal.classificacao_tributaria"
+          bg-color="white"
+          :items="ClassificacaoTributariaEnum"
+          item-value="value"
+          item-title="text"
+          variant="outlined"
+          label="Classificação Tributária *"
           density="compact"
           :rules="rules.campoObrigatorio"
           clearable
@@ -119,24 +133,85 @@
         />
       </v-col>
     </v-row>
-
     <v-row>
-        <v-col cols="12" md="6" class="py-2">
-        <InputTextMoeda
-          v-model="dadosFormGeralLocal.servico.valor_total"
-          prefix="R$"
-          label="Valor Total do Serviço: *"
+      <v-col cols="12" md="4" class="py-2">
+        <v-text-field
+          v-model="dadosFormGeralLocal.rntrc"
+          label="RNTRC *"
+          density="compact"
+          variant="outlined"
           bg-color="white"
           :rules="rules.campoObrigatorio"
-        />
+          clearable
+        >
+        </v-text-field>
+      </v-col>
+    </v-row>
+
+    <v-row dense>
+      <v-col cols="12">
+        <div class="px-2 text-redNeveah">
+          Serviço
+          <v-divider :thickness="2"></v-divider>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="my-3">
+      <v-col cols="12" md="6" class="py-2">
+        <v-badge
+          class="w-100"
+          v-tooltip="'(Gerado automaticamente) Frete peso + Advalorem'"
+          content="?"
+        >
+          <InputTextMoeda
+            v-model="valorTotalCalculadoLocal"
+            prefix="R$"
+            label="Valor Total do Serviço: *"
+            bg-color="white"
+            readonly
+            :rules="rules.campoObrigatorio"
+          />
+        </v-badge>
       </v-col>
       <v-col cols="12" md="6" class="py-2">
+        <v-badge
+          class="w-100"
+          v-tooltip="'(Gerado automaticamente) Frete peso + Advalorem'"
+          content="?"
+        >
+          <InputTextMoeda
+            v-model="valorTotalCalculadoLocal"
+            prefix="R$"
+            label="Valor Recebido do Serviço: *"
+            bg-color="white"
+            readonly
+            :rules="rules.campoObrigatorio"
+          />
+        </v-badge>
+      </v-col>
+
+      <v-col cols="12" md="4" class="py-2">
         <InputTextMoeda
-          v-model="dadosFormGeralLocal.servico.valor_recebido"
-          prefix="R$"
-          label="Valor Recebido do Serviço: *"
+          v-model="dadosFormGeralLocal.servico.componentes.FRETE_PESO"
+          label="Frete Peso *"
           bg-color="white"
-          :rules="rules.campoObrigatorio"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="4" class="py-2">
+        <InputTextMoeda
+          v-model="dadosFormGeralLocal.servico.componentes.PESO_CUBADO"
+          label="Frete Peso *"
+          bg-color="white"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="4" class="pt-2">
+        <InputTextMoeda
+          v-model="dadosFormGeralLocal.servico.componentes.advalorem"
+          label="Advalorem *"
+          bg-color="white"
+          clearable
         />
       </v-col>
     </v-row>
@@ -169,6 +244,7 @@ import { ModalidadeEntregaEnum } from '@/Enums/Fiscal/ModalidadeEntregaEnum'
 import { NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
 import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue'
+import { ClassificacaoTributariaEnum } from '@/Enums/Fiscal/ClassificacaoTributariaEnum'
 
 export default {
   name: 'FormDadosGeral',
@@ -184,6 +260,9 @@ export default {
       type: Object,
       required: true
     },
+    valorTotalCalculado: {
+      type: Number
+    },
   },
   data() {
     return {
@@ -192,6 +271,7 @@ export default {
       ModalidadeEntregaEnum,
       TipoDeEmissaoCteEnum,
       NaturezaOperacaoEnum,
+      ClassificacaoTributariaEnum,
 
       rules: {
         campoObrigatorio: [
@@ -208,8 +288,16 @@ export default {
       set(novosDados) {
         this.$emit('update:dadosFormGeral', novosDados)
       }
+    },
 
-    }
+    valorTotalCalculadoLocal: {
+      get() {
+        return this.valorTotalCalculado
+      },
+      set(novosDados) {
+        this.$emit('update:valorTotalCalculado', novosDados)
+      }
+    },
   },
   methods: {
     municipiosDoEstadoSelecionado(uf) {

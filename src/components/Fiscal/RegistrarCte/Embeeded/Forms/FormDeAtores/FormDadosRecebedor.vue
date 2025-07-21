@@ -368,7 +368,6 @@ export default {
       this.dadosFormAtoresRecebedorLocal.endereco = clienteEncontrado.logradouro
       this.dadosFormAtoresRecebedorLocal.bairro = clienteEncontrado.bairro
       this.dadosFormAtoresRecebedorLocal.numero = clienteEncontrado.numero
-      this.dadosFormAtoresRecebedorLocal.estado = clienteEncontrado.estado
       this.dadosFormAtoresRecebedorLocal.cidade = clienteEncontrado.cidade
       this.dadosFormAtoresRecebedorLocal.complemento = clienteEncontrado.complemento ?? null
       this.dadosFormAtoresRecebedorLocal.uf = clienteEncontrado.uf

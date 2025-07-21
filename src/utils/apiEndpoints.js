@@ -38,6 +38,7 @@ export const endpoints = {
     autoriza: `${URL_BASE}/ctes/autoriza`,
     cancela: `${URL_BASE}/ctes/cancela`,
     novo: `${URL_BASE}/ctes/cria-cte-xml`,
+    emite: `${URL_BASE}/ctes/emite-cte-pelo-webmania`,
   },
   dashboard: {
     dashboardUnificado: `${URL_BASE}/dashboard/dashboard-unificado`,
