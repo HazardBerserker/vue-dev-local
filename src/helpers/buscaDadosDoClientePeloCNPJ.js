@@ -16,9 +16,6 @@ export async function buscaDadosDoClientePeloCNPJ(cnpj) {
       url: url,
     });
 
-    console.log(resposta);
-
-
     alertStore.addAlert('Dados preenchidos automaticamente', 'info')
     return resposta?.data?.data
 

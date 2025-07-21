@@ -505,8 +505,6 @@ export default {
         this.valor_cobrado = this.item.valor_cobrado
         this.prazo = this.item.prazo
 
-        console.log(this.item);
-
       },
       validateForm() {
         return this.$refs.form.validate();

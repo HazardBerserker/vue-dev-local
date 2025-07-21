@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <v-form ref="formDadosAtores" class="bg-grey-lighten-4 border pa-6 elevation-2">
+    <v-form ref="formDadosDestinatario" class="bg-grey-lighten-4 border pa-6 elevation-2">
       <v-row class="my-3">
         <v-col cols="12" md="4" class="py-2">
           <InputText

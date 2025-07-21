@@ -65,7 +65,7 @@
                 <v-icon>
                   mdi-car
                 </v-icon>
-                IMPOSTOS
+                CARGA
               </v-card>
             </v-col>
             <v-col>
@@ -94,7 +94,7 @@
                 <v-icon>
                   mdi-car
                 </v-icon>
-                RODOVIÁRIOS
+                RECAPITULAÇÃO
               </v-card>
             </v-col>
           </v-row>
@@ -205,42 +205,43 @@
                       </div>
                     </v-col>
                     <v-col cols="10">
-                      <div>
+                      <v-form>
                         <v-fade-transition mode="out-in">
                           <template v-if="formAtorAtual == 1">
                             <FormDadosRemetente
+                              ref="formDadosRemetente"
                               :dadosFormAtoresRemetente="dadosFormAtores.remetente"
-                              v-if="formAtorAtual == 1"
                             />
                           </template>
                           <template v-if="formAtorAtual == 2">
                             <FormDadosDestinatario
+                              ref="formDadosDestinatario"
                               :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
-                              v-if="formAtorAtual == 2"
                             />
                           </template>
                           <template v-if="formAtorAtual == 3">
                             <FormDadosExpedidor
+                              ref="formDadosExpedidor"
                               :dadosFormAtoresExpedidor="dadosFormAtores.expedidor"
                               :dadosFormAtoresRemetente="dadosFormAtores.remetente"
                               v-model:expedidorEhIgualRemetente="expedidorEhIgualRemetente"
                               v-model:semExpedidor="dadosFormAtoresComplementar.sem_expedidor"
                               :remetenteTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.remetente)"
-                              v-if="formAtorAtual == 3"
                             />
                           </template>
                           <template v-if="formAtorAtual == 4">
                             <FormDadosRecebedor
+                              ref="formDadosRecebedor"
                               :dadosFormAtoresRecebedor="dadosFormAtores.recebedor"
                               :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
                               v-model:recebedorEhIgualDestinatario="recebedorEhIgualDestinatario"
                               v-model:semRecebedor="dadosFormAtoresComplementar.sem_recebedor"
-                              :remetenteTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.destinatario)"
-                              v-if="formAtorAtual == 4"
+                              :destinatarioTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.destinatario)"
                             />
                           </template>
                           <template v-if="formAtorAtual == 5">
                             <FormDadosTomador
+                              ref="formDadosTomador"
                               :dadosFormAtoresTomador="dadosFormAtores.tomador"
                               v-model:tomadorEhIgualRemetente="tomadorEhIgualRemetente"
                               v-model:tomadorEhIgualDestinatario="tomadorEhIgualDestinatario"
@@ -248,10 +249,10 @@
                               v-model:tomadorEhIgualExpedidor="tomadorEhIgualExpedidor"
                               v-model:contribuicaoTomador="dadosFormAtoresComplementar.contribuicao_tomador"
                               v-model:tomadorPreenchido="tomadorPreenchido"
-                              v-if="formAtorAtual == 5"
                             />
                           </template>
                         </v-fade-transition>
+
 
                         <v-sheet
                           class="d-flex align-center px-4 mt-8 w-100"
@@ -282,10 +283,40 @@
                             </v-icon>
                           </div>
                         </v-sheet>
-                      </div>
+                      </v-form>
                     </v-col>
                   </v-row>
                 </div>
+              </template>
+
+              <template v-if="stepAtual == 3">
+                <FormDadosCarga
+                  ref="formDadosCarga"
+                  :dadosFormCarga="dadosFormCarga"
+                />
+              </template>
+
+              <template v-if="stepAtual == 4">
+                <FormDadosDocumentos
+                  ref="formDadosDocumento"
+                  :dadosFormDocumento="dadosFormDocumento"
+                />
+              </template>
+
+              <template v-if="stepAtual == 5">
+                <RecapitulacaoDados
+                  ref="recapitulacaoDados"
+                  :dadosFormGeral="dadosFormGeral"
+                  :dadosFormAtores="dadosFormAtores"
+                  :dadosFormCarga="dadosFormCarga"
+                  :dadosFormDocumento="dadosFormDocumento"
+                  :semExpedidor="dadosFormAtoresComplementar.sem_expedidor"
+                  :semRecebedor="dadosFormAtoresComplementar.sem_recebedor"
+                  :tomadorEhIgualRemetente="tomadorEhIgualRemetente"
+                  :tomadorEhIgualDestinatario="tomadorEhIgualDestinatario"
+                  :tomadorEhIgualRecebedor="tomadorEhIgualRecebedor"
+                  :tomadorEhIgualExpedidor="tomadorEhIgualExpedidor"
+                />
               </template>
             </v-fade-transition>
 
@@ -317,11 +348,14 @@ import { useAlertStore } from '@/stores/alertStore'
 import { useLoadingStore } from '@/stores/loading'
 import { endpoints } from '@/utils/apiEndpoints'
 import FormDadosGeral from './Forms/FormDadosGeral.vue'
-import FormDadosRemetente from './Forms/FormDadosRemetente.vue'
-import FormDadosDestinatario from './Forms/FormDadosDestinatario.vue'
-import FormDadosExpedidor from './Forms/FormDadosExpedidor.vue'
-import FormDadosRecebedor from './Forms/FormDadosRecebedor.vue'
-import FormDadosTomador from './Forms/FormDadosTomador.vue'
+import FormDadosRemetente from './Forms/FormDeAtores/FormDadosRemetente.vue'
+import FormDadosDestinatario from './Forms/FormDeAtores/FormDadosDestinatario.vue'
+import FormDadosExpedidor from './Forms/FormDeAtores/FormDadosExpedidor.vue'
+import FormDadosRecebedor from './Forms/FormDeAtores/FormDadosRecebedor.vue'
+import FormDadosTomador from './Forms/FormDeAtores/FormDadosTomador.vue'
+import FormDadosCarga from './Forms/FormDadosCarga.vue'
+import FormDadosDocumentos from './Forms/FormDadosDocumento.vue'
+import RecapitulacaoDados from './Forms/RecapitulacaoDados.vue'
 
 export default {
   name: 'BtnEmiteCte',
@@ -331,7 +365,10 @@ export default {
     FormDadosDestinatario,
     FormDadosExpedidor,
     FormDadosRecebedor,
-    FormDadosTomador
+    FormDadosTomador,
+    FormDadosCarga,
+    FormDadosDocumentos,
+    RecapitulacaoDados
   },
   watch: {
     'dadosFormGeral.local_inicio_prestacao.uf'(newValue, oldValue) {
@@ -358,10 +395,10 @@ export default {
 
       refsForms: {
         1: 'formDadosGeral',
-        2: 'formStep2',
-        3: 'formStep3',
-        4: 'formStep4',
-        5: 'formStep5',
+        2: '', //Nao uso esse valor aqui pois valido de outra forma
+        3: 'formDadosCarga',
+        4: 'formDadosDocumento',
+        5: 'recapitulacaoDados',
       },
 
       rules: {
@@ -433,6 +470,20 @@ export default {
           uf: null,
           ie: null,
         },
+        tomador: {
+          nome_razao: null,
+          nome_fantasia: null,
+          cnpj: null,
+          telefone: null,
+          endereco: null,
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cep: null,
+          cidade: null,
+          uf: null,
+          ie: null,
+        },
         expedidor: {
           nome_razao: null,
           nome_fantasia: null,
@@ -461,27 +512,20 @@ export default {
           uf: null,
           ie: null,
         },
-        tomador: {
-          nome_razao: null,
-          nome_fantasia: null,
-          cnpj: null,
-          telefone: null,
-          endereco: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
-          cep: null,
-          cidade: null,
-          uf: null,
-          ie: null,
-        },
       },
-
       dadosFormAtoresComplementar: {
         contribuicao_tomador: 1,
         sem_expedidor: true,
         sem_recebedor: true,
       },
+      dadosFormCarga: {
+        valor_total: null,
+        valor_averbacao: null,
+        produto_predominante: null,
+        caracteristicas: null, //Exemplos: Fria, Granel ou Refrigerada
+        quantidades: []
+      },
+      dadosFormDocumento: [],
 
       camposObrigatoriosDosAtores: [
         'nome_razao',
@@ -496,7 +540,7 @@ export default {
 
       estadosESeusMunicipios: {},
 
-      stepAtual: 2,
+      stepAtual: 1,
       formAtorAtual: 1,
       expedidorEhIgualRemetente: false,
       recebedorEhIgualDestinatario: false,
@@ -592,16 +636,25 @@ export default {
 
     async avancaStepSeEstiverTudoOkay(novoStep) {
       const alertStore = useAlertStore()
-      const formRefAtual = this.refsForms[this.stepAtual];
-      const form = this.$refs[formRefAtual];
 
-      if (!form) return;
+      if (novoStep == 3) {
+        const valid = await this.validaFormularioDeAtores()
+        if (!valid) {
+          alertStore.addAlert('Formulário possui campos incorretos', 'warning')
+          return; // early return se o step atual não for válido
+        }
+      }
 
-      const { valid } = await form.validate();
+      if(novoStep != 3) {
+        let formRefAtual = this.refsForms[this.stepAtual];
+        let form = this.$refs[formRefAtual];
+        if (!form) return;
 
-      if (!valid) {
-        alertStore.addAlert('Formulário possui campos incorretos', 'warning')
-        return; // early return se o step atual não for válido
+        const { valid } = await form.validate();
+        if (!valid) {
+          alertStore.addAlert('Formulário possui campos incorretos', 'warning')
+          return; // early return se o step atual não for válido
+        }
       }
 
       const regrasDeEmissao = this.validaRegrasParaEmissao(alertStore)
@@ -618,9 +671,42 @@ export default {
 
       const UFlocalInicioEUFLocalTerminoSaoDiferentes = this.dadosFormGeral.local_inicio_prestacao.uf != this.dadosFormGeral.local_termino_prestacao.uf
 
+      // FORM GERAL
       if(this.dadosFormGeral.cfop == '5353' && UFlocalInicioEUFLocalTerminoSaoDiferentes) {
         alertStore.addAlert('CFOP (5353) Não permite que A UF da Origem e UF do Destino sejam diferentes', 'warning')
         return false
+      }
+
+      // FORM CARGA
+      if(this.dadosFormCarga.quantidades.length == 0 && this.stepAtual == 3) {
+        alertStore.addAlert('Adicione pelo menos uma Quantidade para Carga', 'warning')
+        return
+      }
+
+      // FORM DOCUMENTOS
+      if(this.dadosFormDocumento.length == 0 && this.stepAtual == 4) {
+        alertStore.addAlert('Vincule pelo menos uma Documento ao CT-e', 'warning')
+        return
+      }
+
+      return true
+    },
+
+    async validaFormularioDeAtores() {
+
+      const remetenteValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.remetente);
+      const destinatarioValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.destinatario);
+      const recebedorValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.recebedor) || this.dadosFormAtoresComplementar.sem_recebedor
+      const expedidorValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.expedidor) || this.dadosFormAtoresComplementar.sem_expedidor
+      const tomadorValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.tomador) || this.tomadorPreenchido;
+
+      if(!remetenteValid
+        || !destinatarioValid
+        || !recebedorValid
+        || !expedidorValid
+        || !tomadorValid
+      ) {
+        return false;
       }
 
       return true

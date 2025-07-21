@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <v-form ref="formDadosAtores" class="bg-grey-lighten-4 border pa-6 elevation-2">
+    <v-form ref="formDadosDestinatario" class="bg-grey-lighten-4 border pa-6 elevation-2">
       <v-row dense>
        <v-col cols="6">
           <v-row dense>
@@ -349,6 +349,9 @@ export default {
 
     },
   },
+  mounted() {
+    this.defineValorDoRadio()
+  },
 
   data() {
     return {
@@ -379,7 +382,7 @@ export default {
         ],
       },
 
-      valorDosRadios: 1,
+      valorDosRadios: null,
       preenchimentoManualAtivo: false
     }
   },
@@ -394,10 +397,10 @@ export default {
     },
     tomadorEhIgualRemetenteLocal: {
       get() {
-        return this.tomadorEhIgualDestinatario
+        return this.tomadorEhIgualRemetente
       },
       set(novoValor) {
-        this.$emit('update:tomadorEhIgualDestinatario', novoValor)
+        this.$emit('update:tomadorEhIgualRemetente', novoValor)
       }
     },
     tomadorEhIgualDestinatarioLocal: {
@@ -410,18 +413,18 @@ export default {
     },
     tomadorEhIgualRecebedorLocal: {
       get() {
-        return this.tomadorEhIgualDestinatario
+        return this.tomadorEhIgualRecebedor
       },
       set(novoValor) {
-        this.$emit('update:tomadorEhIgualDestinatario', novoValor)
+        this.$emit('update:tomadorEhIgualRecebedor', novoValor)
       }
     },
     tomadorEhIgualExpedidorLocal: {
       get() {
-        return this.tomadorEhIgualDestinatario
+        return this.tomadorEhIgualExpedidor
       },
       set(novoValor) {
-        this.$emit('update:tomadorEhIgualDestinatario', novoValor)
+        this.$emit('update:tomadorEhIgualExpedidor', novoValor)
       }
     },
     tomadorPreenchidoLocal: {
@@ -442,6 +445,38 @@ export default {
     },
   },
   methods: {
+    defineValorDoRadio() {
+      if(
+        !this.tomadorEhIgualRemetente &&
+        !this.tomadorEhIgualDestinatario &&
+        !this.tomadorEhIgualRecebedor &&
+        !this.tomadorEhIgualExpedidor &&
+        !this.tomadorPreenchido
+      ) {
+        this.valorDosRadios = 1
+        return
+      }
+
+      if(this.tomadorEhIgualRemetente) {
+        this.valorDosRadios = 1
+        return
+      }
+      if(this.tomadorEhIgualDestinatario) {
+        this.valorDosRadios = 2
+        return
+      }
+      if(this.tomadorEhIgualRecebedor) {
+        this.valorDosRadios = 3
+        return
+      }
+      if(this.tomadorEhIgualExpedidor) {
+        this.valorDosRadios = 4
+        return
+      }
+
+      this.valorDosRadios = 5
+    },
+
     desabilitaPreenchimentoAutomatico() {
       if(this.dadosFormAtoresTomadorLocal?.cnpj?.length != 14) {
         return true

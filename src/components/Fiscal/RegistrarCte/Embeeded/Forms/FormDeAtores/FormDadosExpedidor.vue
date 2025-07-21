@@ -2,31 +2,30 @@
   <div>
     <div class="d-flex justify-space-between align-end w-100">
       <div class="text-redNeveah mb-2 text-h6">
-        Recebedor
+        Expedidor
       </div>
 
       <div class="d-flex ga-12">
 
 
 
-        <div class="d-flex ga-4 mb-1 align-end">
+        <div class="d-flex ga-2 mb-1 align-end">
           <v-radio-group
-          max-width="800"
           v-model="valorDosRadios"
           inline
           hide-details
         >
           <v-radio
-            label="Não há Recebedor"
+            label="Não há Expedidor"
             :value="1"
           ></v-radio>
 
           <v-radio
-            label="Recebedor é igual o Destinatario"
-            :base-color="!destinatarioTemTodosOsDadosObrigatoriosPreenchidos ? 'grey-lighten-1' : ''"
-            :class="!destinatarioTemTodosOsDadosObrigatoriosPreenchidos ? 'text-grey-lighten-1' : ''"
-            :readonly="!destinatarioTemTodosOsDadosObrigatoriosPreenchidos"
-            v-tooltip="!destinatarioTemTodosOsDadosObrigatoriosPreenchidos ? 'Preencha os dados do destinatario para ativar essa funcionalidade' : 'Traz dados do Destinatario'"
+            label="Expedidor é igual o Remetente"
+            :base-color="!remetenteTemTodosOsDadosObrigatoriosPreenchidos ? 'grey-lighten-1' : ''"
+            :class="!remetenteTemTodosOsDadosObrigatoriosPreenchidos ? 'text-grey-lighten-1' : ''"
+            :readonly="!remetenteTemTodosOsDadosObrigatoriosPreenchidos"
+            v-tooltip="!remetenteTemTodosOsDadosObrigatoriosPreenchidos ? 'Preencha os dados do remetente para ativar essa funcionalidade' : 'Traz dados do Remetente'"
             :value="2"
           ></v-radio>
 
@@ -57,18 +56,18 @@
       </div>
     </div>
 
-    <v-form ref="formDadosAtores" class="bg-grey-lighten-4 border pa-6 elevation-2">
+    <v-form ref="formDadosExpedidor" class="bg-grey-lighten-4 border pa-6 elevation-2">
       <v-row class="my-3">
         <v-col cols="12" md="4" class="py-2">
           <InputText
             density="compact"
             bg-color="white"
             label="CNPJ *"
-            v-model="dadosFormAtoresRecebedorLocal.cnpj"
+            v-model="dadosFormAtoresExpedidorLocal.cnpj"
             mask="##.###.###/####-##"
             :rules="rules.campoObrigatorio"
             counter="18"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
           />
         </v-col>
         <v-col cols="12" md="5" class="py-2">
@@ -77,30 +76,24 @@
             density="compact"
             bg-color="white"
             label="Razão Social *"
-            v-model="dadosFormAtoresRecebedorLocal.nome_razao"
+            v-model="dadosFormAtoresExpedidorLocal.nome_razao"
             :rules="rules.campoObrigatorio"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           >
           </v-text-field>
         </v-col>
         <v-col cols="12" md="3" class="py-2">
-          <v-badge
-            class="w-100"
-            v-tooltip="'informe ISENTO se não houver'"
-            content="?"
+          <v-text-field
+            variant="outlined"
+            density="compact"
+            bg-color="white"
+            label="Inscrição Estadual (IE)"
+            v-model="dadosFormAtoresExpedidorLocal.ie"
+            :disabled="semExpedidorLocal"
+            clearable
           >
-            <v-text-field
-              variant="outlined"
-              density="compact"
-              bg-color="white"
-              label="Inscrição Estadual (IE)"
-              v-model="dadosFormAtoresRecebedorLocal.ie"
-              :disabled="semRecebedorLocal"
-              clearable
-            >
-            </v-text-field>
-          </v-badge>
+          </v-text-field>
         </v-col>
       </v-row>
       <v-row class="my-3">
@@ -109,11 +102,11 @@
             density="compact"
             bg-color="white"
             label="CEP *"
-            v-model="dadosFormAtoresRecebedorLocal.cep"
+            v-model="dadosFormAtoresExpedidorLocal.cep"
             mask="#####-###"
             :rules="rules.campoObrigatorio"
             counter="8"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           />
         </v-col>
@@ -123,9 +116,9 @@
             density="compact"
             bg-color="white"
             label="Endereço *"
-            v-model="dadosFormAtoresRecebedorLocal.endereco"
+            v-model="dadosFormAtoresExpedidorLocal.endereco"
             :rules="rules.campoObrigatorio"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           >
           </v-text-field>
@@ -136,9 +129,9 @@
             density="compact"
             bg-color="white"
             label="Número *"
-            v-model="dadosFormAtoresRecebedorLocal.numero"
+            v-model="dadosFormAtoresExpedidorLocal.numero"
             :rules="rules.campoObrigatorio"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           >
           </v-text-field>
@@ -149,8 +142,8 @@
             density="compact"
             bg-color="white"
             label="Complemento"
-            v-model="dadosFormAtoresRecebedorLocal.complemento"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            v-model="dadosFormAtoresExpedidorLocal.complemento"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           >
           </v-text-field>
@@ -163,9 +156,9 @@
             density="compact"
             bg-color="white"
             label="Bairro *"
-            v-model="dadosFormAtoresRecebedorLocal.bairro"
+            v-model="dadosFormAtoresExpedidorLocal.bairro"
             :rules="rules.campoObrigatorio"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           >
           </v-text-field>
@@ -176,16 +169,16 @@
             density="compact"
             bg-color="white"
             label="Cidade *"
-            v-model="dadosFormAtoresRecebedorLocal.cidade"
+            v-model="dadosFormAtoresExpedidorLocal.cidade"
             :rules="rules.campoObrigatorio"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           >
           </v-text-field>
         </v-col>
         <v-col cols="12" md="2" class="py-2">
           <v-select
-            v-model="dadosFormAtoresRecebedorLocal.uf"
+            v-model="dadosFormAtoresExpedidorLocal.uf"
             bg-color="white"
             :items="estadosBrasileiros"
             item-value="value"
@@ -194,7 +187,7 @@
             label="UF *"
             density="compact"
             :rules="rules.campoObrigatorio"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
             clearable
           />
         </v-col>
@@ -203,10 +196,10 @@
             density="compact"
             bg-color="white"
             label="Telefone *"
-            v-model="dadosFormAtoresRecebedorLocal.telefone"
-            :mask="dadosFormAtoresRecebedorLocal?.telefone?.length > 10 ? '(##) #####-####' : '(##) ####-####'"
+            v-model="dadosFormAtoresExpedidorLocal.telefone"
+            :mask="dadosFormAtoresExpedidorLocal?.telefone?.length > 10 ? '(##) #####-####' : '(##) ####-####'"
             counter="15"
-            :disabled="recebedorEhIgualDestinatarioLocal || semRecebedorLocal"
+            :disabled="expedidorEhIgualRemetenteLocal || semExpedidorLocal"
           />
         </v-col>
       </v-row>
@@ -228,28 +221,28 @@ import InputText from '@/components/Form/InputText.vue'
 import { buscaDadosDoClientePeloCNPJ } from '@/helpers/buscaDadosDoClientePeloCNPJ'
 
 export default {
-  name: 'FormDadosRecebedor',
+  name: 'FormDadosExpedidor',
   components: {
     InputText
   },
   props: {
-    dadosFormAtoresRecebedor: {
+    dadosFormAtoresExpedidor: {
       type: Object,
       required: true
     },
-    dadosFormAtoresDestinatario: {
+    dadosFormAtoresRemetente: {
       type: Object,
       required: true
     },
-    recebedorEhIgualDestinatario: {
+    expedidorEhIgualRemetente: {
       type: Boolean,
       required: true
     },
-    semRecebedor: {
+    semExpedidor: {
       type: Boolean,
       required: true
     },
-    destinatarioTemTodosOsDadosObrigatoriosPreenchidos: {
+    remetenteTemTodosOsDadosObrigatoriosPreenchidos: {
       type: Boolean,
       required: true
     },
@@ -257,21 +250,21 @@ export default {
   watch: {
     valorDosRadios(newValue) {
 
-      this.semRecebedorLocal = false
-      this.recebedorEhIgualDestinatarioLocal = false
-      this.preenchimentoManualAtivo = false
+      this.semExpedidorLocal = false
+      this.expedidorEhIgualRemetenteLocal = false
+      this.ativaPreenchimentoManual = false
 
       if(newValue == 1) {
         this.limpaCampos()
-        this.semRecebedorLocal = true
+        this.semExpedidorLocal = true
         return
       }
       if(newValue == 2) {
-        Object.assign(this.dadosFormAtoresRecebedorLocal, this.dadosFormAtoresDestinatario)
-        this.recebedorEhIgualDestinatarioLocal = true
+        Object.assign(this.dadosFormAtoresExpedidorLocal, this.dadosFormAtoresRemetente)
+        this.expedidorEhIgualRemetenteLocal = true
         return
       }
-      if(newValue == 3) {
+       if(newValue == 3) {
         this.ativaPreenchimentoManual = true
       }
     },
@@ -285,7 +278,7 @@ export default {
       TipoDeEmissaoCteEnum,
       NaturezaOperacaoEnum,
 
-      recebedorVazio: {
+      expedidorVazio: {
         nome_razao: null,
         nome_fantasia: null,
         cnpj: null,
@@ -307,42 +300,42 @@ export default {
       },
 
       valorDosRadios: 1,
-      preenchimentoManualAtivo: false
+      ativaPreenchimentoManual: false,
     }
   },
   computed: {
-    dadosFormAtoresRecebedorLocal: {
+    dadosFormAtoresExpedidorLocal: {
       get() {
-        return this.dadosFormAtoresRecebedor
+        return this.dadosFormAtoresExpedidor
       },
       set(novosDados) {
         this.$emit('update:dadosFormAtores', novosDados)
       }
     },
 
-    recebedorEhIgualDestinatarioLocal: {
+    expedidorEhIgualRemetenteLocal: {
       get() {
-        return this.recebedorEhIgualDestinatario
+        return this.expedidorEhIgualRemetente
       },
       set(novoValor) {
-        this.$emit('update:recebedorEhIgualDestinatario', novoValor)
+        this.$emit('update:expedidorEhIgualRemetente', novoValor)
       }
     },
 
-    semRecebedorLocal: {
+    semExpedidorLocal: {
       get() {
-        return this.semRecebedor
+        return this.semExpedidor
       },
       set(novoValor) {
-        this.$emit('update:semRecebedor', novoValor)
+        this.$emit('update:semExpedidor', novoValor)
       }
     },
   },
   methods: {
     desabilitaPreenchimentoAutomatico() {
       if(
-        this.dadosFormAtoresRecebedorLocal?.cnpj?.length != 14 ||
-        this.recebedorEhIgualDestinatario
+        this.dadosFormAtoresExpedidorLocal?.cnpj?.length != 14 ||
+        this.expedidorEhIgualRemetente
       ) {
         return true
       }
@@ -350,11 +343,11 @@ export default {
     },
 
     limpaCampos() {
-      Object.assign(this.dadosFormAtoresRecebedorLocal, this.recebedorVazio)
+      Object.assign(this.dadosFormAtoresExpedidorLocal, this.expedidorVazio)
     },
 
     async preencheDadosDoClienteAutomaticamente() {
-      const dadosDoCliente = await buscaDadosDoClientePeloCNPJ(this.dadosFormAtoresRecebedorLocal?.cnpj)
+      const dadosDoCliente = await buscaDadosDoClientePeloCNPJ(this.dadosFormAtoresExpedidorLocal?.cnpj)
       this.preencheDadosEncontrados(dadosDoCliente)
     },
 
@@ -362,21 +355,21 @@ export default {
 
       if(!clienteEncontrado) return;
 
-      this.dadosFormAtoresRecebedorLocal.nome_razao = clienteEncontrado.nome
-      this.dadosFormAtoresRecebedorLocal.nome_fantasia = clienteEncontrado.nome_fantasia ?? null
-      this.dadosFormAtoresRecebedorLocal.cep = clienteEncontrado.cep
-      this.dadosFormAtoresRecebedorLocal.endereco = clienteEncontrado.logradouro
-      this.dadosFormAtoresRecebedorLocal.bairro = clienteEncontrado.bairro
-      this.dadosFormAtoresRecebedorLocal.numero = clienteEncontrado.numero
-      this.dadosFormAtoresRecebedorLocal.estado = clienteEncontrado.estado
-      this.dadosFormAtoresRecebedorLocal.cidade = clienteEncontrado.cidade
-      this.dadosFormAtoresRecebedorLocal.complemento = clienteEncontrado.complemento ?? null
-      this.dadosFormAtoresRecebedorLocal.uf = clienteEncontrado.uf
-      this.dadosFormAtoresRecebedorLocal.telefone = clienteEncontrado.telefone ?? null
-      this.dadosFormAtoresRecebedorLocal.email = clienteEncontrado.email ?? null
-      this.dadosFormAtoresRecebedorLocal.ie = clienteEncontrado.ie ?? null
-      // this.dadosFormAtoresRecebedorLocal.estado_inscricao_estadual = clienteEncontrado.estado_inscricao_estadual ?? null
-      // this.dadosFormAtoresRecebedorLocal.situacao_cadastral = clienteEncontrado.situacao_cadastral ?? null
+      this.dadosFormAtoresExpedidorLocal.nome_razao = clienteEncontrado.nome
+      this.dadosFormAtoresExpedidorLocal.nome_fantasia = clienteEncontrado.nome_fantasia ?? null
+      this.dadosFormAtoresExpedidorLocal.cep = clienteEncontrado.cep
+      this.dadosFormAtoresExpedidorLocal.endereco = clienteEncontrado.logradouro
+      this.dadosFormAtoresExpedidorLocal.bairro = clienteEncontrado.bairro
+      this.dadosFormAtoresExpedidorLocal.numero = clienteEncontrado.numero
+      this.dadosFormAtoresExpedidorLocal.estado = clienteEncontrado.estado
+      this.dadosFormAtoresExpedidorLocal.cidade = clienteEncontrado.cidade
+      this.dadosFormAtoresExpedidorLocal.complemento = clienteEncontrado.complemento ?? null
+      this.dadosFormAtoresExpedidorLocal.uf = clienteEncontrado.uf
+      this.dadosFormAtoresExpedidorLocal.telefone = clienteEncontrado.telefone ?? null
+      this.dadosFormAtoresExpedidorLocal.email = clienteEncontrado.email ?? null
+      this.dadosFormAtoresExpedidorLocal.ie = clienteEncontrado.ie ?? null
+      // this.dadosFormAtoresExpedidorLocal.estado_inscricao_estadual = clienteEncontrado.estado_inscricao_estadual ?? null
+      // this.dadosFormAtoresExpedidorLocal.situacao_cadastral = clienteEncontrado.situacao_cadastral ?? null
     },
   }
 }
