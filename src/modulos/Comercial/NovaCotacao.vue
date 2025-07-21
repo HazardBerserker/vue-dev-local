@@ -707,7 +707,7 @@ export default {
       this.nome_destinatario = cliente.nome
       this.cep_destinatario = cliente.cep
       this.numero_destinatario = cliente.numero
-      this.cidade_destinatario = cliente.municipio
+      this.cidade_destinatario = cliente.cidade
       this.uf_destinatario = cliente.uf
     }
   },
