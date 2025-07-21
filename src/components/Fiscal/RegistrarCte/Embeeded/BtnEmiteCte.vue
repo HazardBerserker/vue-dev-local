@@ -339,7 +339,7 @@
               </template>
             </v-fade-transition>
 
-            {{ dadosFormGeral }}
+            <!-- {{ dadosFormGeral }}
             {{ dadosFormAtores }}
             {{ dadosFormAtoresComplementar }}
             {{ dadosFormCarga }}
@@ -347,7 +347,7 @@
 
             <v-btn @click="formataDadosParaEnvio">
               teste
-            </v-btn>
+            </v-btn> -->
 
             <div class="d-flex justify-end mt-2">
               <v-btn v-if="stepAtual != 5" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">

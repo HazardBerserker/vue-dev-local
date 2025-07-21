@@ -201,7 +201,7 @@
       <v-col cols="12" md="4" class="py-2">
         <InputTextMoeda
           v-model="dadosFormGeralLocal.servico.componentes.PESO_CUBADO"
-          label="Frete Peso *"
+          label="Peso Cubado *"
           bg-color="white"
           clearable
         />
