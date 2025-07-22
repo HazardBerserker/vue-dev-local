@@ -39,6 +39,15 @@
               <strong>Observações:</strong> {{ dadosFormGeral.observacoes_gerais || '---' }}
             </v-col>
           </v-row>
+          <v-divider class="my-3" />
+          <div class="text-subtitle-2 text-grey-darken-2 mb-2 px-4">Serviços</div>
+          <v-row class="px-3">
+            <v-col v-for="(valorServico, campo) in dadosFormGeral.servico.componentes" :key="campo" cols="12" md="4">
+              <v-card variant="tonal" color="grey-darken-5" class="pa-2">
+                <div><strong>{{campo}}:</strong> {{ formataMoeda(valorServico) }}</div>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
 
@@ -205,7 +214,7 @@
 <script>
 import { DocumentoFiscalEnumDescricao } from '@/Enums/Fiscal/DocumentoFiscalEnum'
 import { UnidadeDeMedidaEnumDescricao } from '@/Enums/Fiscal/UnidadeDeMedidaEnum'
-import { formataCEP, formataCNPJ } from '@/utils/masks'
+import { formataCEP, formataCNPJ, formataMoeda } from '@/utils/masks'
 
 export default {
   name: 'RecapitulacaoDados',
@@ -232,7 +241,8 @@ export default {
       DocumentoFiscalEnumDescricao,
       UnidadeDeMedidaEnumDescricao,
       formataCNPJ,
-      formataCEP
+      formataCEP,
+      formataMoeda
     }
   },
   computed: {

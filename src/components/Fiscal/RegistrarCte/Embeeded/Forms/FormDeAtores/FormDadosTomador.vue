@@ -448,17 +448,6 @@ export default {
   },
   methods: {
     defineValorDoRadio() {
-      if(
-        !this.tomadorEhIgualRemetente &&
-        !this.tomadorEhIgualDestinatario &&
-        !this.tomadorEhIgualRecebedor &&
-        !this.tomadorEhIgualExpedidor &&
-        !this.tomadorPreenchido
-      ) {
-        this.valorDosRadios = 1
-        return
-      }
-
       if(this.tomadorEhIgualRemetente) {
         this.valorDosRadios = 1
         return

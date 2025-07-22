@@ -469,7 +469,7 @@ export default {
         cfop: '5353',
         classificacao_tributaria: 'SN',
         natureza_operacao:  null,
-        rntrc: null,
+        rntrc: '57174199',
         finalidade: { value: '0', text: '0 - Normal' },
         tipo: { value: '0', text: '0 - Normal' },
         modalidade: { value: '1', text: '1 - Rodoviário' },

@@ -157,7 +157,25 @@
       </v-col>
     </v-row>
     <v-row class="my-3">
-      <v-col cols="12" md="6" class="py-2">
+      <v-col cols="12" md="3" class="py-2">
+        <InputTextMoeda
+          prefix="R$"
+          v-model="dadosFormGeralLocal.servico.componentes.FRETE_PESO"
+          label="Frete Peso *"
+          bg-color="white"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="3" class="pt-2">
+        <InputTextMoeda
+          prefix="R$"
+          v-model="dadosFormGeralLocal.servico.componentes.advalorem"
+          label="Advalorem *"
+          bg-color="white"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="3" class="py-2">
         <v-badge
           class="w-100"
           v-tooltip="'(Gerado automaticamente) Frete peso + Advalorem'"
@@ -173,7 +191,7 @@
           />
         </v-badge>
       </v-col>
-      <v-col cols="12" md="6" class="py-2">
+      <v-col cols="12" md="3" class="py-2">
         <v-badge
           class="w-100"
           v-tooltip="'(Gerado automaticamente) Frete peso + Advalorem'"
@@ -189,32 +207,65 @@
           />
         </v-badge>
       </v-col>
+    </v-row>
 
-      <v-col cols="12" md="4" class="py-2">
-        <InputTextMoeda
-          v-model="dadosFormGeralLocal.servico.componentes.FRETE_PESO"
-          label="Frete Peso *"
-          bg-color="white"
-          clearable
-        />
-      </v-col>
-      <v-col cols="12" md="4" class="py-2">
-        <InputTextMoeda
-          v-model="dadosFormGeralLocal.servico.componentes.PESO_CUBADO"
-          label="Peso Cubado *"
-          bg-color="white"
-          clearable
-        />
-      </v-col>
-      <v-col cols="12" md="4" class="pt-2">
-        <InputTextMoeda
-          v-model="dadosFormGeralLocal.servico.componentes.advalorem"
-          label="Advalorem *"
-          bg-color="white"
-          clearable
-        />
+    <v-row dense>
+      <v-col cols="12">
+        <div class="px-2 text-redNeveah">
+          Serviços Personalizados
+          <v-divider :thickness="2"></v-divider>
+        </div>
       </v-col>
     </v-row>
+
+     <v-row class="my-3 bg-grey-lighten-2 mx-1 pt-4">
+        <v-col cols="12" md="3" class="py-2">
+          <v-text-field
+            v-model="nomeServicoPersonalizado"
+            label="Nome do Serviço *"
+            placeholder="Ex: AJUDANTE"
+            density="compact"
+            variant="outlined"
+            bg-color="white"
+            clearable
+          />
+        </v-col>
+        <v-col cols="12" md="9" class="py-2">
+          <InputTextMoeda
+            v-model="valorServicoPersonalizado"
+            prefix="R$"
+            label="Valor do Serviço *"
+            bg-color="white"
+            clearable
+          />
+        </v-col>
+        <v-col class="mb-4">
+          <v-btn prepend-icon="mdi-plus" variant="flat" color="red-darken-4" @click="adicionarServicoPersonalizado">
+            Adicionar
+          </v-btn>
+        </v-col>
+     </v-row>
+
+     <v-row class="mx-1 bg-red-lighten-5 mb-6" v-if="Object.keys(dadosFormGeralLocal.servico.componentes).length !== 0">
+        <v-col>
+          <v-row>
+            <v-col cols="3" v-for="valorServico, campo in dadosFormGeralLocal.servico.componentes" :key="campo">
+              <v-card class="pa-2 pe-4 d-flex rounded-pill align-center ga-2 justify-space-between" color="grey-darken-1">
+                <div class="d-flex ga-2">
+                  <v-btn icon="mdi-close" size="x-small" color="grey-darken-4" @click="removeServico(campo)">
+                  </v-btn>
+                  <v-chip variant="flat" color="grey-darken-4">
+                    {{campo}}
+                  </v-chip>
+                </div>
+                <div>
+                  {{formataMoeda(valorServico)}}
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+     </v-row>
 
     <v-row>
         <v-col md="12" class="py-2">
@@ -245,6 +296,8 @@ import { NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
 import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue'
 import { ClassificacaoTributariaEnum } from '@/Enums/Fiscal/ClassificacaoTributariaEnum'
+import { useAlertStore } from '@/stores/alertStore'
+import { formataMoeda } from '@/utils/masks';
 
 export default {
   name: 'FormDadosGeral',
@@ -266,12 +319,17 @@ export default {
   },
   data() {
     return {
+      formataMoeda,
+
       estadosBrasileiros,
       FinalidadeCteEnum,
       ModalidadeEntregaEnum,
       TipoDeEmissaoCteEnum,
       NaturezaOperacaoEnum,
       ClassificacaoTributariaEnum,
+
+      nomeServicoPersonalizado: null,
+      valorServicoPersonalizado: null,
 
       rules: {
         campoObrigatorio: [
@@ -309,7 +367,32 @@ export default {
 
     validate() {
       return this.$refs?.formDadosGeral.validate()
-    }
+    },
+
+    adicionarServicoPersonalizado() {
+
+      const alertStore = useAlertStore();
+
+      if(this.nomeServicoPersonalizado == null
+        || this.valorServicoPersonalizado == null
+      ) {
+        alertStore.addAlert('Preencha todos os campos do Serviço corretamente para adiciona-lo', 'warning')
+        return
+      }
+
+      const campo = this.dadosFormGeralLocal?.servico?.componentes[this.nomeServicoPersonalizado]
+
+      if(campo) {
+        alertStore.addAlert('Já existe um Serviço com este Nome', 'warning')
+        return
+      }
+
+      this.dadosFormGeralLocal.servico.componentes[this.nomeServicoPersonalizado] = this.valorServicoPersonalizado;
+    },
+
+    removeServico(chave) {
+      delete this.dadosFormGeralLocal.servico.componentes[chave]
+    },
   }
 }
 </script>
