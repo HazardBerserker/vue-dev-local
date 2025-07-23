@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      color="cyan-darken-3"
+      color="purple-darken-3"
       prepend-icon="mdi-file-plus"
       variant="tonal"
       density="compact"
@@ -9,7 +9,7 @@
       rounded="pill"
       @click="openDialog"
     >
-      Emitir Cte
+      Emitir MDFe
     </v-btn>
 
     <v-dialog v-model="dialogIsOpen" transition="dialog-bottom-transition" ref="dialogEmite" fullscreen>
@@ -20,7 +20,7 @@
           @click="dialogIsOpen = false"
         ></v-btn>
 
-        <v-toolbar-title>Emitir CT-e</v-toolbar-title>
+        <v-toolbar-title>Emitir MDF-e</v-toolbar-title>
 
       </v-toolbar>
 
@@ -40,7 +40,7 @@
                 <v-icon>
                   mdi-tune
                 </v-icon>
-                GERAL
+                CARGA
               </v-card>
             </v-col>
 
@@ -58,43 +58,7 @@
                 <v-icon>
                   mdi-account-multiple
                 </v-icon>
-                ATORES
-              </v-card>
-            </v-col>
-
-            <v-col>
-              <v-card
-                :class="[
-                  classeBaseDosCards,
-                  stepAtual === 3 ? 'elevation-12' : ''
-                ]"
-                min-width="160"
-                :color="stepsValidos['3'] ? 'green' : 'redNeveah'"
-                :variant="stepAtual == 3 || stepsValidos['3'] ? 'flat' : 'tonal'"
-                @click="avancaOuVoltaStep(3)"
-              >
-                <v-icon>
-                  mdi-truck-trailer
-                </v-icon>
-                CARGA
-              </v-card>
-            </v-col>
-
-            <v-col>
-              <v-card
-                :class="[
-                  classeBaseDosCards,
-                  stepAtual === 4 ? 'elevation-12' : ''
-                ]"
-                min-width="160"
-                :color="stepsValidos['4'] ? 'green' : 'redNeveah'"
-                :variant="stepAtual == 4 || stepsValidos['4'] ? 'flat' : 'tonal'"
-                @click="avancaOuVoltaStep(4)"
-              >
-                <v-icon>
-                  mdi-file-document-multiple
-                </v-icon>
-                DOCUMENTOS
+                RODOVIÁRIO
               </v-card>
             </v-col>
 
@@ -124,16 +88,16 @@
 
             <v-fade-transition mode="out-in">
               <template v-if="stepAtual == 1">
-                <FormDadosGeral
+                <FormDadosCarga
                   ref="formDadosGeral"
-                  :dadosFormGeral="dadosFormGeral"
+                  :dadosFormCarga="dadosFormCarga"
                   :estadosESeusMunicipios="estadosESeusMunicipios"
-                  :valorTotalCalculado="valorTotalCalculado"
+                  :municipiosDoPercurso="municipiosDoPercurso"
                 />
               </template>
 
               <template v-if="stepAtual == 2">
-                <div class="mt-6">
+                <!-- <div class="mt-6">
                   <v-row>
                     <v-col cols="2">
                       <div class="text-body-2 mb-4 px-1">
@@ -305,10 +269,10 @@
                       </v-form>
                     </v-col>
                   </v-row>
-                </div>
+                </div> -->
               </template>
 
-              <template v-if="stepAtual == 3">
+              <!-- <template v-if="stepAtual == 3">
                 <FormDadosCarga
                   ref="formDadosCarga"
                   :dadosFormCarga="dadosFormCarga"
@@ -336,7 +300,7 @@
                   :tomadorEhIgualRecebedor="tomadorEhIgualRecebedor"
                   :tomadorEhIgualExpedidor="tomadorEhIgualExpedidor"
                 />
-              </template>
+              </template> -->
             </v-fade-transition>
 
             <!-- {{ dadosFormGeral }}
@@ -379,30 +343,32 @@ import ApiService from '@/services/ApiService'
 import { useAlertStore } from '@/stores/alertStore'
 import { useLoadingStore } from '@/stores/loading'
 import { endpoints } from '@/utils/apiEndpoints'
-import FormDadosGeral from './Forms/FormDadosGeral.vue'
-import FormDadosRemetente from './Forms/FormDeAtores/FormDadosRemetente.vue'
-import FormDadosDestinatario from './Forms/FormDeAtores/FormDadosDestinatario.vue'
-import FormDadosExpedidor from './Forms/FormDeAtores/FormDadosExpedidor.vue'
-import FormDadosRecebedor from './Forms/FormDeAtores/FormDadosRecebedor.vue'
-import FormDadosTomador from './Forms/FormDeAtores/FormDadosTomador.vue'
-import FormDadosCarga from './Forms/FormDadosCarga.vue'
-import FormDadosDocumentos from './Forms/FormDadosDocumento.vue'
-import RecapitulacaoDados from './Forms/RecapitulacaoDados.vue'
+// import FormDadosGeral from './Forms/FormDadosGeral.vue'
+// import FormDadosRemetente from './Forms/FormDeAtores/FormDadosRemetente.vue'
+// import FormDadosDestinatario from './Forms/FormDeAtores/FormDadosDestinatario.vue'
+// import FormDadosExpedidor from './Forms/FormDeAtores/FormDadosExpedidor.vue'
+// import FormDadosRecebedor from './Forms/FormDeAtores/FormDadosRecebedor.vue'
+// import FormDadosTomador from './Forms/FormDeAtores/FormDadosTomador.vue'
+// import FormDadosCarga from './Forms/FormDadosCarga.vue'
+// import FormDadosDocumentos from './Forms/FormDadosDocumento.vue'
+// import RecapitulacaoDados from './Forms/RecapitulacaoDados.vue'
 import { limparCamposVazios } from '@/helpers/limpaCamposVazio'
 import { IndicadorTomadorEnumDescricao } from '@/Enums/Fiscal/IndicadorTomadorEnum'
+import FormDadosCarga from './Forms/FormDadosCarga.vue'
 
 export default {
-  name: 'BtnEmiteCte',
+  name: 'BtnEmiteMDFe',
   components: {
-    FormDadosGeral,
-    FormDadosRemetente,
-    FormDadosDestinatario,
-    FormDadosExpedidor,
-    FormDadosRecebedor,
-    FormDadosTomador,
-    FormDadosCarga,
-    FormDadosDocumentos,
-    RecapitulacaoDados
+    // FormDadosGeral,
+    // FormDadosRemetente,
+    // FormDadosDestinatario,
+    // FormDadosExpedidor,
+    // FormDadosRecebedor,
+    // FormDadosTomador,
+    // FormDadosCarga,
+    // FormDadosDocumentos,
+    // RecapitulacaoDados
+    FormDadosCarga
   },
   watch: {
     'dadosFormGeral.local_inicio_prestacao.uf'(newValue, oldValue) {
@@ -429,6 +395,31 @@ export default {
 
       return valorTotal
     },
+
+    municipiosDoPercurso() {
+
+      const uf_carregamento = this.dadosFormCarga?.uf_carregamento
+      const uf_descarregamento = this.dadosFormCarga?.uf_descarregamento
+
+      const municipiosDaUfDeCarregamento = this.municipiosDoEstadoSelecionado(uf_carregamento)
+      const municipiosDaUfDeDescarregamento = this.municipiosDoEstadoSelecionado(uf_descarregamento)
+
+      if (uf_carregamento && !uf_descarregamento) {
+        return []
+      }
+
+      const listaMunicipios = []
+
+      if (uf_carregamento) {
+        listaMunicipios.push(...municipiosDaUfDeCarregamento)
+      }
+
+      if (uf_descarregamento) {
+        listaMunicipios.push(...municipiosDaUfDeDescarregamento)
+      }
+
+      return listaMunicipios
+    },
   },
   data() {
     return {
@@ -436,25 +427,12 @@ export default {
       stepsValidos: {
         1: false,
         2: false,
-        3: false,
-        4: false,
-        5: false,
       },
 
       refsForms: {
-        1: 'formDadosGeral',
-        2: '', //Nao uso esse valor aqui pois valido de outra forma
-        3: 'formDadosCarga',
-        4: 'formDadosDocumento',
-        5: 'recapitulacaoDados',
+        1: 'formDadosCarga',
+        2: 'formDadosRodoviario',
       },
-
-      rules: {
-        campoObrigatorio: [
-          (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
-        ],
-      },
-
       // enums
       estadosBrasileiros,
       TipoDeEmissaoCteEnum,
@@ -464,127 +442,25 @@ export default {
 
       dialogIsOpen: false,
 
-      // dadosformGeral
-      dadosFormGeral: {
-        cfop: '5353',
-        classificacao_tributaria: 'SN',
-        natureza_operacao:  null,
-        rntrc: '57174199',
-        finalidade: { value: '0', text: '0 - Normal' },
-        tipo: { value: '0', text: '0 - Normal' },
-        modalidade: { value: '1', text: '1 - Rodoviário' },
-        local_inicio_prestacao: {
-          cidade: null,
-          uf: null,
-        },
-        local_termino_prestacao: {
-          cidade: null,
-          uf: null,
-        },
-        servico: {
-          valor_total: null,
-          valor_recebido: null,
-          componentes:  {}
-        },
-        observacoes_gerais: null,
-      },
-      // dadosFormAtores
-      dadosFormAtores: {
-        remetente: {
-          nome_razao: null,
-          nome_fantasia: null,
-          cnpj: null,
-          telefone: null,
-          endereco: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
-          cep: null,
-          cidade: null,
-          uf: null,
-          ie: null,
-        },
-        destinatario: {
-          nome_razao: null,
-          nome_fantasia: null,
-          cnpj: null,
-          telefone: null,
-          endereco: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
-          cep: null,
-          cidade: null,
-          uf: null,
-          ie: null,
-        },
-        tomador: {
-          nome_razao: null,
-          nome_fantasia: null,
-          cnpj: null,
-          telefone: null,
-          endereco: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
-          cep: null,
-          cidade: null,
-          uf: null,
-          ie: null,
-        },
-        expedidor: {
-          nome_razao: null,
-          nome_fantasia: null,
-          cnpj: null,
-          telefone: null,
-          endereco: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
-          cep: null,
-          cidade: null,
-          uf: null,
-          ie: null,
-        },
-        recebedor: {
-          nome_razao: null,
-          nome_fantasia: null,
-          cnpj: null,
-          telefone: null,
-          endereco: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
-          cep: null,
-          cidade: null,
-          uf: null,
-          ie: null,
-        },
-      },
-      dadosFormAtoresComplementar: {
-        contribuicao_tomador: 1,
-        sem_expedidor: true,
-        sem_recebedor: true,
-      },
       dadosFormCarga: {
-        valor_total: null,
-        valor_averbacao: null,
-        produto_predominante: null,
-        caracteristicas: null, //Exemplos: Fria, Granel ou Refrigerada
-        quantidades: []
-      },
-      dadosFormDocumento: [],
+        emitente: 1,
+        modalidade: '1',
+        transportador: null,
+        uf_carregamento: null,
+        uf_descarregamento: null,
+        valor_carga: null,
+        unidade: null,
+        peso_bruto: null,
+        carregamento: [],
+        produto_predominante: {
+          tipo_carga: null,
+          nome: null,
+        },
+        seguro: [],
+        rodoviario: {
 
-      camposObrigatoriosDosAtores: [
-        'nome_razao',
-        'cnpj',
-        'endereco',
-        'numero',
-        'bairro',
-        'cep',
-        'cidade',
-        'uf',
-      ],
+        }
+      },
 
       estadosESeusMunicipios: {},
 
@@ -682,10 +558,7 @@ export default {
         tomador: this.defineDadosTomador(),
       }
 
-
-
       const dadosTratados = limparCamposVazios(dados)
-      console.log(dadosTratados);
 
       return dadosTratados
     },

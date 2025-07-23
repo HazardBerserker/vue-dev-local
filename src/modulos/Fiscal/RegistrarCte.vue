@@ -290,6 +290,8 @@
 
         <BtnEmiteCte/>
 
+        <BtnEmiteMDFe/>
+
         <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
         <v-btn
@@ -407,6 +409,7 @@ import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnCreateCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnCreateCte.vue';
 import BtnEmiteCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnEmiteCte.vue';
+import BtnEmiteMDFe from '@/components/Fiscal/RegistrarMDFe/Embeeded/BtnEmiteMDFe.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteEnum';
@@ -422,9 +425,10 @@ export default {
   components: {
     GlobalAlertFixed,
     BtnCreateCte,
-    BtnEmiteCte,
     InputTextMoeda,
-    InputText
+    InputText,
+    BtnEmiteMDFe,
+    BtnEmiteCte,
   },
   created() {
     this.dialog = inject('dialog')
