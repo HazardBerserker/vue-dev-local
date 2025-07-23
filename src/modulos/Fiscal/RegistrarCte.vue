@@ -272,8 +272,8 @@
       </v-expand-transition>
     </v-card>
 
-    <div class="py-3 justify-space-between mt-6" v-if="permissao">
-      <div class="d-flex align-center ga-2 flex-md-row flex-column ">
+    <div class="py-3 d-flex justify-space-between mt-6 flex-md-row flex-column ga-2" v-if="permissao">
+      <div class="d-flex ga-2 flex-md-row flex-column">
         <v-btn
           color="grey-darken-3"
           prepend-icon="mdi-reload"
@@ -286,13 +286,6 @@
         >
           Atualizar
         </v-btn>
-
-
-        <BtnEmiteCte/>
-
-        <BtnEmiteMDFe/>
-
-        <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
 
         <v-btn
           color="green-darken-3"
@@ -320,7 +313,17 @@
           Cancelar
         </v-btn>
 
-        <v-btn
+        <BtnEmiteCte/>
+
+        <BtnEmiteMDFe/>
+
+        <BtnCreateCte @acrescentaODadoNoArrayLocalmente="onAcrescentaODadoNoArrayLocalmente"/>
+
+
+      </div>
+
+      <div class="d-flex ga-2 d-flex ga-2 flex-md-row flex-column">
+         <v-btn
           color="teal-darken-2"
           prepend-icon="mdi-file-export"
           variant="tonal"
@@ -330,7 +333,33 @@
           :disabled="datatable.carregando"
           @click="exportarExcel"
         >
-          Exportar
+          Exportar Excel
+        </v-btn>
+
+        <v-btn
+          color="lime-darken-3"
+          prepend-icon="mdi-file-export"
+          variant="tonal"
+          density="comfortable"
+          class="text-white"
+          rounded="pill"
+          :disabled="datatable.carregando || datatable.itensSelecionados.length !== 1"
+          @click="visualizaXml"
+        >
+          Visualizar XML
+        </v-btn>
+
+        <v-btn
+          color="orange-darken-2"
+          prepend-icon="mdi-file-export"
+          variant="tonal"
+          density="comfortable"
+          class="text-white"
+          rounded="pill"
+          :disabled="datatable.carregando || datatable.itensSelecionados.length !== 1"
+          @click="visualizaPdf"
+        >
+          Visualizar PDF
         </v-btn>
       </div>
 
@@ -419,6 +448,7 @@ import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import InputText from '@/components/Form/InputText.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 import { estadosBrasileiros } from '@/Enums/estadosEnum';
+import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
 
 export default {
   name: 'CtesScreen',
@@ -459,10 +489,14 @@ export default {
     const noventaDiasAtras = new Date();
     noventaDiasAtras.setDate(hoje.getDate() - 90);
 
+    const diaAtualMaisUm = new Date(hoje);
+    diaAtualMaisUm.setDate(hoje.getDate() + 1);
+
     return {
       estadosBrasileiros,
-      hoje,
       noventaDiasAtras,
+      diaAtualMaisUm,
+
       formataCEP,
       formataCNPJ,
       formataMoeda,
@@ -485,7 +519,7 @@ export default {
 
       filtros: {
         data_inicial_emissao: noventaDiasAtras,
-        data_final_emissao: hoje,
+        data_final_emissao: diaAtualMaisUm,
       },
       opcoesStatus: [
         {
@@ -641,6 +675,47 @@ export default {
   },
   methods: {
 
+    async visualizaPdf() {
+
+      const item = this.datatable.itens.find(item => {
+        return item.Id_CTe == this.datatable.itensSelecionados
+      })
+
+      if(!item.pdf_path) {
+        const alertStore = useAlertStore()
+        alertStore.addAlert(`CTE <strong>${item.Id_CTe}</strong> não possui PDF vinculado, tente outro`, 'warning');
+        return
+      }
+
+      let urlFinal = item.pdf_path;
+
+      if (urlEDaS3(urlFinal)) {
+        urlFinal = await geraUrlTemporariaParaImagemS3(urlFinal);
+      }
+
+      window.open(urlFinal, '_blank');
+    },
+
+    async visualizaXml() {
+      const item = this.datatable.itens.find(item => {
+        return item.Id_CTe == this.datatable.itensSelecionados
+      })
+
+      if(!item.xml_path) {
+        const alertStore = useAlertStore()
+        alertStore.addAlert(`CTE <strong>${item.Id_CTe}</strong> não possui XML vinculado, tente outro`, 'warning');
+        return
+      }
+
+      let urlFinal = item.xml_path;
+
+      if (urlEDaS3(urlFinal)) {
+        urlFinal = await geraUrlTemporariaParaImagemS3(urlFinal);
+      }
+
+      window.open(urlFinal, '_blank');
+    },
+
     async buscarRemetente() {
       await buscaListaDeClientesHelper(
         this.filtros.rem_xNome,
@@ -670,7 +745,7 @@ export default {
     limpaFiltros() {
       this.filtros = {
         data_inicial_emissao: this.noventaDiasAtras,
-        data_final_emissao: this.hoje,
+        data_final_emissao: this.diaAtualMaisUm,
       }
     },
 

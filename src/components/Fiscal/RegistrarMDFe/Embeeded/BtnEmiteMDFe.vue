@@ -5,7 +5,7 @@
       prepend-icon="mdi-file-plus"
       variant="tonal"
       density="compact"
-      class="text-white"
+      class="text-white w-100"
       rounded="pill"
       @click="openDialog"
     >
@@ -404,7 +404,7 @@ export default {
       const municipiosDaUfDeCarregamento = this.municipiosDoEstadoSelecionado(uf_carregamento)
       const municipiosDaUfDeDescarregamento = this.municipiosDoEstadoSelecionado(uf_descarregamento)
 
-      if (uf_carregamento && !uf_descarregamento) {
+      if (!uf_carregamento && !uf_descarregamento) {
         return []
       }
 
@@ -449,14 +449,27 @@ export default {
         uf_carregamento: null,
         uf_descarregamento: null,
         valor_carga: null,
-        unidade: null,
+        unidade: '1',
         peso_bruto: null,
         carregamento: [],
         produto_predominante: {
           tipo_carga: null,
           nome: null,
         },
-        seguro: [],
+        seguro: [
+          {
+            responsavel: {
+              tipo_responsavel: 1,
+              cnpj: null
+            },
+            seguradora: {
+              nome_seguradora: 'Porto Seguro',
+              cnpj: 61198164000160
+            },
+            numero_apolice: 4250126501,
+            numero_averbacao: null
+          },
+        ],
         rodoviario: {
 
         }
@@ -785,7 +798,6 @@ export default {
       this.dialogIsOpen = false
     },
     async openDialog() {
-      this.dialogIsOpen = true
 
       const alertStore = useAlertStore();
       const loadingStore = useLoadingStore();
@@ -796,6 +808,7 @@ export default {
       } catch {
         alertStore.addAlert('Erro ao Carregar Municípios', 'error')
       } finally {
+        this.dialogIsOpen = true
         loadingStore.hide();
       }
     },

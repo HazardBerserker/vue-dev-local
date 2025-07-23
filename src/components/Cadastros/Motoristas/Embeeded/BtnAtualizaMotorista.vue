@@ -41,6 +41,7 @@
                   <span v-else>Arquivos</span>
                 </div>
               </v-tab>
+              
             </v-tabs>
           </div>
       </template>

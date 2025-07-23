@@ -5,7 +5,7 @@
       prepend-icon="mdi-file-plus"
       variant="tonal"
       density="compact"
-      class="text-white"
+      class="text-white w-100"
       rounded="pill"
       @click="openDialog"
     >
@@ -912,7 +912,6 @@ export default {
       this.dialogIsOpen = false
     },
     async openDialog() {
-      this.dialogIsOpen = true
 
       const alertStore = useAlertStore();
       const loadingStore = useLoadingStore();
@@ -923,6 +922,7 @@ export default {
       } catch {
         alertStore.addAlert('Erro ao Carregar Municípios', 'error')
       } finally {
+        this.dialogIsOpen = true
         loadingStore.hide();
       }
     },

@@ -136,9 +136,9 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="py-2">
-         <v-badge
+        <v-badge
           class="w-100"
-          v-tooltip:bottom="'Informar os Estados por onde a Carga passou'"
+          v-tooltip:bottom="'Informar os Estados por onde a Carga passa'"
           content="?"
         >
           <v-select
@@ -160,10 +160,15 @@
         </v-badge>
       </v-col>
     </v-row>
-    <v-row dense class="mt-4">
+    <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
-          Carregamento
+          <div class="d-flex ga-2">
+            <v-icon size="large">
+              mdi-truck-plus
+            </v-icon>
+            <span>Carregamento</span>
+          </div>
           <v-divider :thickness="2"></v-divider>
         </div>
       </v-col>
@@ -178,6 +183,7 @@
           item-title="description"
           item-value="item"
           variant="outlined"
+          no-data-text="Municípios com base nas UFs de carregamento e descarregamento selecionadas"
           label="Municípios *"
           density="compact"
           :rules="rules.campoObrigatorio"
@@ -189,10 +195,15 @@
         />
       </v-col>
     </v-row>
-    <v-row dense class="mt-4">
+    <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
-          Descarregamento
+          <div class="d-flex ga-2">
+            <v-icon size="large">
+              mdi-truck-minus
+            </v-icon>
+            <span>Descarregamento</span>
+          </div>
           <v-divider :thickness="2"></v-divider>
         </div>
       </v-col>
@@ -262,10 +273,15 @@
         </div>
       </v-col>
     </v-row>
-    <v-row dense class="mt-4">
+    <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
-          Produto Predominante
+          <div class="d-flex ga-2">
+            <v-icon size="large">
+              mdi-truck-trailer
+            </v-icon>
+            <span>Produto Predominante</span>
+          </div>
           <v-divider :thickness="2"></v-divider>
         </div>
       </v-col>
@@ -294,7 +310,7 @@
                 clearable
                 />
             </v-col>
-            <v-col cols="12" md="">
+            <v-col cols="12" md="8">
               <v-text-field
                 v-model="dadosFormCargaLocal.produto_predominante.nome"
                 label="Nome/Descrição do produto *"
@@ -305,6 +321,108 @@
                 clearable
               >
               </v-text-field>
+            </v-col>
+          </v-row>
+        </div>
+      </v-col>
+    </v-row>
+
+    <v-row dense class="mt-8">
+      <v-col cols="12">
+        <div class="px-2 text-redNeveah">
+          <div class="d-flex ga-2">
+            <v-icon size="large">
+              mdi-face-agent
+            </v-icon>
+            <span>Seguro</span>
+          </div>
+          <v-divider :thickness="2"></v-divider>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="mb-4">
+      <v-col>
+        <div class="bg-red-lighten-5 mx-1 pa-2 pt-4 text-grey-darken-2 text-body-2" style="border: 1px solid #ffbdb7;">
+          <v-row dense>
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="dadosFormCargaLocal.seguro[0].seguradora.nome_seguradora"
+                label="Nome Seguradora *"
+                density="compact"
+                variant="outlined"
+                bg-color="white"
+                :rules="rules.campoObrigatorio"
+                clearable
+              />
+            </v-col>
+            <v-col cols="12" md="4">
+              <InputText
+                v-model="dadosFormCargaLocal.seguro[0].seguradora.cnpj"
+                label="CNPJ Seguradora *"
+                bg-color="white"
+                density="compact"
+                mask="##.###.###/####-##"
+                :rules="rules.campoObrigatorio"
+                counter="18"
+              />
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="dadosFormCargaLocal.seguro[0].numero_apolice"
+                label="Nº Apólice Seguro *"
+                density="compact"
+                variant="outlined"
+                bg-color="white"
+                :rules="rules.campoObrigatorio"
+                clearable
+              />
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="12" md="4">
+              <v-combobox
+                v-model="dadosFormCargaLocal.seguro[0].numero_averbacao"
+                bg-color="white"
+                variant="outlined"
+                density="compact"
+                label="Nº da(s) Averbação(es)"
+                placeholder="Adicione as averbações"
+                chips
+                hide-selected
+                multiple
+                clearable
+              />
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="dadosFormCargaLocal.seguro[0].responsavel.tipo_responsavel"
+                bg-color="white"
+                :items="TipoResponsavelEnum"
+                item-value="value"
+                item-title="text"
+                variant="outlined"
+                label="Responsável *"
+                density="compact"
+                clearable
+                />
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-badge
+                class="w-100"
+                v-tooltip:bottom="'Não é necessário informar caso o responsável seja o emitente do MDF-e'"
+                content="?"
+              >
+                <v-text-field
+                  v-model="dadosFormCargaLocal.seguro[0].responsavel.cnpj"
+                  label="CPF/CNPJ Responsável *"
+                  density="compact"
+                  variant="outlined"
+                  bg-color="white"
+                  :disabled="dadosFormCargaLocal.seguro[0].responsavel.tipo_responsavel == TipoResponsavelEnumValorDescricao.EMITENTE"
+                  clearable
+                >
+                </v-text-field>
+              </v-badge>
             </v-col>
           </v-row>
         </div>
@@ -369,20 +487,6 @@
         </v-col>
      </v-row> -->
 
-    <v-row>
-        <v-col md="12" class="py-2">
-          <v-textarea
-            v-model="dadosFormCargaLocal.observacoes_gerais"
-            bg-color="white"
-            variant="outlined"
-            label="Observações Gerais"
-            density="compact"
-            clearable
-          >
-          </v-textarea>
-      </v-col>
-    </v-row>
-
     <v-card class="border pa-4 text-body-2 mt-2" variant="tonal" color="redNeveah">
       (*) Campos com esta estrela são obrigatórios
     </v-card>
@@ -404,11 +508,14 @@ import { TipoDoEmitenteEnum } from '@/Enums/Fiscal/TipoDoEmitenteEnum'
 import { TipoDoTransportadorEnum } from '@/Enums/Fiscal/TipoDoTransportadorEnum.js.js'
 import { UnidadeDeMedidaEnum } from '@/Enums/Fiscal/UnidadeDeMedidaEnum'
 import { ProdutoPredominanteEnum } from '@/Enums/Fiscal/ProdutoPredominanteEnum'
+import { TipoResponsavelEnum, TipoResponsavelEnumValorDescricao } from '@/Enums/Fiscal/TipoResponsavelEnum'
+import InputText from '@/components/Form/InputText.vue'
 
 export default {
   name: 'FormDadosGeral',
   components: {
-    InputTextMoeda
+    InputTextMoeda,
+    InputText
   },
   props: {
     dadosFormCarga: {
@@ -433,6 +540,8 @@ export default {
       estadosBrasileiros,
       UnidadeDeMedidaEnum,
       ProdutoPredominanteEnum,
+      TipoResponsavelEnum,
+      TipoResponsavelEnumValorDescricao,
 
       FinalidadeCteEnum,
       ModalidadeEntregaEnum,

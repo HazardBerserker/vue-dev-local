@@ -5,7 +5,7 @@
       prepend-icon="mdi-file-import"
       variant="tonal"
       density="comfortable"
-      class="text-white"
+      class="text-white w-100"
       rounded="pill"
       @click="openDialog"
     >
