@@ -138,7 +138,7 @@
       <v-col cols="12" class="py-2">
         <v-badge
           class="w-100"
-          v-tooltip:bottom="'Informar os Estados por onde a Carga passa'"
+          v-tooltip:bottom="'Informar os Estados por onde a Carga passa (Este campo não é obrigatório se os estados fizerem fronteira)'"
           content="?"
         >
           <v-select
@@ -151,7 +151,6 @@
             variant="outlined"
             label="Percursos"
             density="compact"
-            :rules="rules.campoObrigatorio"
             color="blue-darken-2"
             multiple
             chips
@@ -179,11 +178,11 @@
           v-model="dadosFormCargaLocal.carregamento"
           placeholder="Selecionar..."
           bg-color="white"
-          :items="municipiosDoPercurso"
+          :items="estadosESeusMunicipios[dadosFormCargaLocal.uf_carregamento] ? estadosESeusMunicipios[dadosFormCargaLocal.uf_carregamento] : []"
           item-title="description"
           item-value="item"
           variant="outlined"
-          no-data-text="Municípios com base nas UFs de carregamento e descarregamento selecionadas"
+          no-data-text="Municípios com base nas UFs de carregamento selecionadas"
           label="Municípios *"
           density="compact"
           :rules="rules.campoObrigatorio"
@@ -211,63 +210,129 @@
     <v-row>
       <v-col>
         <div class="bg-red-lighten-5 mx-1 pa-2 pt-4 text-grey-darken-2 text-body-2" style="border: 1px solid #ffbdb7;">
-          <!-- [
-
-            "nome_municipio": "São Paulo",
-            "codigo_municipio": "3550308",
-            "documentos_fiscais": [...]
-            ] -->
-          <!-- [
-
-            "documentos_fiscais": [
-                {
-                    "chave": "00000000000000000000000000000000000000000000"
-                },
-                {
-                    "chave": "00000000000000000000000000000000000000000000"
-                },
-                {
-                    "chave": "00000000000000000000000000000000000000000000"
-                }
-            ],
-            ] -->
           <v-row dense>
-            <v-col cols="12" md="1" class="align-center d-flex">
-              <div class="text-h6 text-center bg-grey-darken-3 border-md w-100">
-                <strong>#1</strong>
-              </div>
-            </v-col>
-            <v-col cols="12" md="3">
-              <v-select
-                v-model="dadosFormCargaLocal.uf_carregamento"
-                bg-color="white"
-                :items="estadosBrasileiros"
-                item-value="value"
-                item-title="text"
+            <v-col cols="12" md="6">
+              <InputText
+                v-model="cep"
                 variant="outlined"
-                label="Município de descarga*"
+                bg-color="white"
+                density="compact"
+                label="CEP do local de carregamento"
+                mask="#####-###"
+                counter="9"
+                clearable
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <InputText
+                v-model="cep"
+                variant="outlined"
+                bg-color="white"
+                density="compact"
+                label="CEP do local de carregamento"
+                mask="#####-###"
+                counter="9"
+                clearable
+              />
+            </v-col>
+          </v-row>
+          <v-row dense class="bg-red-lighten-4 mt-4 px-2">
+            <v-col cols="12" md="4" class="d-flex ga-2 align-center">
+              <div>
+                <v-icon color="redNeveah">
+                  mdi-note-plus
+                </v-icon>
+              </div>
+              <v-select
+                v-model="municipioDescarregamentoSelecionado"
+                bg-color="white"
+                :items="estadosESeusMunicipios[dadosFormCargaLocal.uf_descarregamento] ? estadosESeusMunicipios[dadosFormCargaLocal.uf_descarregamento] : []"
+                item-title="description"
+                variant="outlined"
+                label="Município de descarga *"
+                no-data-text="Municípios com base nas UFs de descarregamento selecionadas"
                 density="compact"
                 return-object
                 hide-details
                 clearable
               />
             </v-col>
-            <v-col cols="12" md="7">
-              <v-text-field
-                v-model="dadosFormCargaLocal.peso_bruto"
-                label="Chave de acesso dos Documentos Fiscais*"
+            <v-col cols="12" md="3">
+               <v-combobox
+                :loading="comboBoxCteLoading"
+                @keyup="(event) => {
+                  const tecla = event.key
+                  const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
+                  if (teclaValida) buscaCtes()
+                }"
+                v-model="cteSelecionado"
                 density="compact"
                 variant="outlined"
                 bg-color="white"
+                label="Buscar Cte para Vincular:"
+                placeholder="Comece a digitar..."
+                :items="listaDeCtes"
+                item-title="Id_CTe"
+                class="w-100"
+                hide-selected
                 hide-details
                 clearable
-              >
-              </v-text-field>
+              />
             </v-col>
-            <v-col cols="12" md="1" class="align-center d-flex">
-              <v-btn variant="flat" icon="mdi-close" size="x-small" color="grey-darken-3">
+            <v-col cols="12" md="2">
+               <v-btn variant="flat" color="redNeveah" @click="vincularCte">
+                Adicionar
+               </v-btn>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="12">
 
-              </v-btn>
+              <div v-if="dadosFormCargaLocal.descarregamento.length == 0" class="d-flex pt-2 text-grey text-body-2">
+                <div class="mt-2">
+                  <em>Nenhum CT-E vinculado</em>
+                </div>
+              </div>
+
+              <v-card class="pa-4 rounded-md bg-red-lighten-5 d-flex flex-column ga-3 overflow-y-auto" variant="flat" max-height="450" v-else>
+
+                <div class="my-2 text-h6 text-grey">
+                  <em>CT-Es vinculados</em>
+                </div>
+
+                <div v-for="item, indexDescarregamento in dadosFormCargaLocal?.descarregamento" :key="`item-descarregamento-${indexDescarregamento}`" class="mt-4 mb-2">
+                  <div class="mb-4 d-flex align-center ga-2">
+                    <span class="text-body-1 text-redNeveah">
+                      <strong>{{item.nome_municipio}}: </strong>
+                    </span>
+                    <v-chip label color="redNeveah" variant="flat">
+                      {{item.codigo_municipio}}
+                    </v-chip>
+                  </div>
+
+                  <v-row class="mb-4">
+                    <v-col
+                      cols="12"
+                      md="5"
+                      class="bg-red-lighten-4 text-redNeveah pa-2 rounded-lg text-body-2 d-flex flex-column ga-3 ma-1"
+                      style="border: 1px solid #ba1614;"
+                      v-for="cte, index in item.documentos_fiscais" :key="`cte-${index}`"
+                    >
+                      <div class="px-2">
+                        <div class="d-flex align-center text-body-2">
+                          <div class="d-flex flex-column w-100 ga-2">
+                            <div class="w-100">ID: <strong>{{ cte.Id_CTe}}</strong></div>
+                            <div class="w-100">Chave: <strong>{{cte.chCTe}}</strong></div>
+                          </div>
+                          <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeQuantidade(index)"/>
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+
+                  <v-divider :thickness="2"></v-divider>
+                </div>
+              </v-card>
             </v-col>
           </v-row>
         </div>
@@ -290,16 +355,11 @@
       <v-col>
         <div class="bg-red-lighten-5 mx-1 pa-2 pt-4 text-grey-darken-2 text-body-2" style="border: 1px solid #ffbdb7;">
           <v-row dense>
-            <v-col cols="12" md="1" class="align-center d-flex">
-              <div class="text-h6 text-center bg-grey-darken-3 border-md w-100">
-                <strong>#1</strong>
-              </div>
-            </v-col>
             <v-col cols="12" md="3">
               <v-select
                 v-model="dadosFormCargaLocal.produto_predominante.tipo_carga"
                 bg-color="white"
-                :items="ProdutoPredominanteEnum"
+                :items="TipoCargaEnum"
                 item-value="value"
                 item-title="text"
                 variant="outlined"
@@ -310,7 +370,7 @@
                 clearable
                 />
             </v-col>
-            <v-col cols="12" md="8">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="dadosFormCargaLocal.produto_predominante.nome"
                 label="Nome/Descrição do produto *"
@@ -321,6 +381,24 @@
                 clearable
               >
               </v-text-field>
+            </v-col>
+            <v-col cols="12" md="3">
+              <v-badge
+                class="w-100"
+                v-tooltip:bottom="'Obrigatório caso hajam menos que 2 CT-es vinculados'"
+                content="?"
+              >
+                <v-text-field
+                  v-model="dadosFormCargaLocal.produto_predominante.ncm"
+                  label="NCM"
+                  density="compact"
+                  variant="outlined"
+                  bg-color="white"
+                  hide-details
+                  clearable
+                >
+                </v-text-field>
+              </v-badge>
             </v-col>
           </v-row>
         </div>
@@ -507,9 +585,10 @@ import { formataMoeda } from '@/utils/masks';
 import { TipoDoEmitenteEnum } from '@/Enums/Fiscal/TipoDoEmitenteEnum'
 import { TipoDoTransportadorEnum } from '@/Enums/Fiscal/TipoDoTransportadorEnum.js.js'
 import { UnidadeDeMedidaEnum } from '@/Enums/Fiscal/UnidadeDeMedidaEnum'
-import { ProdutoPredominanteEnum } from '@/Enums/Fiscal/ProdutoPredominanteEnum'
+import { TipoCargaEnum } from '@/Enums/Fiscal/TipoCargaEnum'
 import { TipoResponsavelEnum, TipoResponsavelEnumValorDescricao } from '@/Enums/Fiscal/TipoResponsavelEnum'
 import InputText from '@/components/Form/InputText.vue'
+import { buscaListaDeCtesHelper } from '@/helpers/buscaListaDeCtes'
 
 export default {
   name: 'FormDadosGeral',
@@ -539,7 +618,7 @@ export default {
       TipoDoTransportadorEnum,
       estadosBrasileiros,
       UnidadeDeMedidaEnum,
-      ProdutoPredominanteEnum,
+      TipoCargaEnum,
       TipoResponsavelEnum,
       TipoResponsavelEnumValorDescricao,
 
@@ -562,6 +641,12 @@ export default {
           (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
         ],
       },
+
+      cteSelecionado: null,
+      municipioDescarregamentoSelecionado: null,
+
+      listaDeCtes: [],
+      comboBoxCteLoading: false
     }
   },
   computed: {
@@ -575,14 +660,92 @@ export default {
     },
   },
   methods: {
-  //   depois
+    vincularCte() {
 
-  //   const dadosParaSalvar = {
-  //   carregamento: this.dadosFormCargaLocal.carregamento.map(municipio => ({
-  //     nome_municipio: municipio.description,
-  //     codigo_municipio: municipio.codigo_municipio
-  //   }))
-  // }
+      const alertStore = useAlertStore();
+
+      console.log(this.municipioDescarregamentoSelecionado);
+
+      if(!this.cteSelecionado || typeof this.cteSelecionado != 'object') {
+        alertStore.addAlert('Preencha o Campo do Ct-e corretamente selecionando o CT-e', 'warning')
+        return
+      }
+
+      if(!this.municipioDescarregamentoSelecionado || typeof this.municipioDescarregamentoSelecionado != 'object') {
+        alertStore.addAlert('Preencha o Campo do Município de descarregamento corretamente selecionando o Município', 'warning')
+        return
+      }
+
+      if(this.dadosFormCargaLocal.descarregamento.length == 0) {
+        this.criaNovoItemNoArrayDeDescarregamento()
+        return
+      }
+
+      const item = this.buscaItemPeloMunicipioNoArrayDeDescarregamento()
+
+      if(!item) {
+        this.criaNovoItemNoArrayDeDescarregamento()
+        return
+      }
+
+      const existeCte = this.verificaSeExisteCteNoArrayDeDocumentos(item.documentos_fiscais)
+
+      console.log(item);
+      console.log(existeCte);
+
+
+      if(existeCte) {
+        alertStore.addAlert('Este CT-e já foi adicionando para o Município em Questão', 'warning')
+        return
+      }
+
+      item.documentos_fiscais.push(this.cteSelecionado)
+
+    },
+
+    criaNovoItemNoArrayDeDescarregamento() {
+      const item = {
+        codigo_municipio: this.municipioDescarregamentoSelecionado.codigo_municipio,
+        nome_municipio: this.municipioDescarregamentoSelecionado.description,
+        documentos_fiscais: [
+          {
+            ...this.cteSelecionado
+          }
+        ]
+      }
+
+      this.dadosFormCargaLocal.descarregamento.push(item)
+    },
+
+    buscaItemPeloMunicipioNoArrayDeDescarregamento() {
+      const item = this.dadosFormCargaLocal.descarregamento.find(item => {
+        return item.codigo_municipio == this.municipioDescarregamentoSelecionado.codigo_municipio
+      })
+
+      return item
+    },
+
+    verificaSeExisteCteNoArrayDeDocumentos(documentos_fiscais) {
+      for(const cte in documentos_fiscais) {
+        if(documentos_fiscais[cte].chCTe == this.cteSelecionado.chCTe) {
+          return true
+        }
+      }
+
+      return false
+    },
+
+    async buscaCtes() {
+      await buscaListaDeCtesHelper(
+        this.cteSelecionado,
+        (clientes) => {
+          this.listaDeCtes = clientes;
+        },
+        (loading) => {
+          this.comboBoxCteLoading = loading;
+        }
+      );
+    },
 
     municipiosDoEstadoSelecionado(uf) {
       if(!uf) {

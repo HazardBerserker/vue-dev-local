@@ -1,4 +1,4 @@
-export const ProdutoPredominanteEnum = [
+export const TipoCargaEnum = [
   { value: '01', text: '01 - Granel sólido' },
   { value: '02', text: '02 - Granel líquido' },
   { value: '03', text: '03 - Frigorificada' },
@@ -12,7 +12,7 @@ export const ProdutoPredominanteEnum = [
   { value: '11', text: '11 - Perigosa (carga geral)' },
 ];
 
-export const ProdutoPredominanteEnumDescricao = Object.freeze({
+export const TipoCargaEnumDescricao = Object.freeze({
   '01': '01 - Granel sólido',
   '02': '02 - Granel líquido',
   '03': '03 - Frigorificada',

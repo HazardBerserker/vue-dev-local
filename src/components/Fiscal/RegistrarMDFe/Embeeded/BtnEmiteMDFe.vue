@@ -92,7 +92,6 @@
                   ref="formDadosGeral"
                   :dadosFormCarga="dadosFormCarga"
                   :estadosESeusMunicipios="estadosESeusMunicipios"
-                  :municipiosDoPercurso="municipiosDoPercurso"
                 />
               </template>
 
@@ -396,30 +395,30 @@ export default {
       return valorTotal
     },
 
-    municipiosDoPercurso() {
+    // municipiosDoPercurso() {
 
-      const uf_carregamento = this.dadosFormCarga?.uf_carregamento
-      const uf_descarregamento = this.dadosFormCarga?.uf_descarregamento
+    //   const uf_carregamento = this.dadosFormCarga?.uf_carregamento
+    //   const uf_descarregamento = this.dadosFormCarga?.uf_descarregamento
 
-      const municipiosDaUfDeCarregamento = this.municipiosDoEstadoSelecionado(uf_carregamento)
-      const municipiosDaUfDeDescarregamento = this.municipiosDoEstadoSelecionado(uf_descarregamento)
+    //   const municipiosDaUfDeCarregamento = this.municipiosDoEstadoSelecionado(uf_carregamento)
+    //   const municipiosDaUfDeDescarregamento = this.municipiosDoEstadoSelecionado(uf_descarregamento)
 
-      if (!uf_carregamento && !uf_descarregamento) {
-        return []
-      }
+    //   if (!uf_carregamento && !uf_descarregamento) {
+    //     return []
+    //   }
 
-      const listaMunicipios = []
+    //   const listaMunicipios = []
 
-      if (uf_carregamento) {
-        listaMunicipios.push(...municipiosDaUfDeCarregamento)
-      }
+    //   if (uf_carregamento) {
+    //     listaMunicipios.push(...municipiosDaUfDeCarregamento)
+    //   }
 
-      if (uf_descarregamento) {
-        listaMunicipios.push(...municipiosDaUfDeDescarregamento)
-      }
+    //   if (uf_descarregamento) {
+    //     listaMunicipios.push(...municipiosDaUfDeDescarregamento)
+    //   }
 
-      return listaMunicipios
-    },
+    //   return listaMunicipios
+    // },
   },
   data() {
     return {
@@ -452,6 +451,7 @@ export default {
         unidade: '1',
         peso_bruto: null,
         carregamento: [],
+        descarregamento: [],
         produto_predominante: {
           tipo_carga: null,
           nome: null,
@@ -803,8 +803,9 @@ export default {
       const loadingStore = useLoadingStore();
 
       try {
-        loadingStore.show('Buscando Municípios...');
-        await this.buscaEstadosESeusMunicipios()
+        // loadingStore.show('Buscando Municípios...');
+        // await this.buscaEstadosESeusMunicipios()
+        this.buscaEstadosESeusMunicipios()
       } catch {
         alertStore.addAlert('Erro ao Carregar Municípios', 'error')
       } finally {
