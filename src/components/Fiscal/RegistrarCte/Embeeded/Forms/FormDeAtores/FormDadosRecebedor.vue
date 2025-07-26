@@ -85,22 +85,17 @@
           </v-text-field>
         </v-col>
         <v-col cols="12" md="3" class="py-2">
-          <v-badge
-            class="w-100"
-            v-tooltip="'informe ISENTO se não houver'"
-            content="?"
-          >
-            <v-text-field
-              variant="outlined"
-              density="compact"
-              bg-color="white"
-              label="Inscrição Estadual (IE)"
-              v-model="dadosFormAtoresRecebedorLocal.ie"
-              :disabled="semRecebedorLocal"
-              clearable
-            >
-            </v-text-field>
-          </v-badge>
+          <InputText
+            density="compact"
+            variant="outlined"
+            bg-color="white"
+            label="Inscrição Estadual (IE)"
+            v-model="dadosFormAtoresRecebedorLocal.ie"
+            mask="##############"
+            counter="14"
+            :disabled="semExpedidorLocal"
+            clearable
+          />
         </v-col>
       </v-row>
       <v-row class="my-3">

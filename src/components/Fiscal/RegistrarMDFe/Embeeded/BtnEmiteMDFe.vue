@@ -89,186 +89,21 @@
             <v-fade-transition mode="out-in">
               <template v-if="stepAtual == 1">
                 <FormDadosCarga
-                  ref="formDadosGeral"
+                  ref="formDadosCarga"
                   :dadosFormCarga="dadosFormCarga"
+                  v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
                   :estadosESeusMunicipios="estadosESeusMunicipios"
                 />
               </template>
 
               <template v-if="stepAtual == 2">
-                <!-- <div class="mt-6">
-                  <v-row>
-                    <v-col cols="2">
-                      <div class="text-body-2 mb-4 px-1">
-                        <em>Preencha os Autores</em>
-                      </div>
-
-                      <div class="d-flex flex-column ga-2">
-                        <v-card
-                          title="Remetente"
-                          :subtitle="formAtorAtual == 1 ? 'Selecionado': 'Selecione'"
-                          :prepend-icon="formAtorAtual == 1 ? 'mdi-account-eye': 'mdi-account'"
-                          color="redNeveah"
-                          :variant="formAtorAtual == 1 ? 'flat': 'tonal'"
-                          @click="formAtorAtual = 1"
-                        >
-                          <template #append>
-                            <v-fade-transition>
-                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.remetente)" color="green">
-                                mdi-check-circle
-                              </v-icon>
-                            </v-fade-transition>
-                          </template>
-                        </v-card>
-                        <v-card
-                          title="Destinatário"
-                          :subtitle="formAtorAtual == 2 ? 'Selecionado': 'Selecione'"
-                          :prepend-icon="formAtorAtual == 2 ? 'mdi-account-eye': 'mdi-account'"
-                          color="redNeveah"
-                          :variant="formAtorAtual == 2 ? 'flat': 'tonal'"
-                          @click="formAtorAtual = 2"
-                        >
-                          <template #append>
-                            <v-fade-transition>
-                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.destinatario)" color="green">
-                                mdi-check-circle
-                              </v-icon>
-                            </v-fade-transition>
-                          </template>
-                        </v-card>
-                        <v-card
-                          title="Expedidor"
-                          :subtitle="formAtorAtual == 3 ? 'Selecionado': 'Selecione'"
-                          :prepend-icon="formAtorAtual == 3 ? 'mdi-account-eye': 'mdi-account'"
-                          color="redNeveah"
-                          :variant="formAtorAtual == 3 ? 'flat': 'tonal'"
-                          @click="formAtorAtual = 3"
-                        >
-                          <template #append>
-                            <v-fade-transition>
-                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.expedidor) || dadosFormAtoresComplementar.sem_expedidor" color="green">
-                                mdi-check-circle
-                              </v-icon>
-                            </v-fade-transition>
-                          </template>
-                        </v-card>
-                        <v-card
-                          title="Recebedor"
-                          :subtitle="formAtorAtual == 4 ? 'Selecionado': 'Selecione'"
-                          :prepend-icon="formAtorAtual == 4 ? 'mdi-account-eye': 'mdi-account'"
-                          color="redNeveah"
-                          :variant="formAtorAtual == 4 ? 'flat': 'tonal'"
-                          @click="formAtorAtual = 4"
-                        >
-                          <template #append>
-                            <v-fade-transition>
-                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.recebedor) || dadosFormAtoresComplementar.sem_recebedor" color="green">
-                                mdi-check-circle
-                              </v-icon>
-                            </v-fade-transition>
-                          </template>
-                        </v-card>
-                        <v-card
-                          title="Tomador"
-                          :subtitle="formAtorAtual == 5 ? 'Selecionado': 'Selecione'"
-                          :prepend-icon="formAtorAtual == 5 ? 'mdi-account-eye': 'mdi-account'"
-                          color="redNeveah"
-                          :variant="formAtorAtual == 5 ? 'flat': 'tonal'"
-                          @click="formAtorAtual = 5"
-                        >
-                          <template #append>
-                            <v-fade-transition>
-                              <v-icon v-if="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.tomador) || tomadorPreenchido" color="green">
-                                mdi-check-circle
-                              </v-icon>
-                            </v-fade-transition>
-                          </template>
-                        </v-card>
-                      </div>
-                    </v-col>
-                    <v-col cols="10">
-                      <v-form>
-                        <v-fade-transition mode="out-in">
-                          <template v-if="formAtorAtual == 1">
-                            <FormDadosRemetente
-                              ref="formDadosRemetente"
-                              :dadosFormAtoresRemetente="dadosFormAtores.remetente"
-                            />
-                          </template>
-                          <template v-if="formAtorAtual == 2">
-                            <FormDadosDestinatario
-                              ref="formDadosDestinatario"
-                              :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
-                            />
-                          </template>
-                          <template v-if="formAtorAtual == 3">
-                            <FormDadosExpedidor
-                              ref="formDadosExpedidor"
-                              :dadosFormAtoresExpedidor="dadosFormAtores.expedidor"
-                              :dadosFormAtoresRemetente="dadosFormAtores.remetente"
-                              v-model:expedidorEhIgualRemetente="expedidorEhIgualRemetente"
-                              v-model:semExpedidor="dadosFormAtoresComplementar.sem_expedidor"
-                              :remetenteTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.remetente)"
-                            />
-                          </template>
-                          <template v-if="formAtorAtual == 4">
-                            <FormDadosRecebedor
-                              ref="formDadosRecebedor"
-                              :dadosFormAtoresRecebedor="dadosFormAtores.recebedor"
-                              :dadosFormAtoresDestinatario="dadosFormAtores.destinatario"
-                              v-model:recebedorEhIgualDestinatario="recebedorEhIgualDestinatario"
-                              v-model:semRecebedor="dadosFormAtoresComplementar.sem_recebedor"
-                              :destinatarioTemTodosOsDadosObrigatoriosPreenchidos="verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosFormAtores.destinatario)"
-                            />
-                          </template>
-                          <template v-if="formAtorAtual == 5">
-                            <FormDadosTomador
-                              ref="formDadosTomador"
-                              :dadosFormAtoresTomador="dadosFormAtores.tomador"
-                              v-model:tomadorEhIgualRemetente="tomadorEhIgualRemetente"
-                              v-model:tomadorEhIgualDestinatario="tomadorEhIgualDestinatario"
-                              v-model:tomadorEhIgualRecebedor="tomadorEhIgualRecebedor"
-                              v-model:tomadorEhIgualExpedidor="tomadorEhIgualExpedidor"
-                              v-model:contribuicaoTomador="dadosFormAtoresComplementar.contribuicao_tomador"
-                              v-model:tomadorPreenchido="tomadorPreenchido"
-                            />
-                          </template>
-                        </v-fade-transition>
-
-
-                        <v-sheet
-                          class="d-flex align-center px-4 mt-8 w-100"
-                          max-width="750"
-                          rounded="lg"
-                          @click="progressoDoPreenchimentoDosAtores() "
-                        >
-                          <v-fade-transition>
-                            <v-progress-linear
-                              :location="null"
-                              bg-color="#92aed9"
-                              buffer-color="#6a3e0b"
-                              buffer-opacity="1"
-                              buffer-value="0"
-                              color="redNeveah"
-                              height="12"
-                              max="5"
-                              min="0"
-                              :model-value="progressoDoPreenchimentoDosAtores()"
-                              rounded
-                            ></v-progress-linear>
-                          </v-fade-transition>
-                          <div class="d-flex w-100 align-center">
-                            <div class="ms-4 text-h6">{{progressoDoPreenchimentoDosAtores()}}/5</div>
-                            <div class="ms-4 text-body-2">(Formulários corretamente Preenchidos)</div>
-                            <v-icon class="ms-2">
-                              mdi-check
-                            </v-icon>
-                          </div>
-                        </v-sheet>
-                      </v-form>
-                    </v-col>
-                  </v-row>
-                </div> -->
+                 <FormDadosRodoviario
+                  ref="formDadosGeral"
+                  :tipoTransportador="dadosFormCarga.transportador"
+                  :dadosFormRodoviario="dadosFormCarga.rodoviario"
+                  :estadosESeusMunicipios="estadosESeusMunicipios"
+                  v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
+                />
               </template>
 
               <!-- <template v-if="stepAtual == 3">
@@ -342,44 +177,15 @@ import ApiService from '@/services/ApiService'
 import { useAlertStore } from '@/stores/alertStore'
 import { useLoadingStore } from '@/stores/loading'
 import { endpoints } from '@/utils/apiEndpoints'
-// import FormDadosGeral from './Forms/FormDadosGeral.vue'
-// import FormDadosRemetente from './Forms/FormDeAtores/FormDadosRemetente.vue'
-// import FormDadosDestinatario from './Forms/FormDeAtores/FormDadosDestinatario.vue'
-// import FormDadosExpedidor from './Forms/FormDeAtores/FormDadosExpedidor.vue'
-// import FormDadosRecebedor from './Forms/FormDeAtores/FormDadosRecebedor.vue'
-// import FormDadosTomador from './Forms/FormDeAtores/FormDadosTomador.vue'
-// import FormDadosCarga from './Forms/FormDadosCarga.vue'
-// import FormDadosDocumentos from './Forms/FormDadosDocumento.vue'
-// import RecapitulacaoDados from './Forms/RecapitulacaoDados.vue'
 import { limparCamposVazios } from '@/helpers/limpaCamposVazio'
-import { IndicadorTomadorEnumDescricao } from '@/Enums/Fiscal/IndicadorTomadorEnum'
 import FormDadosCarga from './Forms/FormDadosCarga.vue'
+import FormDadosRodoviario from './Forms/FormDadosRodoviario.vue'
 
 export default {
   name: 'BtnEmiteMDFe',
   components: {
-    // FormDadosGeral,
-    // FormDadosRemetente,
-    // FormDadosDestinatario,
-    // FormDadosExpedidor,
-    // FormDadosRecebedor,
-    // FormDadosTomador,
-    // FormDadosCarga,
-    // FormDadosDocumentos,
-    // RecapitulacaoDados
-    FormDadosCarga
-  },
-  watch: {
-    'dadosFormGeral.local_inicio_prestacao.uf'(newValue, oldValue) {
-      if(newValue != oldValue) {
-        this.dadosFormGeral.local_inicio_prestacao.cidade = null
-      }
-    },
-    'dadosFormGeral.local_termino_prestacao.uf'(newValue, oldValue) {
-      if(newValue != oldValue) {
-        this.dadosFormGeral.local_termino_prestacao.cidade = null
-      }
-    },
+    FormDadosCarga,
+    FormDadosRodoviario
   },
   computed: {
     valorTotalCalculado() {
@@ -447,14 +253,20 @@ export default {
         transportador: null,
         uf_carregamento: null,
         uf_descarregamento: null,
+        percurso: [],
         valor_carga: null,
-        unidade: '1',
+        unidade: '01',
         peso_bruto: null,
         carregamento: [],
         descarregamento: [],
         produto_predominante: {
-          tipo_carga: null,
+          tipo_carga: '05',
           nome: null,
+          ncm: null,
+          lotacao: {
+            carregamento: {},
+            descarregamento: {}
+          },
         },
         seguro: [
           {
@@ -467,26 +279,61 @@ export default {
               cnpj: 61198164000160
             },
             numero_apolice: 4250126501,
-            numero_averbacao: null
+            numero_averbacao: ['0']
           },
         ],
         rodoviario: {
-
+          rntrc: '57174199',
+          veiculo_tracao: {
+            placa: null,
+            tara: null,
+            uf_licenciamento: null,
+            tipo_rodado: null,
+            tipo_carroceria: null,
+            proprietario: {}
+          },
+          condutor: [],
+          contratante: [
+            {
+              cnpj: "55963693000100"
+            }
+          ],
+          pagamento_frete: [
+            {
+              cpf: null,
+              nome: "DÊnio Clécio",
+              valor_contrato: 500,
+              forma_pagamento: 1,
+              valor_adiantamento: 100,
+              componentes_pagamento_frete: [
+                {
+                  tipo_componente: "99",
+                  valor_componente: null,
+                  descricao_componente: null
+                }
+              ],
+              informacoes_bancarias: {
+                tipo_informacao_bancaria: null,
+                numero_banco: null,
+                numero_agencia:null
+              },
+              informacoes_pagamento_prazo: [
+                {
+                  data_vencimento_parcela: null,
+                  valor_parcela: null
+                }
+              ]
+            }
+          ]
         }
       },
 
+      dadosFormCargaAuxiliar: {
+        totalDeCtesVinculados: 0
+      },
+
       estadosESeusMunicipios: {},
-
-      stepAtual: 1,
-      formAtorAtual: 1,
-      expedidorEhIgualRemetente: false,
-      recebedorEhIgualDestinatario: false,
-
-      tomadorEhIgualRemetente: true,
-      tomadorEhIgualDestinatario: false,
-      tomadorEhIgualRecebedor: false,
-      tomadorEhIgualExpedidor: false,
-      tomadorPreenchido: true,
+      stepAtual: 2,
 
       classeBaseDosCards: 'd-flex flex-column justify-center align-center ga-2 pa-2'
     }
@@ -576,113 +423,6 @@ export default {
       return dadosTratados
     },
 
-    defineIndicadorTomador() {
-      if(this.tomadorEhIgualRemetente) {
-        return IndicadorTomadorEnumDescricao.REMETENTE
-      }
-      if(this.tomadorEhIgualDestinatario) {
-        return IndicadorTomadorEnumDescricao.DESTINATARIO
-      }
-      if(this.tomadorEhIgualRecebedor) {
-        return IndicadorTomadorEnumDescricao.RECEBEDOR
-      }
-      if(this.tomadorEhIgualExpedidor) {
-        return IndicadorTomadorEnumDescricao.EXPEDIDOR
-      }
-
-      return IndicadorTomadorEnumDescricao.OUTROS
-    },
-
-    defineDadosTomador() {
-      if(this.tomadorEhIgualRemetente) {
-        return {...this.dadosFormAtores.remetente}
-      }
-      if(this.tomadorEhIgualDestinatario) {
-        return {...this.dadosFormAtores.destinatario}
-      }
-      if(this.tomadorEhIgualRecebedor) {
-        return {...this.dadosFormAtores.recebedor}
-      }
-      if(this.tomadorEhIgualExpedidor) {
-        return {...this.dadosFormAtores.expedidor}
-      }
-      return  {...this.dadosFormAtores.tomador}
-    },
-
-    limitarTamanhoTextoParaNaturezaOperacao(texto) {
-      if (!texto) return "";
-      return texto.length > 60 ? texto.slice(0, 60) : texto;
-    },
-
-    progressoDoPreenchimentoDosAtores() {
-      let numero = 0
-
-      const {
-        expedidorNaoDeveSerPreenchido,
-        recebedorNaoDeveSerPreenchido
-      } = this.verificaSeOExpedidorOuRecebedorNaoDeveSerPreenchido()
-
-      for (const dadosForm in this.dadosFormAtores) {
-
-        if(dadosForm == 'expedidor' && expedidorNaoDeveSerPreenchido) {
-          numero += 1
-          continue
-        }
-
-        if(dadosForm == 'recebedor' && recebedorNaoDeveSerPreenchido) {
-          numero += 1
-          continue
-        }
-
-        if(dadosForm == 'tomador' && this.tomadorPreenchido) {
-          numero += 1
-          continue
-        }
-
-        if(this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores[dadosForm])) {
-          numero += 1
-        }
-      }
-      return numero
-    },
-
-    verificaSeOExpedidorOuRecebedorNaoDeveSerPreenchido() {
-      let expedidorNaoDeveSerPreenchido = false
-      let recebedorNaoDeveSerPreenchido = false
-
-      for (const dadoComplementar in this.dadosFormAtoresComplementar) {
-        if(dadoComplementar == 'contibuicao_tomador') continue
-
-        if(dadoComplementar == 'sem_expedidor' && this.dadosFormAtoresComplementar[dadoComplementar]) {
-          expedidorNaoDeveSerPreenchido = true
-        }
-        if(dadoComplementar == 'sem_recebedor' && this.dadosFormAtoresComplementar[dadoComplementar]) {
-          recebedorNaoDeveSerPreenchido = true
-        }
-      }
-
-      return {
-        expedidorNaoDeveSerPreenchido: expedidorNaoDeveSerPreenchido,
-        recebedorNaoDeveSerPreenchido: recebedorNaoDeveSerPreenchido,
-      }
-    },
-
-    verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(dadosAtor) {
-      let atorTemTodosOsCamposObrigatoriosPreenchidos = true
-
-      for (const campo in dadosAtor) {
-        if(!this.camposObrigatoriosDosAtores.includes(campo)) {
-          continue
-        }
-
-        if(dadosAtor[campo] == null || dadosAtor[campo] == undefined || dadosAtor[campo] == '') {
-          atorTemTodosOsCamposObrigatoriosPreenchidos = false
-        }
-      }
-
-      return atorTemTodosOsCamposObrigatoriosPreenchidos
-    },
-
     async avancaOuVoltaStep(novoStep) {
       if (novoStep >= this.stepAtual + 1 || !this.stepsValidos[novoStep]) {
         this.avancaStepSeEstiverTudoOkay(novoStep)
@@ -695,24 +435,14 @@ export default {
     async avancaStepSeEstiverTudoOkay(novoStep) {
       const alertStore = useAlertStore()
 
-      if (novoStep == 3) {
-        const valid = await this.validaFormularioDeAtores()
-        if (!valid) {
-          alertStore.addAlert('Formulário possui campos incorretos', 'warning')
-          return; // early return se o step atual não for válido
-        }
-      }
+      let formRefAtual = this.refsForms[this.stepAtual];
+      let form = this.$refs[formRefAtual];
+      if (!form) return;
 
-      if(novoStep != 3) {
-        let formRefAtual = this.refsForms[this.stepAtual];
-        let form = this.$refs[formRefAtual];
-        if (!form) return;
-
-        const { valid } = await form.validate();
-        if (!valid) {
-          alertStore.addAlert('Formulário possui campos incorretos', 'warning')
-          return; // early return se o step atual não for válido
-        }
+      const { valid } = await form.validate();
+      if (!valid) {
+        alertStore.addAlert('Formulário possui campos incorretos', 'warning')
+        return; // early return se o step atual não for válido
       }
 
       const regrasDeEmissao = this.validaRegrasParaEmissao(alertStore)
@@ -727,24 +457,10 @@ export default {
 
     validaRegrasParaEmissao(alertStore) {
 
-      const UFlocalInicioEUFLocalTerminoSaoDiferentes = this.dadosFormGeral.local_inicio_prestacao.uf != this.dadosFormGeral.local_termino_prestacao.uf
-
       // FORM GERAL
-      if(this.dadosFormGeral.cfop == '5353' && UFlocalInicioEUFLocalTerminoSaoDiferentes) {
-        alertStore.addAlert('CFOP (5353) Não permite que A UF da Origem e UF do Destino sejam diferentes', 'warning')
+      if(this.totalDeCtesVinculados == 0) {
+        alertStore.addAlert('Nenhum CT-e encontrado, vincule pelo menos um', 'warning')
         return false
-      }
-
-      // FORM CARGA
-      if(this.dadosFormCarga.quantidades.length == 0 && this.stepAtual == 3) {
-        alertStore.addAlert('Adicione pelo menos uma Quantidade para Carga', 'warning')
-        return
-      }
-
-      // FORM DOCUMENTOS
-      if(this.dadosFormDocumento.length == 0 && this.stepAtual == 4) {
-        alertStore.addAlert('Vincule pelo menos uma Documento ao CT-e', 'warning')
-        return
       }
 
       return true
@@ -803,9 +519,8 @@ export default {
       const loadingStore = useLoadingStore();
 
       try {
-        // loadingStore.show('Buscando Municípios...');
-        // await this.buscaEstadosESeusMunicipios()
-        this.buscaEstadosESeusMunicipios()
+        loadingStore.show('Buscando Municípios...');
+        await this.buscaEstadosESeusMunicipios()
       } catch {
         alertStore.addAlert('Erro ao Carregar Municípios', 'error')
       } finally {

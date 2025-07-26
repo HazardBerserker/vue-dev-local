@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-100">
       <v-badge color="white" transition="slide-x-transition" style="width: 100%;" :floating="overlap" v-if="ajudaMensagem">
       <!-- Badge com tooltip de ajuda -->
         <template v-if="ajudaMensagem" v-slot:badge>

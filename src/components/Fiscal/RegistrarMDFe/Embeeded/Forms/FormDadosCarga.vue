@@ -1,5 +1,5 @@
 <template>
-  <v-form class="bg-grey-lighten-4 border elevation-2 pa-6" ref="formDadosGeral">
+  <v-form class="bg-grey-lighten-4 border elevation-2 pa-6" ref="formDadosCarga">
     <v-row class="my-3">
       <v-col cols="12" md="4" class="py-2">
         <v-select
@@ -99,22 +99,19 @@
         />
       </v-col>
       <v-col cols="12" md="2" class="py-2">
-        <v-text-field
+        <InputTextMoeda
           v-model="dadosFormCargaLocal.peso_bruto"
           label="Peso Bruto *"
-          density="compact"
-          variant="outlined"
           bg-color="white"
           :rules="rules.campoObrigatorio"
           clearable
-        >
-        </v-text-field>
+        />
       </v-col>
       <v-col cols="12" md="2" class="py-2">
          <v-select
           v-model="dadosFormCargaLocal.unidade"
           bg-color="white"
-          :items="UnidadeDeMedidaEnum"
+          :items="UnidadeMedidaMdfeEnum"
           item-value="value"
           item-title="text"
           variant="outlined"
@@ -210,33 +207,7 @@
     <v-row>
       <v-col>
         <div class="bg-red-lighten-5 mx-1 pa-2 pt-4 text-grey-darken-2 text-body-2" style="border: 1px solid #ffbdb7;">
-          <v-row dense>
-            <v-col cols="12" md="6">
-              <InputText
-                v-model="cep"
-                variant="outlined"
-                bg-color="white"
-                density="compact"
-                label="CEP do local de carregamento"
-                mask="#####-###"
-                counter="9"
-                clearable
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <InputText
-                v-model="cep"
-                variant="outlined"
-                bg-color="white"
-                density="compact"
-                label="CEP do local de carregamento"
-                mask="#####-###"
-                counter="9"
-                clearable
-              />
-            </v-col>
-          </v-row>
-          <v-row dense class="bg-red-lighten-4 mt-4 px-2">
+          <v-row dense class="bg-red-lighten-4 mt-4 pa-2">
             <v-col cols="12" md="4" class="d-flex ga-2 align-center">
               <div>
                 <v-icon color="redNeveah">
@@ -257,7 +228,7 @@
                 clearable
               />
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="3" class="d-flex ga-2 align-center">
                <v-combobox
                 :loading="comboBoxCteLoading"
                 @keyup="(event) => {
@@ -279,10 +250,20 @@
                 clearable
               />
             </v-col>
-            <v-col cols="12" md="2">
-               <v-btn variant="flat" color="redNeveah" @click="vincularCte">
-                Adicionar
-               </v-btn>
+            <v-col cols="12" md="2" class="d-flex ga-2 align-center">
+              <v-btn variant="flat" color="redNeveah" @click="vincularCte">
+              Adicionar
+              </v-btn>
+            </v-col>
+            <v-col cols="12" md="3">
+              <div class="d-flex ga-2 align-center pt-2 text-redNeveah justify-end text-body-1">
+                <div>
+                  <em>CT-Es vinculados</em>
+                </div>
+                <div>
+                  <v-chip>{{ calculaQuantidadeDeCtesVinculados() }}</v-chip>
+                </div>
+              </div>
             </v-col>
           </v-row>
           <v-row dense>
@@ -290,15 +271,11 @@
 
               <div v-if="dadosFormCargaLocal.descarregamento.length == 0" class="d-flex pt-2 text-grey text-body-2">
                 <div class="mt-2">
-                  <em>Nenhum CT-E vinculado</em>
+                  <em>Nenhum CT-e vinculado</em>
                 </div>
               </div>
 
               <v-card class="pa-4 rounded-md bg-red-lighten-5 d-flex flex-column ga-3 overflow-y-auto" variant="flat" max-height="450" v-else>
-
-                <div class="my-2 text-h6 text-grey">
-                  <em>CT-Es vinculados</em>
-                </div>
 
                 <div v-for="item, indexDescarregamento in dadosFormCargaLocal?.descarregamento" :key="`item-descarregamento-${indexDescarregamento}`" class="mt-4 mb-2">
                   <div class="mb-4 d-flex align-center ga-2">
@@ -313,20 +290,20 @@
                   <v-row class="mb-4">
                     <v-col
                       cols="12"
-                      md="5"
-                      class="bg-red-lighten-4 text-redNeveah pa-2 rounded-lg text-body-2 d-flex flex-column ga-3 ma-1"
+                      md="4"
+                      class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
                       style="border: 1px solid #ba1614;"
                       v-for="cte, index in item.documentos_fiscais" :key="`cte-${index}`"
                     >
-                      <div class="px-2">
+                      <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
                         <div class="d-flex align-center text-body-2">
                           <div class="d-flex flex-column w-100 ga-2">
                             <div class="w-100">ID: <strong>{{ cte.Id_CTe}}</strong></div>
                             <div class="w-100">Chave: <strong>{{cte.chCTe}}</strong></div>
                           </div>
-                          <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeQuantidade(index)"/>
+                          <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeServico(item, index, indexDescarregamento)"/>
                         </div>
-                      </div>
+                      </v-card>
                     </v-col>
                   </v-row>
 
@@ -365,10 +342,8 @@
                 variant="outlined"
                 label="Tipo da Carga*"
                 density="compact"
-                return-object
-                hide-details
                 clearable
-                />
+              />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
@@ -377,27 +352,65 @@
                 density="compact"
                 variant="outlined"
                 bg-color="white"
-                hide-details
                 clearable
-              >
-              </v-text-field>
+              />
             </v-col>
             <v-col cols="12" md="3">
               <v-badge
                 class="w-100"
-                v-tooltip:bottom="'Obrigatório caso hajam menos que 2 CT-es vinculados'"
+                v-tooltip:bottom="'Obrigatório se houver apenas 1 CT-e vinculado'"
                 content="?"
               >
-                <v-text-field
+                <InputText
                   v-model="dadosFormCargaLocal.produto_predominante.ncm"
+                  :rules="calculaQuantidadeDeCtesVinculados() == 1 ? rules.campoObrigatorio : []"
                   label="NCM"
                   density="compact"
                   variant="outlined"
                   bg-color="white"
-                  hide-details
+                  counter="8"
                   clearable
-                >
-                </v-text-field>
+                />
+              </v-badge>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="12" md="6">
+              <v-badge
+                class="w-100"
+                v-tooltip:bottom="'Obrigatório se houver apenas 1 CT-e vinculado'"
+                content="?"
+              >
+                <InputText
+                  v-model="dadosFormCargaLocal.produto_predominante.lotacao.carregamento.cep"
+                  :rules="calculaQuantidadeDeCtesVinculados() == 1 ? rules.campoObrigatorio : []"
+                  variant="outlined"
+                  bg-color="white"
+                  density="compact"
+                  label="CEP do local de carregamento"
+                  mask="#####-###"
+                  counter="9"
+                  clearable
+                />
+              </v-badge>
+            </v-col>
+            <v-col cols="12" md="6">
+               <v-badge
+                class="w-100"
+                v-tooltip:bottom="'Obrigatório se houver apenas 1 CT-e vinculado'"
+                content="?"
+              >
+                <InputText
+                  v-model="dadosFormCargaLocal.produto_predominante.lotacao.descarregamento.cep"
+                  :rules="calculaQuantidadeDeCtesVinculados() == 1 ? rules.campoObrigatorio : []"
+                  variant="outlined"
+                  bg-color="white"
+                  density="compact"
+                  label="CEP do local de descarregamento"
+                  mask="#####-###"
+                  counter="9"
+                  clearable
+                />
               </v-badge>
             </v-col>
           </v-row>
@@ -507,64 +520,6 @@
       </v-col>
     </v-row>
 
-    <!-- <v-row dense>
-      <v-col cols="12">
-        <div class="px-2 text-redNeveah">
-          Serviços Personalizados
-          <v-divider :thickness="2"></v-divider>
-        </div>
-      </v-col>
-    </v-row>
-
-     <v-row class="my-3 bg-grey-lighten-2 mx-1 pt-4">
-        <v-col cols="12" md="3" class="py-2">
-          <v-text-field
-            v-model="nomeServicoPersonalizado"
-            label="Nome do Serviço *"
-            placeholder="Ex: AJUDANTE"
-            density="compact"
-            variant="outlined"
-            bg-color="white"
-            clearable
-          />
-        </v-col>
-        <v-col cols="12" md="9" class="py-2">
-          <InputTextMoeda
-            v-model="valorServicoPersonalizado"
-            prefix="R$"
-            label="Valor do Serviço *"
-            bg-color="white"
-            clearable
-          />
-        </v-col>
-        <v-col class="mb-4">
-          <v-btn prepend-icon="mdi-plus" variant="flat" color="red-darken-4" @click="adicionarServicoPersonalizado">
-            Adicionar
-          </v-btn>
-        </v-col>
-     </v-row>
-
-     <v-row class="mx-1 bg-red-lighten-5 mb-6" v-if="Object.keys(dadosFormCargaLocal.servico.componentes).length !== 0">
-        <v-col>
-          <v-row>
-            <v-col cols="3" v-for="valorServico, campo in dadosFormCargaLocal.servico.componentes" :key="campo">
-              <v-card class="pa-2 pe-4 d-flex rounded-pill align-center ga-2 justify-space-between" color="grey-darken-1">
-                <div class="d-flex ga-2">
-                  <v-btn icon="mdi-close" size="x-small" color="grey-darken-4" @click="removeServico(campo)">
-                  </v-btn>
-                  <v-chip variant="flat" color="grey-darken-4">
-                    {{campo}}
-                  </v-chip>
-                </div>
-                <div>
-                  {{formataMoeda(valorServico)}}
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-col>
-     </v-row> -->
-
     <v-card class="border pa-4 text-body-2 mt-2" variant="tonal" color="redNeveah">
       (*) Campos com esta estrela são obrigatórios
     </v-card>
@@ -584,7 +539,7 @@ import { useAlertStore } from '@/stores/alertStore'
 import { formataMoeda } from '@/utils/masks';
 import { TipoDoEmitenteEnum } from '@/Enums/Fiscal/TipoDoEmitenteEnum'
 import { TipoDoTransportadorEnum } from '@/Enums/Fiscal/TipoDoTransportadorEnum.js.js'
-import { UnidadeDeMedidaEnum } from '@/Enums/Fiscal/UnidadeDeMedidaEnum'
+import { UnidadeMedidaMdfeEnum } from '@/Enums/Fiscal/UnidadeMedidaMdfeEnum'
 import { TipoCargaEnum } from '@/Enums/Fiscal/TipoCargaEnum'
 import { TipoResponsavelEnum, TipoResponsavelEnumValorDescricao } from '@/Enums/Fiscal/TipoResponsavelEnum'
 import InputText from '@/components/Form/InputText.vue'
@@ -605,9 +560,28 @@ export default {
       type: Object,
       required: true
     },
-    municipiosDoPercurso: {
-      type: Array,
+    totalDeCtesVinculados: {
+      type: Number,
       required: true
+    },
+  },
+  watch: {
+    'dadosFormCarga.descarregamento': {
+      handler() {
+        this.totalDeCtesVinculadosLocal = this.calculaQuantidadeDeCtesVinculados()
+      },
+      deep: true
+    },
+    'dadosFormCarga.uf_carregamento'(newValue, oldValue) {
+      if(newValue != oldValue) {
+        this.dadosFormCargaLocal.percurso = []
+      }
+    },
+    'dadosFormCarga.uf_descarregamento'(newValue, oldValue) {
+      if(newValue != oldValue) {
+        this.municipioDescarregamentoSelecionado = []
+        this.dadosFormCargaLocal.descarregamento = []
+      }
     },
   },
   data() {
@@ -617,7 +591,7 @@ export default {
       TipoDoEmitenteEnum,
       TipoDoTransportadorEnum,
       estadosBrasileiros,
-      UnidadeDeMedidaEnum,
+      UnidadeMedidaMdfeEnum,
       TipoCargaEnum,
       TipoResponsavelEnum,
       TipoResponsavelEnumValorDescricao,
@@ -658,13 +632,30 @@ export default {
         this.$emit('update:dadosFormCarga', novosDados)
       }
     },
+    totalDeCtesVinculadosLocal: {
+      get() {
+        return this.totalDeCtesVinculados
+      },
+      set(novosDados) {
+        this.$emit('update:totalDeCtesVinculados', novosDados)
+      }
+    },
   },
   methods: {
+    calculaQuantidadeDeCtesVinculados() {
+      let total = 0
+
+      for(const item in this.dadosFormCargaLocal.descarregamento) {
+        const quantidadeDeDocumentos = this.dadosFormCargaLocal.descarregamento[item]?.documentos_fiscais?.length
+        total += quantidadeDeDocumentos
+      }
+
+      return total
+    },
+
     vincularCte() {
 
       const alertStore = useAlertStore();
-
-      console.log(this.municipioDescarregamentoSelecionado);
 
       if(!this.cteSelecionado || typeof this.cteSelecionado != 'object') {
         alertStore.addAlert('Preencha o Campo do Ct-e corretamente selecionando o CT-e', 'warning')
@@ -755,7 +746,7 @@ export default {
     },
 
     validate() {
-      return this.$refs?.formDadosGeral.validate()
+      return this.$refs?.formDadosCarga.validate()
     },
 
     adicionarServicoPersonalizado() {
@@ -779,8 +770,13 @@ export default {
       this.dadosFormCargaLocal.servico.componentes[this.nomeServicoPersonalizado] = this.valorServicoPersonalizado;
     },
 
-    removeServico(chave) {
-      delete this.dadosFormCargaLocal.servico.componentes[chave]
+    removeServico(item, index, indexDescarregamento) {
+      item.documentos_fiscais.splice(index, 1);
+
+      //remove o item por completo caso nao ajam mais documentos, senao os valores de municipio permanecem preenchidos
+      if(item.documentos_fiscais.length == 0) {
+        this.dadosFormCargaLocal?.descarregamento.splice(indexDescarregamento, 1)
+      }
     },
   }
 }
