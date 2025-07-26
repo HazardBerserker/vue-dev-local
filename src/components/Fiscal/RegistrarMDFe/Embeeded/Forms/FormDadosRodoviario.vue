@@ -3,9 +3,9 @@
     <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
-          <div class="d-flex ga-2">
+          <div class="d-flex ga-2 align-center">
             <v-icon size="large">
-               mdi-note-text
+              mdi-note-text
             </v-icon>
             <span>Detalhes do Transporte</span>
           </div>
@@ -55,7 +55,7 @@
     <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
-          <div class="d-flex ga-2">
+          <div class="d-flex ga-2 align-center">
             <v-icon size="large">
               mdi-truck
             </v-icon>
@@ -142,9 +142,10 @@
             <span >
               <v-badge
                 class="w-100"
-                v-tooltip:top="'Só é obrigatório se o campo do Tipo do Transportador estiver preenchido'"
+                v-tooltip:top="'Esses campos serão obrigatórios/disponíveis quando o Tipo do Transportador estiver preenchido'"
                 content="?"
-                offset-x="-14"
+                offset-x="-18"
+                offset-y="6"
               >
                 Dados Proprietário do Veículo
               </v-badge>
@@ -195,7 +196,7 @@
           variant="outlined"
           bg-color="white"
           label="CPF do Proprietário *"
-          dadosFormRodoviarioLocal.veiculo_tracao.proprietario.cpf
+          v-model="dadosFormRodoviarioLocal.veiculo_tracao.proprietario.cpf"
           mask="###.###.###-##"
           :rules="tipoTransportador ? rules.campoObrigatorio : []"
           :disabled="tipoTransportador ? false : true"
@@ -316,7 +317,7 @@
               />
             </v-col>
             <v-col cols="12" md="2" class="d-flex ga-2 align-center">
-              <v-btn variant="flat" color="redNeveah" @click="vincularCte">
+              <v-btn variant="flat" color="redNeveah" @click="adicionaCondutor">
               Adicionar
               </v-btn>
             </v-col>
@@ -371,13 +372,342 @@
     <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
-          <div class="d-flex ga-2">
+          <div class="d-flex ga-2 align-center">
             <v-icon size="large">
-              mdi-truck-minus
+              mdi-cash
             </v-icon>
-            <span>Descarregamento</span>
+            <span>
+              <v-badge
+                class="w-100"
+                v-tooltip:top="'Esses campos serão obrigatórios/disponíveis quando houver apenas um CT-e vinculado'"
+                content="?"
+                offset-x="-18"
+                offset-y="6"
+              >
+                Pagamento do Frete
+              </v-badge>
+            </span>
           </div>
           <v-divider :thickness="2"></v-divider>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="3">
+        <v-radio-group
+          v-model="valorDoRadioPagamento"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          inline
+        >
+          <v-radio
+            label="Pagador é PJ"
+            :value="1"
+          ></v-radio>
+          <v-radio
+            label="Pagador é PF"
+            :value="2"
+          ></v-radio>
+        </v-radio-group>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="4" v-if="valorDoRadioPagamento == 1">
+        <InputText
+          label="CNPJ do Pagador *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].cnpj"
+          mask="##.###.###/####-##"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          counter="18"
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+        />
+      </v-col>
+      <v-col cols="12" md="4" v-else>
+         <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="CPF do Pagador *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].cpf"
+          mask="###.###.###-##"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          counter="14"
+        />
+      </v-col>
+      <v-col cols="12" md="4" v-if="valorDoRadioPagamento == 1">
+        <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="Razão Social do Pagador *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].razao_social"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+        />
+      </v-col>
+      <v-col cols="12" md="4" v-else>
+        <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="Nome do Pagador *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].nome"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+        />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-badge
+          class="w-100"
+          v-tooltip:top="'Esse valor é a soma dos Pagamentos Vinculados'"
+          content="?"
+        >
+          <InputTextMoeda
+            prefix="R$"
+            v-model="dadosFormRodoviarioLocal.pagamento_frete[0].valor_contrato"
+            label="Valor do contrato *"
+            bg-color="white"
+            :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+            disabled
+            clearable
+          />
+        </v-badge>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="4">
+        <v-select
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].forma_pagamento"
+          bg-color="white"
+          :items="FormaPagamentoMdfeEnum"
+          item-value="value"
+          item-title="text"
+          variant="outlined"
+          label="Forma de Pagamento *"
+          density="compact"
+          :rules="rules.campoObrigatorio"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          clearable
+        />
+      </v-col>
+    </v-row>
+
+    <v-row v-if="dadosFormRodoviarioLocal.pagamento_frete[0].forma_pagamento == FormaPagamentoMdfeEnumDescricao.A_PRAZO">
+      <v-col cols="12" md="4">
+        <InputTextMoeda
+          prefix="R$"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].valor_adiantamento"
+          label="Valor do Adiantamento *"
+          bg-color="white"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="4">
+        <InputTextMoeda
+          prefix="R$"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_pagamento_prazo[0].valor_parcela"
+          label="Valor do Saldo/Parcela *"
+          bg-color="white"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-date-input
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela"
+          label="Data de Vencimento do Saldo/Parcela:"
+          prepend-icon=""
+          density="compact"
+          prepend-inner-icon="$calendar"
+          placeholder="dd/mm/yy"
+          bg-color="white"
+          clearable
+          variant="outlined"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+        ></v-date-input>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12" md="4">
+        <v-select
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria"
+          bg-color="white"
+          :items="TipoInformacaoBancariaEnum"
+          item-value="value"
+          item-title="text"
+          variant="outlined"
+          label="Método de Pagamento*"
+          density="compact"
+          :rules="rules.campoObrigatorio"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="4"
+        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.BANCO_AGENCIA"
+      >
+        <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="Número do banco *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.numero_banco"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          counter="5"
+        />
+      </v-col>
+      <v-col cols="12" md="4"
+        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.BANCO_AGENCIA"
+      >
+        <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="Número da Agência Bancaria *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.numero_agencia"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          counter="10"
+        />
+      </v-col>
+      <v-col cols="12" md="4"
+        v-if=" dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.CNPJ_IPFE"
+      >
+        <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="CNPJ da Instituição de Pagamento Eletrônico do Frete *"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.cnpj_ipef"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          counter="14"
+        />
+      </v-col>
+      <v-col cols="12" md="4"
+        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.PIX"
+      >
+        <InputText
+          density="compact"
+          variant="outlined"
+          bg-color="white"
+          label="Chave PIX para recebimento do frete*"
+          v-model="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.pix"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
+          :disabled="totalDeCtesVinculados == 1 ? false : true"
+          counter="60"
+        />
+      </v-col>
+    </v-row>
+
+    <v-row v-if="totalDeCtesVinculados == 1">
+      <v-col>
+        <div class="bg-red-lighten-5 mx-1 px-2 text-grey-darken-2 text-body-2" style="border: 1px solid #ffbdb7;">
+          <v-row dense class="bg-red-lighten-4 mt-4 pa-2">
+            <v-col cols="12" md="2" class="d-flex ga-2 align-center">
+              <div>
+                <v-icon color="redNeveah">
+                  mdi-cash-plus
+                </v-icon>
+              </div>
+              <v-select
+                v-model="tipoDoComponenteDePagamento"
+                bg-color="white"
+                variant="outlined"
+                :items="TipoComponentePagamentoEnum"
+                item-value="value"
+                item-title="text"
+                label="Tipo de Pagamento *"
+                density="compact"
+                hide-details
+                clearable
+              />
+            </v-col>
+            <v-col cols="12" md="2" class="d-flex ga-2 align-center">
+              <InputTextMoeda
+                prefix="R$"
+                v-model="valorDoComponenteDePagamento"
+                label="Valor do pagamento *"
+                bg-color="white"
+                hide-details
+                clearable
+              />
+            </v-col>
+            <v-col cols="12" md="3" class="d-flex ga-2 align-center">
+              <v-text-field
+                v-model="descricaoComponentePagamento"
+                density="compact"
+                variant="outlined"
+                label="Descrição Pagamento"
+                bg-color="white"
+                hide-details
+                :disabled="tipoDoComponenteDePagamento != TipoComponentePagamentoEnumValorDescricao.OUTROS"
+                clearable
+              />
+            </v-col>
+            <v-col cols="12" md="2" class="d-flex ga-2 align-center">
+              <v-btn variant="flat" color="redNeveah" @click="adicionaComponenteDePagamento">
+              Adicionar
+              </v-btn>
+            </v-col>
+            <v-col cols="12" md="3">
+              <div class="d-flex ga-2 align-center pt-2 text-redNeveah justify-end text-body-1">
+                <div>
+                  <em>Pagamentos Vinculados</em>
+                </div>
+                <div>
+                  <v-chip>{{this.dadosFormRodoviarioLocal.pagamento_frete[0].componentes_pagamento_frete.length}}</v-chip>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+
+          <v-row dense>
+            <v-col cols="12">
+
+              <div v-if="this.dadosFormRodoviarioLocal.pagamento_frete[0].componentes_pagamento_frete.length == 0" class="d-flex pt-2 text-grey text-body-2">
+                <div class="mt-2">
+                  <em>Nenhum Pagamento vinculado</em>
+                </div>
+              </div>
+
+              <v-card class="pa-4 mb-2 rounded-md bg-red-lighten-5 d-flex flex-column ga-3 overflow-y-auto" variant="flat" max-height="450" v-else>
+                <v-row class="mb-4">
+                  <v-col
+                    cols="12"
+                    md="4"
+                    class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
+                    v-for="pagamento, index in this.dadosFormRodoviarioLocal.pagamento_frete[0].componentes_pagamento_frete" :key="`condutor-${index}`"
+                  >
+                    <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
+                      <div class="d-flex align-center text-body-2">
+                        <div class="d-flex flex-column w-100 ga-2">
+                          <div class="w-100">Tipo de Pagamento: <strong>{{ TipoComponentePagamentoEnumDescricao[pagamento.tipo_componente]}}</strong></div>
+                          <div class="w-100">Valor do Pagamento: <strong>{{ formataMoeda(pagamento.valor_componente)}}</strong></div>
+                          <div class="w-100" v-if="pagamento.tipo_componente == TipoComponentePagamentoEnumValorDescricao.OUTROS">
+                            Descrição do Pagamento: <strong>{{ pagamento.descricao_componente}}</strong>
+                          </div>
+                          <div class="w-100" v-else>
+                            Descrição do Pagamento: --
+                          </div>
+                        </div>
+                        <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeComponenteDePagamento(index)"/>
+                      </div>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+          </v-row>
         </div>
       </v-col>
     </v-row>
@@ -400,6 +730,10 @@ import InputText from '@/components/Form/InputText.vue'
 import { TipoRodadoEnumEnum } from '@/Enums/Fiscal/TipoRodadoEnum'
 import { TipoCarroceriaEnum } from '@/Enums/Fiscal/TipoCarroceriaEnum'
 import { TipoProprietarioEnum } from '@/Enums/Fiscal/TipoProprietarioEnum';
+import { FormaPagamentoMdfeEnum, FormaPagamentoMdfeEnumDescricao } from '@/Enums/Fiscal/FormaPagamentoMdfeEnum';
+import { format as formatDate } from 'date-fns';
+import { TipoComponentePagamentoEnum, TipoComponentePagamentoEnumValorDescricao, TipoComponentePagamentoEnumDescricao } from '@/Enums/Fiscal/TipoComponentePagamento';
+import { TipoInformacaoBancariaEnum, TipoInformacaoBancariaEnumDescricao } from '@/Enums/Fiscal/TipoInformacaoBancariaEnum';
 
 export default {
   name: 'FormDadosGeral',
@@ -418,7 +752,7 @@ export default {
     },
     totalDeCtesVinculados: {
       type: Number,
-      default: 0,
+      required: true
     },
     tipoTransportador: {
       required: true
@@ -434,6 +768,21 @@ export default {
         this.dadosFormRodoviarioLocal.veiculo_tracao.proprietario.ie = null
       }
     },
+    tipoDoComponenteDePagamento(newValue, oldValue) {
+      if(newValue == oldValue) {
+        return
+      }
+
+      if(oldValue == TipoComponentePagamentoEnumValorDescricao.OUTROS) {
+        this.descricaoComponentePagamento = null
+      }
+    },
+    'pagamentoFrete.componentes_pagamento_frete': {
+      handler() {
+        this.calculaValorDoContrato()
+      },
+      deep: true
+    }
   },
   data() {
     return {
@@ -445,6 +794,13 @@ export default {
       TipoRodadoEnumEnum,
       TipoCarroceriaEnum,
       TipoProprietarioEnum,
+      FormaPagamentoMdfeEnum,
+      FormaPagamentoMdfeEnumDescricao,
+      TipoComponentePagamentoEnum,
+      TipoComponentePagamentoEnumValorDescricao,
+      TipoComponentePagamentoEnumDescricao,
+      TipoInformacaoBancariaEnum,
+      TipoInformacaoBancariaEnumDescricao,
 
       // ClassificacaoTributariaEnum,
 
@@ -456,6 +812,7 @@ export default {
       `,
 
       valorDoRadio: 2,
+      valorDoRadioPagamento: 2,
 
       rules: {
         campoObrigatorio: [
@@ -465,9 +822,17 @@ export default {
 
       nomeCondutor: null,
       cpfCondutor: null,
+
+      tipoDoComponenteDePagamento: null,
+      valorDoComponenteDePagamento: null,
+      descricaoComponentePagamento: null,
     }
   },
   computed: {
+    pagamentoFrete() {
+      return this.dadosFormRodoviarioLocal.pagamento_frete?.[0];
+    },
+
     dadosFormRodoviarioLocal: {
       get() {
         return this.dadosFormRodoviario
@@ -486,18 +851,66 @@ export default {
     },
   },
   methods: {
-    calculaQuantidadeDeCtesVinculados() {
-      let total = 0
-
-      for(const item in this.dadosFormRodoviarioLocal.descarregamento) {
-        const quantidadeDeDocumentos = this.dadosFormRodoviarioLocal.descarregamento[item]?.documentos_fiscais?.length
-        total += quantidadeDeDocumentos
-      }
-
-      return total
+    format(date) {
+      return formatDate(date, 'dd/MM/yyyy')
     },
 
-    vincularCte() {
+    calculaValorDoContrato() {
+      const componentesDePagamento = this.dadosFormRodoviarioLocal.pagamento_frete[0].componentes_pagamento_frete
+      let total = 0
+
+      for(const index in componentesDePagamento) {
+        console.log(componentesDePagamento);
+        console.log(index);
+
+        total += componentesDePagamento[index].valor_componente
+      }
+
+      this.dadosFormRodoviarioLocal.pagamento_frete[0].valor_contrato = total
+    },
+
+    adicionaComponenteDePagamento() {
+
+      const alertStore = useAlertStore();
+
+
+      if(!this.tipoDoComponenteDePagamento) {
+        alertStore.addAlert('Preencha o Tipo de Pagamento corretamente', 'warning')
+        return
+      }
+
+      if(!this.valorDoComponenteDePagamento) {
+        alertStore.addAlert('Preencha o Valor do Pagamento corretamente', 'warning')
+        return
+      }
+
+      if(!this.descricaoComponentePagamento && this.tipoDoComponenteDePagamento == TipoComponentePagamentoEnumValorDescricao.OUTROS) {
+        alertStore.addAlert('Preencha a Descrição do Pagamento corretamente', 'warning')
+        return
+      }
+
+      this.criaNovoComponenteDePagamento()
+    },
+
+    criaNovoComponenteDePagamento() {
+      let item = {
+        tipo_componente: this.tipoDoComponenteDePagamento,
+        valor_componente: this.valorDoComponenteDePagamento,
+      }
+
+      if(this.tipoDoComponenteDePagamento == TipoComponentePagamentoEnumValorDescricao.OUTROS) {
+        item['descricao_componente'] = this.descricaoComponentePagamento
+      }
+
+      this.dadosFormRodoviarioLocal.pagamento_frete[0].componentes_pagamento_frete.push(item)
+    },
+
+    removeComponenteDePagamento(index) {
+      this.dadosFormRodoviarioLocal.pagamento_frete[0].componentes_pagamento_frete.splice(index, 1);
+    },
+
+
+    adicionaCondutor() {
 
       const alertStore = useAlertStore();
 
@@ -525,13 +938,16 @@ export default {
 
       this.criaNovoCondutor()
     },
-
     criaNovoCondutor() {
       const item = {
         cpf: this.cpfCondutor,
         nome: this.nomeCondutor,
       }
       this.dadosFormRodoviarioLocal.condutor.push(item)
+    },
+
+    removeCondutor(index) {
+     this.dadosFormRodoviarioLocal.condutor.splice(index, 1);
     },
 
     buscaCondutorPeloCPF() {
@@ -545,31 +961,6 @@ export default {
 
     validate() {
       return this.$refs?.formDadosCarga.validate()
-    },
-
-    adicionarServicoPersonalizado() {
-
-      const alertStore = useAlertStore();
-
-      if(this.nomeServicoPersonalizado == null
-        || this.valorServicoPersonalizado == null
-      ) {
-        alertStore.addAlert('Preencha todos os campos do Serviço corretamente para adiciona-lo', 'warning')
-        return
-      }
-
-      const campo = this.dadosFormRodoviarioLocal?.servico?.componentes[this.nomeServicoPersonalizado]
-
-      if(campo) {
-        alertStore.addAlert('Já existe um Serviço com este Nome', 'warning')
-        return
-      }
-
-      this.dadosFormRodoviarioLocal.servico.componentes[this.nomeServicoPersonalizado] = this.valorServicoPersonalizado;
-    },
-
-    removeCondutor(index) {
-     this.dadosFormRodoviarioLocal.condutor.splice(index, 1);
     },
   }
 }

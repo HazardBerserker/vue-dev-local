@@ -301,19 +301,13 @@ export default {
           pagamento_frete: [
             {
               cpf: null,
-              nome: "DÊnio Clécio",
-              valor_contrato: 500,
-              forma_pagamento: 1,
-              valor_adiantamento: 100,
-              componentes_pagamento_frete: [
-                {
-                  tipo_componente: "99",
-                  valor_componente: null,
-                  descricao_componente: null
-                }
-              ],
+              nome: null,
+              valor_contrato: null,
+              forma_pagamento: 0,
+              valor_adiantamento: null,
+              componentes_pagamento_frete: [],
               informacoes_bancarias: {
-                tipo_informacao_bancaria: null,
+                tipo_informacao_bancaria: '3',
                 numero_banco: null,
                 numero_agencia:null
               },
@@ -333,7 +327,7 @@ export default {
       },
 
       estadosESeusMunicipios: {},
-      stepAtual: 2,
+      stepAtual: 1,
 
       classeBaseDosCards: 'd-flex flex-column justify-center align-center ga-2 pa-2'
     }

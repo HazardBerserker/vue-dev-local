@@ -292,7 +292,6 @@
                       cols="12"
                       md="4"
                       class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
-                      style="border: 1px solid #ba1614;"
                       v-for="cte, index in item.documentos_fiscais" :key="`cte-${index}`"
                     >
                       <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
@@ -301,7 +300,7 @@
                             <div class="w-100">ID: <strong>{{ cte.Id_CTe}}</strong></div>
                             <div class="w-100">Chave: <strong>{{cte.chCTe}}</strong></div>
                           </div>
-                          <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeServico(item, index, indexDescarregamento)"/>
+                          <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeCte(item, index, indexDescarregamento)"/>
                         </div>
                       </v-card>
                     </v-col>
@@ -572,11 +571,6 @@ export default {
       },
       deep: true
     },
-    'dadosFormCarga.uf_carregamento'(newValue, oldValue) {
-      if(newValue != oldValue) {
-        this.dadosFormCargaLocal.percurso = []
-      }
-    },
     'dadosFormCarga.uf_descarregamento'(newValue, oldValue) {
       if(newValue != oldValue) {
         this.municipioDescarregamentoSelecionado = []
@@ -606,9 +600,6 @@ export default {
         Obs.: Deve ser preenchido com <strong>2</strong>, para emitentes de NF-e e pelas transportadoras quando estiverem fazendo transporte de carga própria.<br>
         Deve ser preenchido com <strong>3</strong>, para transportador de carga que emitirá à posteriori CT-e Globalizado relacionando as NF-e.
       `,
-
-      nomeServicoPersonalizado: null,
-      valorServicoPersonalizado: null,
 
       rules: {
         campoObrigatorio: [
@@ -738,39 +729,11 @@ export default {
       );
     },
 
-    municipiosDoEstadoSelecionado(uf) {
-      if(!uf) {
-        return []
-      }
-      return this.estadosESeusMunicipios[uf]
-    },
-
     validate() {
       return this.$refs?.formDadosCarga.validate()
     },
 
-    adicionarServicoPersonalizado() {
-
-      const alertStore = useAlertStore();
-
-      if(this.nomeServicoPersonalizado == null
-        || this.valorServicoPersonalizado == null
-      ) {
-        alertStore.addAlert('Preencha todos os campos do Serviço corretamente para adiciona-lo', 'warning')
-        return
-      }
-
-      const campo = this.dadosFormCargaLocal?.servico?.componentes[this.nomeServicoPersonalizado]
-
-      if(campo) {
-        alertStore.addAlert('Já existe um Serviço com este Nome', 'warning')
-        return
-      }
-
-      this.dadosFormCargaLocal.servico.componentes[this.nomeServicoPersonalizado] = this.valorServicoPersonalizado;
-    },
-
-    removeServico(item, index, indexDescarregamento) {
+    removeCte(item, index, indexDescarregamento) {
       item.documentos_fiscais.splice(index, 1);
 
       //remove o item por completo caso nao ajam mais documentos, senao os valores de municipio permanecem preenchidos
