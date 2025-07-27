@@ -3,7 +3,7 @@ export const ModalidadeEntregaEnum = [
   { value: '2', text: '2 - Aéreo' },
 ];
 
-// export const NaturezaOperacaoDescricao = {
-//   '1': 'Prestação de serviço de transporte para execução de serviço da mesma natureza',
-//   '2': 'Prestação de serviço de transporte a estabelecimento industrial',
-// };
+export const ModalidadeEntregaEnumDescricao = {
+  '1': 'Rodoviário',
+  '2': 'Aéreo',
+};

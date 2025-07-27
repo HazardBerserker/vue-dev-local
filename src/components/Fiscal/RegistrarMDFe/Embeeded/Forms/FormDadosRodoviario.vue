@@ -30,6 +30,7 @@
                 variant="outlined"
                 bg-color="white"
                 counter="8"
+                mask="########"
                 clearable
               />
             </v-badge>
@@ -135,23 +136,30 @@
       </v-col>
     </v-row>
 
+    <!-- Campos baseados no Tipo do Transportador, se for TAC é PF do Contrário é PJ, se o Tipo do Transportador não estiver preenchidos esses campos são adicionais -->
     <v-row dense class="mt-8">
       <v-col cols="12">
         <div class="px-2 text-redNeveah">
           <div class="d-flex ga-2">
-            <span >
-              <v-badge
-                class="w-100"
-                v-tooltip:top="'Esses campos serão obrigatórios/disponíveis quando o Tipo do Transportador estiver preenchido'"
-                content="?"
-                offset-x="-18"
-                offset-y="6"
-              >
-                Dados Proprietário do Veículo
-              </v-badge>
-            </span>
+            <v-tooltip location="top">
+              <template #activator="{ props }">
 
-          </div>
+                  <span>
+                    <v-badge
+                      class="w-100"
+                      v-bind="props"
+                      content="?"
+                      offset-x="-18"
+                      offset-y="6"
+                    >
+                      Dados Proprietário do Veículo
+                  </v-badge>
+                </span>
+
+              </template>
+              <span v-html="mensagemTooltipProprietarioDoVeiculo"></span>
+            </v-tooltip>
+            </div>
           <v-divider :thickness="2"></v-divider>
         </div>
       </v-col>
@@ -161,7 +169,7 @@
       <v-col cols="12" md="3">
         <v-radio-group
           v-model="valorDoRadio"
-          :disabled="tipoTransportador ? false : true"
+          disabled
           inline
         >
           <v-radio
@@ -250,6 +258,7 @@
           :rules="tipoTransportador ? rules.campoObrigatorio : []"
           :disabled="tipoTransportador ? false : true"
           counter="8"
+          mask="########"
           clearable
         />
       </v-col>
@@ -295,14 +304,16 @@
                   mdi-card-account-details
                 </v-icon>
               </div>
-              <v-text-field
-                v-model="cpfCondutor"
-                bg-color="white"
-                variant="outlined"
-                label="CPF do condutor"
+              <InputText
                 density="compact"
+                variant="outlined"
+                bg-color="white"
+                label="CPF do condutor"
+                v-model="cpfCondutor"
+                mask="###.###.###-##"
                 hide-details
                 clearable
+                counter="14"
               />
             </v-col>
             <v-col cols="12" md="3" class="d-flex ga-2 align-center">
@@ -495,7 +506,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="dadosFormRodoviarioLocal.pagamento_frete[0].forma_pagamento == FormaPagamentoMdfeEnumDescricao.A_PRAZO">
+    <v-row v-if="dadosFormRodoviarioLocal.pagamento_frete[0].forma_pagamento == FormaPagamentoMdfeEnumValorDescricao.A_PRAZO">
       <v-col cols="12" md="4">
         <InputTextMoeda
           prefix="R$"
@@ -552,7 +563,7 @@
         />
       </v-col>
       <v-col cols="12" md="4"
-        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.BANCO_AGENCIA"
+        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumValorDescricao.BANCO_AGENCIA"
       >
         <InputText
           density="compact"
@@ -566,7 +577,7 @@
         />
       </v-col>
       <v-col cols="12" md="4"
-        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.BANCO_AGENCIA"
+        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumValorDescricao.BANCO_AGENCIA"
       >
         <InputText
           density="compact"
@@ -580,7 +591,7 @@
         />
       </v-col>
       <v-col cols="12" md="4"
-        v-if=" dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.CNPJ_IPFE"
+        v-if=" dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumValorDescricao.CNPJ_IPFE"
       >
         <InputText
           density="compact"
@@ -594,7 +605,7 @@
         />
       </v-col>
       <v-col cols="12" md="4"
-        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumDescricao.PIX"
+        v-if="dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria == TipoInformacaoBancariaEnumValorDescricao.PIX"
       >
         <InputText
           density="compact"
@@ -724,16 +735,16 @@ import { estadosBrasileiros } from '@/Enums/estadosEnum'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue'
 import { useAlertStore } from '@/stores/alertStore'
 import { formataMoeda } from '@/utils/masks';
-import { TipoDoTransportadorEnum } from '@/Enums/Fiscal/TipoDoTransportadorEnum.js.js'
+import { TipoDoTransportadorEnum, TipoDoTransportadorEnumValorDescricao } from '@/Enums/Fiscal/TipoDoTransportadorEnum.js.js'
 import { TipoCargaEnum } from '@/Enums/Fiscal/TipoCargaEnum'
 import InputText from '@/components/Form/InputText.vue'
 import { TipoRodadoEnumEnum } from '@/Enums/Fiscal/TipoRodadoEnum'
 import { TipoCarroceriaEnum } from '@/Enums/Fiscal/TipoCarroceriaEnum'
 import { TipoProprietarioEnum } from '@/Enums/Fiscal/TipoProprietarioEnum';
-import { FormaPagamentoMdfeEnum, FormaPagamentoMdfeEnumDescricao } from '@/Enums/Fiscal/FormaPagamentoMdfeEnum';
+import { FormaPagamentoMdfeEnum, FormaPagamentoMdfeEnumValorDescricao } from '@/Enums/Fiscal/FormaPagamentoMdfeEnum';
 import { format as formatDate } from 'date-fns';
 import { TipoComponentePagamentoEnum, TipoComponentePagamentoEnumValorDescricao, TipoComponentePagamentoEnumDescricao } from '@/Enums/Fiscal/TipoComponentePagamento';
-import { TipoInformacaoBancariaEnum, TipoInformacaoBancariaEnumDescricao } from '@/Enums/Fiscal/TipoInformacaoBancariaEnum';
+import { TipoInformacaoBancariaEnum, TipoInformacaoBancariaEnumValorDescricao } from '@/Enums/Fiscal/TipoInformacaoBancariaEnum';
 
 export default {
   name: 'FormDadosGeral',
@@ -777,12 +788,35 @@ export default {
         this.descricaoComponentePagamento = null
       }
     },
+    tipoDeInformacaoBancaria(newValue, oldValue) {
+      if(newValue == oldValue) {
+        return
+      }
+      if(oldValue == TipoInformacaoBancariaEnumValorDescricao.BANCO_AGENCIA) {
+        this.dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.numero_banco = null
+        this.dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.numero_agencia = null
+      }
+      if(oldValue == TipoInformacaoBancariaEnumValorDescricao.PIX) {
+        this.dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.pix = null
+      }
+      if(oldValue == TipoInformacaoBancariaEnumValorDescricao.CNPJ_IPFE) {
+        this.dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.cnpj_ipef = null
+      }
+    },
     'pagamentoFrete.componentes_pagamento_frete': {
       handler() {
         this.calculaValorDoContrato()
       },
       deep: true
+    },
+  },
+  mounted() {
+    if(this.tipoTransportador == TipoDoTransportadorEnumValorDescricao.TAC) {
+      this.valorDoRadio = 2
+      return
     }
+
+    this.valorDoRadio = 1
   },
   data() {
     return {
@@ -795,12 +829,13 @@ export default {
       TipoCarroceriaEnum,
       TipoProprietarioEnum,
       FormaPagamentoMdfeEnum,
-      FormaPagamentoMdfeEnumDescricao,
+      FormaPagamentoMdfeEnumValorDescricao,
       TipoComponentePagamentoEnum,
       TipoComponentePagamentoEnumValorDescricao,
       TipoComponentePagamentoEnumDescricao,
       TipoInformacaoBancariaEnum,
-      TipoInformacaoBancariaEnumDescricao,
+      TipoInformacaoBancariaEnumValorDescricao,
+      TipoDoTransportadorEnumValorDescricao,
 
       // ClassificacaoTributariaEnum,
 
@@ -811,7 +846,12 @@ export default {
         conta de terceiros e mediante remuneração
       `,
 
-      valorDoRadio: 2,
+      mensagemTooltipProprietarioDoVeiculo: `
+        Campos baseados no Tipo do Transportador, se for TAC é PF do Contrário é PJ. <br>
+        Se o Tipo do Transportador não estiver preenchido esses campos serão opcionais
+      `,
+
+      valorDoRadio: null,
       valorDoRadioPagamento: 2,
 
       rules: {
@@ -831,6 +871,9 @@ export default {
   computed: {
     pagamentoFrete() {
       return this.dadosFormRodoviarioLocal.pagamento_frete?.[0];
+    },
+    tipoDeInformacaoBancaria() {
+      return this.dadosFormRodoviarioLocal.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria
     },
 
     dadosFormRodoviarioLocal: {
@@ -860,8 +903,6 @@ export default {
       let total = 0
 
       for(const index in componentesDePagamento) {
-        console.log(componentesDePagamento);
-        console.log(index);
 
         total += componentesDePagamento[index].valor_componente
       }

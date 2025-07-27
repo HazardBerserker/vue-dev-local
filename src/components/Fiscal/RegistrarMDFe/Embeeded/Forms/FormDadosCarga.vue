@@ -55,6 +55,7 @@
           variant="outlined"
           label="Tipo do Transportador"
           density="compact"
+          :rules="rules.campoObrigatorio"
           clearable
         />
       </v-col>
@@ -127,6 +128,7 @@
           v-model="dadosFormCargaLocal.valor_carga"
           label="Valor Carga *"
           bg-color="white"
+          :rules="rules.campoObrigatorio"
           clearable
         />
       </v-col>

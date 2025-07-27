@@ -98,7 +98,7 @@
 
               <template v-if="stepAtual == 2">
                  <FormDadosRodoviario
-                  ref="formDadosGeral"
+                  ref="formDadosRodoviario"
                   :tipoTransportador="dadosFormCarga.transportador"
                   :dadosFormRodoviario="dadosFormCarga.rodoviario"
                   :estadosESeusMunicipios="estadosESeusMunicipios"
@@ -106,55 +106,35 @@
                 />
               </template>
 
-              <!-- <template v-if="stepAtual == 3">
-                <FormDadosCarga
-                  ref="formDadosCarga"
-                  :dadosFormCarga="dadosFormCarga"
-                />
-              </template>
-
-              <template v-if="stepAtual == 4">
-                <FormDadosDocumentos
-                  ref="formDadosDocumento"
-                  :dadosFormDocumento="dadosFormDocumento"
-                />
-              </template>
-
-              <template v-if="stepAtual == 5">
+              <template v-if="stepAtual == 3">
                 <RecapitulacaoDados
-                  ref="recapitulacaoDados"
-                  :dadosFormGeral="dadosFormGeral"
-                  :dadosFormAtores="dadosFormAtores"
                   :dadosFormCarga="dadosFormCarga"
-                  :dadosFormDocumento="dadosFormDocumento"
-                  :semExpedidor="dadosFormAtoresComplementar.sem_expedidor"
-                  :semRecebedor="dadosFormAtoresComplementar.sem_recebedor"
-                  :tomadorEhIgualRemetente="tomadorEhIgualRemetente"
-                  :tomadorEhIgualDestinatario="tomadorEhIgualDestinatario"
-                  :tomadorEhIgualRecebedor="tomadorEhIgualRecebedor"
-                  :tomadorEhIgualExpedidor="tomadorEhIgualExpedidor"
                 />
-              </template> -->
+              </template>
             </v-fade-transition>
-
-            <!-- {{ dadosFormGeral }}
-            {{ dadosFormAtores }}
-            {{ dadosFormAtoresComplementar }}
-            {{ dadosFormCarga }}
-            {{ dadosFormDocumento }}
 
             <v-btn @click="formataDadosParaEnvio">
               teste
-            </v-btn> -->
+            </v-btn>
 
             <div class="d-flex justify-end mt-2">
-              <v-btn v-if="stepAtual != 5" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
+              <v-btn @click="stepAtual = 1">
+                step 1
+              </v-btn>
+              <v-btn @click="stepAtual = 2">
+                step 2
+              </v-btn>
+              <v-btn @click="stepAtual = 3">
+                step 3
+              </v-btn>
+              <v-btn v-if="stepAtual != 3" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
                 Avançar
               </v-btn>
-              <v-btn v-if="stepAtual == 5" variant="flat" @click="emiteCte" color="grey-darken-3" size="large">
+              <v-btn v-if="stepAtual == 3" variant="flat" @click="emiteMdfe" color="grey-darken-3" size="large">
                 EMITIR
               </v-btn>
             </div>
+            {{ dadosFormCarga }}
           </div>
         </div>
       </v-card>
@@ -169,10 +149,6 @@
 // import { endpoints } from '@/utils/apiEndpoints';
 // import { useLoadingStore } from '@/stores/loading';
 import { estadosBrasileiros } from '@/Enums/estadosEnum'
-import { FinalidadeCteEnum } from '@/Enums/Fiscal/FinalidadeCteEnum'
-import { ModalidadeEntregaEnum } from '@/Enums/Fiscal/ModalidadeEntregaEnum'
-import { NaturezaOperacaoDescricao, NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
-import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import ApiService from '@/services/ApiService'
 import { useAlertStore } from '@/stores/alertStore'
 import { useLoadingStore } from '@/stores/loading'
@@ -180,51 +156,16 @@ import { endpoints } from '@/utils/apiEndpoints'
 import { limparCamposVazios } from '@/helpers/limpaCamposVazio'
 import FormDadosCarga from './Forms/FormDadosCarga.vue'
 import FormDadosRodoviario from './Forms/FormDadosRodoviario.vue'
+import RecapitulacaoDados from './Forms/RecapitulacaoDados.vue'
+import { FormaPagamentoMdfeEnumValorDescricao } from '@/Enums/Fiscal/FormaPagamentoMdfeEnum'
+import { formataDataISOParaPadraoBanco } from '@/utils/masks'
 
 export default {
   name: 'BtnEmiteMDFe',
   components: {
     FormDadosCarga,
-    FormDadosRodoviario
-  },
-  computed: {
-    valorTotalCalculado() {
-      const fretePeso = parseFloat(this.dadosFormGeral?.servico?.componentes?.FRETE_PESO)
-      const advalorem = parseFloat(this.dadosFormGeral?.servico?.componentes?.advalorem)
-
-      if(!fretePeso || !advalorem) {
-        return null
-      }
-
-      const valorTotal = fretePeso + advalorem
-
-      return valorTotal
-    },
-
-    // municipiosDoPercurso() {
-
-    //   const uf_carregamento = this.dadosFormCarga?.uf_carregamento
-    //   const uf_descarregamento = this.dadosFormCarga?.uf_descarregamento
-
-    //   const municipiosDaUfDeCarregamento = this.municipiosDoEstadoSelecionado(uf_carregamento)
-    //   const municipiosDaUfDeDescarregamento = this.municipiosDoEstadoSelecionado(uf_descarregamento)
-
-    //   if (!uf_carregamento && !uf_descarregamento) {
-    //     return []
-    //   }
-
-    //   const listaMunicipios = []
-
-    //   if (uf_carregamento) {
-    //     listaMunicipios.push(...municipiosDaUfDeCarregamento)
-    //   }
-
-    //   if (uf_descarregamento) {
-    //     listaMunicipios.push(...municipiosDaUfDeDescarregamento)
-    //   }
-
-    //   return listaMunicipios
-    // },
+    FormDadosRodoviario,
+    RecapitulacaoDados
   },
   data() {
     return {
@@ -240,17 +181,13 @@ export default {
       },
       // enums
       estadosBrasileiros,
-      TipoDeEmissaoCteEnum,
-      FinalidadeCteEnum,
-      NaturezaOperacaoEnum,
-      ModalidadeEntregaEnum,
 
       dialogIsOpen: false,
 
       dadosFormCarga: {
         emitente: 1,
         modalidade: '1',
-        transportador: null,
+        transportador: 2,
         uf_carregamento: null,
         uf_descarregamento: null,
         percurso: [],
@@ -278,7 +215,7 @@ export default {
               nome_seguradora: 'Porto Seguro',
               cnpj: 61198164000160
             },
-            numero_apolice: 4250126501,
+            numero_apolice: '4250126501',
             numero_averbacao: ['0']
           },
         ],
@@ -334,16 +271,23 @@ export default {
   },
   methods: {
 
-    async emiteCte() {
+    async emiteMdfe() {
       const alertStore = useAlertStore()
       const loading = useLoadingStore()
 
+      const valido = this.regrasDeValidacaoExtrasParaEmissao()
+
+      if(!valido.value) {
+        alertStore.addAlert(valido.message, 'warning')
+        return
+      }
+
       const dadosParaEnvio = this.formataDadosParaEnvio();
 
-      const url = endpoints.cte.emite;
+      const url = endpoints.mdfe.emite;
 
       try {
-        loading.show('Emitindo CT-e...')
+        loading.show('Emitindo MDF-e...')
         const resposta =  await ApiService({
           method: 'post',
           url: url,
@@ -364,57 +308,76 @@ export default {
       }
     },
 
-    formataDadosParaEnvio() {
-      const textoNaturezaOperacao = this.limitarTamanhoTextoParaNaturezaOperacao(NaturezaOperacaoDescricao[this.dadosFormGeral.cfop])
-      const fretePeso = parseFloat(this.dadosFormGeral?.servico?.componentes?.FRETE_PESO)
-      const advalorem = parseFloat(this.dadosFormGeral?.servico?.componentes?.advalorem)
-
-      let valorTotal = fretePeso + advalorem
-
-      if(!fretePeso || !advalorem) {
-        valorTotal = 0
+    regrasDeValidacaoExtrasParaEmissao() {
+      let valido = {
+        value: true,
+        message: ''
       }
+
+      const valorParcela = this.dadosFormCarga.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].valor_parcela
+      const valorContrato = this.dadosFormCarga.rodoviario.pagamento_frete[0].valor_contrato
+      const valorAdiantamento = this.dadosFormCarga.rodoviario.pagamento_frete[0].valor_adiantamento
+      const formaPagamento = this.dadosFormCarga.rodoviario.pagamento_frete[0].forma_pagamento
+
+      if( formaPagamento == FormaPagamentoMdfeEnumValorDescricao.A_PRAZO && valorParcela + valorAdiantamento != valorContrato) {
+        valido.value = false
+        valido.message = 'O Valor do Adiantamento e Saldo somados deve ser igual ao Valor do Contrato'
+        return valido
+      }
+
+      return valido
+
+    },
+
+    formataDadosParaEnvio() {
+
+      const carregamentoFormatado = this.dadosFormCarga.carregamento.map(item => ({
+        codigo_municipio: item.codigo_municipio,
+        nome_municipio: item.description
+      }))
+
+      const descarregamentoFormatado = this.dadosFormCarga.descarregamento.map(item => ({
+        codigo_municipio: item.codigo_municipio,
+        nome_municipio: item.nome_municipio,
+        documentos_fiscais: this.formataDocumentosFiscaisParaEnvio(item.documentos_fiscais)
+      }))
+
+      const dataVencimentoParcela = formataDataISOParaPadraoBanco(this.dadosFormCarga.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela)
 
       const dados = {
         ambiente: 2,
-        natureza_operacao: textoNaturezaOperacao,
-        modalidade: Number(this.dadosFormGeral?.modalidade.value),
-        modelo: "cte",
-        finalidade: this.dadosFormGeral?.finalidade?.value,
-        local_inicio_prestacao: {...this.dadosFormGeral?.local_inicio_prestacao},
-        local_termino_prestacao: {...this.dadosFormGeral?.local_termino_prestacao},
-        contribuicao_tomador: this.dadosFormAtoresComplementar?.contribuicao_tomador,
-        indicador_tomador: this.defineIndicadorTomador(),
-        impostos: {
-          cfop: this.dadosFormGeral.cfop,
-          classificacao_tributaria: this.dadosFormGeral.classificacao_tributaria,
-        },
-        servico: {
-          ...this.dadosFormGeral?.servico,
-          valor_total: valorTotal,
-          valor_recebido: valorTotal
-        },
-        valores_servico: {
-          valor_total: valorTotal,
-          valor_recebido: valorTotal
-        },
-        carga: {
-          ...this.dadosFormCarga,
-        },
-        documentos_fiscais:[...this.dadosFormDocumento],
-        rodoviario: {
-          rntrc: this.dadosFormGeral.rntrc
-        },
-        remetente: {...this.dadosFormAtores.remetente},
-        destinatario: {...this.dadosFormAtores.destinatario},
-        recebedor: {...this.dadosFormAtores.recebedor},
-        expedidor: {...this.dadosFormAtores.expedidor},
-        tomador: this.defineDadosTomador(),
+        emitente: this.dadosFormCarga.emitente,
+        transportador: this.dadosFormCarga.transportador,
+        modalidade: this.dadosFormCarga.modalidade,
+        uf_carregamento: this.dadosFormCarga.uf_carregamento,
+        uf_descarregamento: this.dadosFormCarga.uf_descarregamento,
+        valor_carga: this.dadosFormCarga.valor_carga,
+        unidade: this.dadosFormCarga.unidade,
+        peso_bruto: this.dadosFormCarga.peso_bruto,
+        carregamento: carregamentoFormatado,
+        descarregamento: descarregamentoFormatado,
+        percurso: this.dadosFormCarga.percurso,
+        produto_predominante: {...this.dadosFormCarga.produto_predominante},
+        seguro: this.dadosFormCarga.seguro,
+        rodoviario: {...this.dadosFormCarga.rodoviario}
       }
+
+      dados.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela = dataVencimentoParcela
+
+      console.log('dados sem tratamento', dados);
 
       const dadosTratados = limparCamposVazios(dados)
 
+      console.log('dados tratados', dadosTratados);
+
       return dadosTratados
+    },
+
+    formataDocumentosFiscaisParaEnvio(documentos_fiscais) {
+      const documentosFormatados = documentos_fiscais.map(item => ({
+        chave: item.chCTe
+      }))
+      return documentosFormatados
     },
 
     async avancaOuVoltaStep(novoStep) {
@@ -455,26 +418,6 @@ export default {
       if(this.totalDeCtesVinculados == 0) {
         alertStore.addAlert('Nenhum CT-e encontrado, vincule pelo menos um', 'warning')
         return false
-      }
-
-      return true
-    },
-
-    async validaFormularioDeAtores() {
-
-      const remetenteValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.remetente);
-      const destinatarioValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.destinatario);
-      const recebedorValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.recebedor) || this.dadosFormAtoresComplementar.sem_recebedor
-      const expedidorValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.expedidor) || this.dadosFormAtoresComplementar.sem_expedidor
-      const tomadorValid = this.verificaSeOsCamposObrigatoriosDoAtorEstaoPreenchidos(this.dadosFormAtores.tomador) || this.tomadorPreenchido;
-
-      if(!remetenteValid
-        || !destinatarioValid
-        || !recebedorValid
-        || !expedidorValid
-        || !tomadorValid
-      ) {
-        return false;
       }
 
       return true

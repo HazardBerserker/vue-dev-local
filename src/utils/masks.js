@@ -8,6 +8,15 @@ function aplicarMascara(valor, padrao) {
   return mask.masked(valor);
 }
 
+export function formataNumeroBR(numero) {
+  if (numero == null || isNaN(numero)) return '';
+
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(numero);
+}
+
 export function formataCNPJ(cnpj) {
   return aplicarMascara(cnpj, '##.###.###/####-##');
 }

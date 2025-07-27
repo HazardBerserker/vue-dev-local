@@ -50,5 +50,8 @@ export const endpoints = {
   usuario: {
     novo: `${URL_BASE}/usuarios`,
     atualiza: `${URL_BASE}/usuarios`
+  },
+  mdfe: {
+    emite: `${URL_BASE}/manifestos/emite-manifesto-pelo-webmania`,
   }
 };

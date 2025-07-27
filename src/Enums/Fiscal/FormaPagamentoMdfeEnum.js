@@ -3,7 +3,13 @@ export const FormaPagamentoMdfeEnum = [
   { value: 1, text: '1 - Pagamento a Prazo' },
 ];
 
-export const FormaPagamentoMdfeEnumDescricao = Object.freeze({
+export const FormaPagamentoMdfeEnumValorDescricao = Object.freeze({
   A_VISTA: 0,
   A_PRAZO: 1,
 })
+
+export const FormaPagamentoMdfeEnumDescricao = Object.freeze({
+  0: 'Pagamento à Vista',
+  1: 'Pagamento a Prazo',
+})
+
