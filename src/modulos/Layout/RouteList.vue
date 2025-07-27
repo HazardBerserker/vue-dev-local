@@ -162,9 +162,14 @@ export default {
         nome: 'Fiscal',
         rotasFilhas: [
           {
-            nome: 'Registrar CTE',
+            nome: 'Controle de CT-es',
             caminho: '/fiscal/registrar-cte',
-            icone: 'mdi-note-plus-outline'
+            icone: 'mdi-note-outline'
+          },
+          {
+            nome: 'Controle de MDF-es',
+            caminho: '/fiscal/controle-de-manifestos',
+            icone: 'mdi-text-box-outline'
           },
         ],
       },

@@ -123,14 +123,21 @@
         />
       </v-col>
       <v-col cols="12" md="2" class="py-2">
-        <InputTextMoeda
-          prefix="R$"
-          v-model="dadosFormCargaLocal.valor_carga"
-          label="Valor Carga *"
-          bg-color="white"
-          :rules="rules.campoObrigatorio"
-          clearable
-        />
+        <v-badge
+          class="w-100"
+          v-tooltip:bottom="'Gerado automaticamente ao vincular os CT-es'"
+          content="?"
+        >
+          <InputTextMoeda
+            prefix="R$"
+            v-model="dadosFormCargaLocal.valor_carga"
+            label="Valor Carga *"
+            bg-color="grey-lighten-3"
+            :rules="rules.campoObrigatorio"
+            readonly
+            clearable
+          />
+        </v-badge>
       </v-col>
     </v-row>
     <v-row>
@@ -569,7 +576,11 @@ export default {
   watch: {
     'dadosFormCarga.descarregamento': {
       handler() {
-        this.totalDeCtesVinculadosLocal = this.calculaQuantidadeDeCtesVinculados()
+        this.totalDeCtesVinculadosLocal = this.calculaQuantidadeDeCtesVinculados(),
+
+
+        this.dadosFormCargaLocal.valor_carga = this.calculaValorDaCarga()
+        console.log(this.dadosFormCargaLocal.valor_carga);
       },
       deep: true
     },
@@ -635,11 +646,37 @@ export default {
     },
   },
   methods: {
+    calculaValorDaCarga() {
+
+      let total = 0
+
+      for(const municipio in this.dadosFormCargaLocal.descarregamento) {
+        const valor = this.calculaValorDaCargaDosDocumentosFiscais(this.dadosFormCargaLocal.descarregamento[municipio]?.documentos_fiscais)
+        total += valor
+      }
+
+      if(total == 0) {
+        return null
+      }
+
+      return total
+    },
+
+    calculaValorDaCargaDosDocumentosFiscais(documentos_fiscais) {
+      let total = 0
+
+      for(const index in documentos_fiscais) {
+        total += parseFloat(documentos_fiscais[index].vCarga)
+      }
+
+      return total
+    },
+
     calculaQuantidadeDeCtesVinculados() {
       let total = 0
 
-      for(const item in this.dadosFormCargaLocal.descarregamento) {
-        const quantidadeDeDocumentos = this.dadosFormCargaLocal.descarregamento[item]?.documentos_fiscais?.length
+      for(const municipio in this.dadosFormCargaLocal.descarregamento) {
+        const quantidadeDeDocumentos = this.dadosFormCargaLocal.descarregamento[municipio]?.documentos_fiscais?.length
         total += quantidadeDeDocumentos
       }
 

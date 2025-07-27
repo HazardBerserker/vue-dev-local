@@ -12,7 +12,7 @@
                     <span v-html="ajudaMensagem"></span>
                 </v-tooltip>
             </template>
-            <v-text-field v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :hide-details="hideDetails" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled" :clearable="clearable">
+            <v-text-field v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :hide-details="hideDetails" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled" :clearable="clearable" :readonly="readonly">
                 <template #prepend-inner>
                   {{ prefix }}
                 </template>
@@ -22,7 +22,7 @@
                 </template>
             </v-text-field>
         </v-badge>
-        <v-text-field v-else v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :hide-details="hideDetails" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled" :clearable="clearable">
+        <v-text-field v-else v-model="modelValueLocal" :bg-color="bgColor" @keypress="onlyNumber" :hide-details="hideDetails" :label="label" :variant="variant" :density="density" :rules="rules" validate-on-blur :maxlength="contador" :disabled="disabled" :clearable="clearable" :readonly="readonly">
             <template #prepend-inner>
               {{ prefix }}
             </template>
@@ -107,6 +107,10 @@
         variant: {
           type: String,
           default: 'outlined'
+        },
+        readonly: {
+          type: Boolean,
+          default: false
         },
         density: {
           type: String,

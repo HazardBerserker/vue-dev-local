@@ -7,10 +7,11 @@ import Motoristas from '@/modulos/Motoristas/Motoristas.vue'
 import NovaCotacao from '@/modulos/Comercial/NovaCotacao.vue'
 import FretesCotacoes from '@/modulos/Comercial/FretesCotacoes.vue'
 import PagamentoMotoristas from '@/modulos/Financeiro/PagamentoMotoristas.vue'
-import RegistrarCte from '@/modulos/Fiscal/RegistrarCte.vue'
+import ControleDeCtes from '@/modulos/Fiscal/ControleDeCtes.vue'
 import Dashboard from '@/modulos/Dashboard/Dashboard.vue'
 import MeusFretes from '@/modulos/MenuDoCliente/MeusFretes.vue'
 import NotFound from '@/components/NotFound/NotFound.vue'
+import ControleDeManifestos from '@/modulos/Fiscal/ControleDeManifestos.vue'
 
 const routes = [
   {
@@ -44,23 +45,28 @@ const routes = [
       },
       {
         path: 'comercial/nova-cotacao',
-        name: 'Nova Cotação',
+        name: 'NovaCotacao',
         component: NovaCotacao
       },
       {
         path: 'comercial/fretes-cotacoes',
-        name: 'Fretes Cotações',
+        name: 'FretesCotacoes',
         component: FretesCotacoes
       },
       {
         path: 'financeiro/pagamento-motoristas',
-        name: 'Pagamento de Motoristas',
+        name: 'PagamentoDeMotoristas',
         component: PagamentoMotoristas
       },
       {
         path: 'fiscal/registrar-cte',
-        name: 'Registrar CTE',
-        component: RegistrarCte
+        name: 'ControleDeCtes',
+        component: ControleDeCtes
+      },
+      {
+        path: 'fiscal/controle-de-manifestos',
+        name: 'ControledeManifestos',
+        component: ControleDeManifestos
       },
       {
         path: 'menu-do-cliente/meus-fretes',

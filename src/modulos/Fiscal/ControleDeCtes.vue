@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-breadcrumbs :items="['Fiscal', 'Registrar CTE']" class="mb-6"></v-breadcrumbs>
+    <v-breadcrumbs :items="['Fiscal', 'Controle de CT-es']" class="mb-6"></v-breadcrumbs>
 
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
@@ -436,9 +436,9 @@ import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
-import BtnCreateCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnCreateCte.vue';
-import BtnEmiteCte from '@/components/Fiscal/RegistrarCte/Embeeded/BtnEmiteCte.vue';
-import BtnEmiteMDFe from '@/components/Fiscal/RegistrarMDFe/Embeeded/BtnEmiteMDFe.vue';
+import BtnCreateCte from '@/components/Fiscal/ControleDeCtes/Embeeded/BtnCreateCte.vue';
+import BtnEmiteCte from '@/components/Fiscal/ControleDeCtes/Embeeded/BtnEmiteCte.vue';
+import BtnEmiteMDFe from '@/components/Fiscal/ControleDeManifestos/Embeeded/BtnEmiteMDFe.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { StatusCteEnum, StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteEnum';
@@ -555,7 +555,7 @@ export default {
 
         cabecalho: [
           {
-            title: 'ID CTE',
+            title: 'ID CT-e',
             key: 'Id_CTe',
             align: 'center',
             width: '210',
