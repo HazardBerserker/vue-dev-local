@@ -312,7 +312,7 @@
           Atualizar
         </v-btn>
 
-        <v-btn
+        <!-- <v-btn
           color="green-darken-3"
           prepend-icon="mdi-check"
           variant="tonal"
@@ -323,20 +323,16 @@
           @click="autorizaCte"
         >
           Autorizar
-        </v-btn>
+        </v-btn> -->
 
-        <v-btn
-          color="red-darken-2"
-          prepend-icon="mdi-cancel"
-          variant="tonal"
-          density="comfortable"
-          class="text-white"
-          rounded="pill"
+        <BtnCancelaCte
+          :ctes_autorizados="datatable.ctes_autorizados"
+          :ctes_cancelados="datatable.ctes_cancelados"
+          :ctes_finalizados="datatable.ctes_finalizados"
+          :itensSelecionados="datatable.itensSelecionados"
+          :cte="itemSelecionado"
           :disabled="datatable.carregando || desativaInputDeCancelar"
-          @click="cancelaCte"
-        >
-          Cancelar
-        </v-btn>
+        />
 
         <BtnEmiteCte/>
 
@@ -474,6 +470,7 @@ import InputText from '@/components/Form/InputText.vue';
 import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 import { estadosBrasileiros } from '@/Enums/estadosEnum';
 import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
+import BtnCancelaCte from '@/components/Fiscal/ControleDeCtes/Embeeded/BtnCancelaCte.vue';
 
 export default {
   name: 'ControleDeCtes',
@@ -484,6 +481,7 @@ export default {
     InputText,
     BtnEmiteMDFe,
     BtnEmiteCte,
+    BtnCancelaCte
   },
   created() {
     this.dialog = inject('dialog')
@@ -530,7 +528,7 @@ export default {
       SimENaoEnumDescricao,
       SimENaoEnum,
       mostrarFiltros: false,
-      desativaInputDeAutorizar: false,
+      // desativaInputDeAutorizar: false,
       desativaInputDeCancelar: false,
       itemSelecionado: {},
       permissao: false,
@@ -807,27 +805,23 @@ export default {
           return;
         }
 
+        this.itemSelecionado = item
+
         if(item.status == StatusCteEnumDescricao.CANCELADO) {
           this.desativaInputDeCancelar = true
-          this.desativaInputDeAutorizar = false
-        }
-
-        if(item.status == StatusCteEnumDescricao.AUTORIZADO) {
-          this.desativaInputDeAutorizar = true
-          this.desativaInputDeCancelar = false
+          return
         }
 
         if(item.possui_pagamento == SimENaoEnumDescricao.SIM) {
           this.desativaInputDeCancelar = true
+          return
         }
 
-        this.itemSelecionado = item
-
+        this.desativaInputDeCancelar = false
         return
       }
 
       this.itemSelecionado = {}
-      this.desativaInputDeAutorizar = true
       this.desativaInputDeCancelar = true
     },
 
@@ -998,59 +992,59 @@ export default {
       }
     },
 
-    async autorizaCte() {
-      const alertStore = useAlertStore()
-      const loading = useLoadingStore()
+    // async autorizaCte() {
+    //   const alertStore = useAlertStore()
+    //   const loading = useLoadingStore()
 
-      if(this.datatable.itensSelecionados.length != 1) {
-        alertStore.addAlert('Selecione um item por vez para Autorizar', 'warning');
-        return
-      }
+    //   if(this.datatable.itensSelecionados.length != 1) {
+    //     alertStore.addAlert('Selecione um item por vez para Autorizar', 'warning');
+    //     return
+    //   }
 
-      if(!this.itemSelecionado) {
-        alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
-        return;
-      }
+    //   if(!this.itemSelecionado) {
+    //     alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
+    //     return;
+    //   }
 
-      const mensagem = `Deseja realmente Autorizar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
+    //   const mensagem = `Deseja realmente Autorizar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
 
-      const confirmado = await this.dialog.value.open({
-        title: `Desativar CTE`,
-        message: mensagem,
-        titleColor: 'success'
-      })
+    //   const confirmado = await this.dialog.value.open({
+    //     title: `Desativar CTE`,
+    //     message: mensagem,
+    //     titleColor: 'success'
+    //   })
 
-      if(!confirmado) {
-        return
-      }
+    //   if(!confirmado) {
+    //     return
+    //   }
 
-      loading.show('Autorizando CTE...')
-      const url = `${endpoints.cte.autoriza}/${this.itemSelecionado.Id_CTe}`;
+    //   loading.show('Autorizando CTE...')
+    //   const url = `${endpoints.cte.autoriza}/${this.itemSelecionado.Id_CTe}`;
 
-      try {
-        const resposta =  await ApiService({
-          method: 'post',
-          url: `${url}`,
-        })
+    //   try {
+    //     const resposta =  await ApiService({
+    //       method: 'post',
+    //       url: `${url}`,
+    //     })
 
-        alertStore.addAlert(
-          `${resposta?.data?.message}`,
-          'success'
-        );
+    //     alertStore.addAlert(
+    //       `${resposta?.data?.message}`,
+    //       'success'
+    //     );
 
-        this.itemSelecionado.status = StatusCteEnumDescricao.AUTORIZADO
-        this.datatable.ctes_autorizados += 1
-        this.datatable.ctes_cancelados -= 1
+    //     this.itemSelecionado.status = StatusCteEnumDescricao.AUTORIZADO
+    //     this.datatable.ctes_autorizados += 1
+    //     this.datatable.ctes_cancelados -= 1
 
-        this.datatable.itensSelecionados = [];
-        this.itemSelecionado = {};
+    //     this.datatable.itensSelecionados = [];
+    //     this.itemSelecionado = {};
 
-      } catch (error) {
-        alertStore.addAlert(`Erro ao Autorizar CTE: ${error?.response?.data?.message}`, 'error');
-      } finally {
-        loading.hide()
-      }
-    },
+    //   } catch (error) {
+    //     alertStore.addAlert(`Erro ao Autorizar CTE: ${error?.response?.data?.message}`, 'error');
+    //   } finally {
+    //     loading.hide()
+    //   }
+    // },
 
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {

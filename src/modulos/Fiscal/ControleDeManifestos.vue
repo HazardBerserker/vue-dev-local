@@ -301,18 +301,6 @@
 
     <div class="py-3 d-flex justify-space-between mt-6 flex-md-row flex-column ga-2" v-if="permissao">
       <div class="d-flex ga-2 flex-md-row flex-column">
-        <!-- <v-btn
-          color="red-darken-2"
-          prepend-icon="mdi-cancel"
-          variant="tonal"
-          density="comfortable"
-          class="text-white"
-          rounded="pill"
-          :disabled="datatable.carregando || desativaInputDeCancelar"
-          @click="cancelaManifesto"
-        >
-          Cancelar
-        </v-btn> -->
 
         <BtnCancelaMDFe
           :mdfes_autorizados="datatable.manifestos_autorizados"
@@ -827,17 +815,14 @@ export default {
           return;
         }
 
+        this.itemSelecionado = item
+
         if(item.status == StatusManifestoEnumDescricao.CANCELADO) {
           this.desativaInputDeCancelar = true
+          return
         }
 
-        if(item.possui_pagamento == SimENaoEnumDescricao.SIM) {
-          this.desativaInputDeCancelar = true
-        }
-
-        this.itemSelecionado = item
         this.desativaInputDeCancelar = false
-
         return
       }
 

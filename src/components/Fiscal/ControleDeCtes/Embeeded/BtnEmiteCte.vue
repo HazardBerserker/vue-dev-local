@@ -620,8 +620,6 @@ export default {
           data: dadosParaEnvio
         });
 
-        console.log(resposta);
-
         alertStore.addAlert(resposta?.data.message, 'success')
 
         // this.limpaCampos()
@@ -688,6 +686,130 @@ export default {
       console.log(dadosTratados);
 
       return dadosTratados
+    },
+
+    limpaCampos() {
+
+      this.dadosFormGeral = {
+        cfop: '5353',
+        classificacao_tributaria: 'SN',
+        natureza_operacao:  null,
+        rntrc: '57174199',
+        finalidade: { value: '0', text: '0 - Normal' },
+        tipo: { value: '0', text: '0 - Normal' },
+        modalidade: { value: '1', text: '1 - Rodoviário' },
+        local_inicio_prestacao: {
+          cidade: null,
+          uf: null,
+        },
+        local_termino_prestacao: {
+          cidade: null,
+          uf: null,
+        },
+        servico: {
+          valor_total: null,
+          valor_recebido: null,
+          componentes:  {}
+        },
+        observacoes_gerais: null,
+      }
+      // dadosFormAtores
+      this.dadosFormAtores = {
+        remetente: {
+          nome_razao: null,
+          nome_fantasia: null,
+          cnpj: null,
+          telefone: null,
+          endereco: null,
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cep: null,
+          cidade: null,
+          uf: null,
+          ie: null,
+        },
+        destinatario: {
+          nome_razao: null,
+          nome_fantasia: null,
+          cnpj: null,
+          telefone: null,
+          endereco: null,
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cep: null,
+          cidade: null,
+          uf: null,
+          ie: null,
+        },
+        tomador: {
+          nome_razao: null,
+          nome_fantasia: null,
+          cnpj: null,
+          telefone: null,
+          endereco: null,
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cep: null,
+          cidade: null,
+          uf: null,
+          ie: null,
+        },
+        expedidor: {
+          nome_razao: null,
+          nome_fantasia: null,
+          cnpj: null,
+          telefone: null,
+          endereco: null,
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cep: null,
+          cidade: null,
+          uf: null,
+          ie: null,
+        },
+        recebedor: {
+          nome_razao: null,
+          nome_fantasia: null,
+          cnpj: null,
+          telefone: null,
+          endereco: null,
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cep: null,
+          cidade: null,
+          uf: null,
+          ie: null,
+        }
+      }
+      this.dadosFormAtoresComplementar = {
+        contribuicao_tomador: 1,
+        sem_expedidor: true,
+        sem_recebedor: true,
+      }
+      this.dadosFormCarga = {
+        valor_total: null,
+        valor_averbacao: null,
+        produto_predominante: null,
+        caracteristicas: null, //Exemplos: Fria, Granel ou Refrigerada
+        quantidades: []
+      }
+      this.dadosFormDocumento = []
+
+      this.stepAtual = 1
+      this.formAtorAtual = 1
+      this.expedidorEhIgualRemetente = false
+      this.recebedorEhIgualDestinatario = false
+
+      this.tomadorEhIgualRemetente = true
+      this.tomadorEhIgualDestinatario = false
+      this.tomadorEhIgualRecebedor = false
+      this.tomadorEhIgualExpedidor = false
+      this.tomadorPreenchido = true
     },
 
     defineIndicadorTomador() {

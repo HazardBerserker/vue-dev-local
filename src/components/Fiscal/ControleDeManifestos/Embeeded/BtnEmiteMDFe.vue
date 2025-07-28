@@ -294,12 +294,10 @@ export default {
           data: dadosParaEnvio
         });
 
-        console.log(resposta);
-
         alertStore.addAlert(resposta?.data.message, 'success')
 
-        // this.limpaCampos()
-        // this.closeDialog()
+        this.limpaCampos()
+        this.closeDialog()
 
       } catch (erro) {
         alertStore.addAlert(erro.response?.data?.message, 'error')
@@ -364,13 +362,98 @@ export default {
 
       dados.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela = dataVencimentoParcela
 
-      console.log('dados sem tratamento', dados);
-
       const dadosTratados = limparCamposVazios(dados)
 
-      console.log('dados tratados', dadosTratados);
-
       return dadosTratados
+    },
+
+    limpaCampos() {
+      this.stepsValidos = {
+        1: false,
+        2: false,
+      }
+
+      this.dadosFormCarga = {
+        emitente: 1,
+        modalidade: '1',
+        transportador: 2,
+        uf_carregamento: null,
+        uf_descarregamento: null,
+        percurso: [],
+        valor_carga: null,
+        unidade: '01',
+        peso_bruto: null,
+        carregamento: [],
+        descarregamento: [],
+        produto_predominante: {
+          tipo_carga: '05',
+          nome: null,
+          ncm: null,
+          lotacao: {
+            carregamento: {},
+            descarregamento: {}
+          },
+        },
+        seguro: [
+          {
+            responsavel: {
+              tipo_responsavel: 1,
+              cnpj: null
+            },
+            seguradora: {
+              nome_seguradora: 'Porto Seguro',
+              cnpj: 61198164000160
+            },
+            numero_apolice: '4250126501',
+            numero_averbacao: ['0']
+          },
+        ],
+        rodoviario: {
+          rntrc: '57174199',
+          veiculo_tracao: {
+            placa: null,
+            tara: null,
+            uf_licenciamento: null,
+            tipo_rodado: null,
+            tipo_carroceria: null,
+            proprietario: {}
+          },
+          condutor: [],
+          contratante: [
+            {
+              cnpj: "55963693000100"
+            }
+          ],
+          pagamento_frete: [
+            {
+              cpf: null,
+              nome: null,
+              valor_contrato: null,
+              forma_pagamento: 0,
+              valor_adiantamento: null,
+              componentes_pagamento_frete: [],
+              informacoes_bancarias: {
+                tipo_informacao_bancaria: '3',
+                numero_banco: null,
+                numero_agencia:null
+              },
+              informacoes_pagamento_prazo: [
+                {
+                  data_vencimento_parcela: null,
+                  valor_parcela: null
+                }
+              ]
+            }
+          ]
+        }
+      }
+
+      this.dadosFormCargaAuxiliar = {
+        totalDeCtesVinculados: 0
+      }
+
+      this.estadosESeusMunicipios ={}
+      this.stepAtual = 1
     },
 
     formataDocumentosFiscaisParaEnvio(documentos_fiscais) {
