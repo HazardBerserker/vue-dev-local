@@ -15,8 +15,33 @@
               <v-icon>mdi-note-check</v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
-              <span class="text-body-2 text-white">CTEs Autorizados</span>
+              <span class="text-body-2 text-white">CT-Es Finalizados</span>
               <v-chip variant="flat" size="small" color="white" class="mt-1 text-green-darken-4">
+                  <v-fade-transition mode="out-in">
+                      <span v-if="!datatable.carregando">
+                      <strong :key="'inativos'">
+                        {{ datatable.ctes_finalizados }}
+                      </strong>
+                    </span>
+                      <span v-else>
+                        <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
+                      </span>
+                  </v-fade-transition>
+              </v-chip>
+          </div>
+      </v-card>
+
+      <v-card
+        width="250"
+        class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
+        color="blue-darken-4"
+      >
+          <v-avatar size="40" class="me-4 bg-white text-blue-darken-4">
+              <v-icon>mdi-note-check</v-icon>
+          </v-avatar>
+          <div class="d-flex flex-column">
+              <span class="text-body-2 text-white">CT-Es Autorizados</span>
+              <v-chip variant="flat" size="small" color="white" class="mt-1 text-blue-darken-4">
                   <v-fade-transition mode="out-in">
                       <span v-if="!datatable.carregando">
                       <strong :key="'inativos'">
@@ -24,7 +49,7 @@
                       </strong>
                     </span>
                       <span v-else>
-                        <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
+                        <v-progress-circular indeterminate color="blue-darken-2" size="15"></v-progress-circular>
                       </span>
                   </v-fade-transition>
               </v-chip>
@@ -396,7 +421,7 @@
                 prepend-icon="mdi-alert-circle-outline"
                 variant="flat"
                 size="small"
-                :color="item.status == StatusCteEnumDescricao.CANCELADO ? 'red-darken-3' : 'green-darken-3'"
+                :color="defineCorDoStatus(item.status)"
               >
                 {{ StatusCteEnum[item.status] }}
               </v-chip>
@@ -451,7 +476,7 @@ import { estadosBrasileiros } from '@/Enums/estadosEnum';
 import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
 
 export default {
-  name: 'CtesScreen',
+  name: 'ControleDeCtes',
   components: {
     GlobalAlertFixed,
     BtnCreateCte,
@@ -529,11 +554,16 @@ export default {
         {
           label: StatusCteEnum[StatusCteEnumDescricao.CANCELADO],
           value: StatusCteEnumDescricao.CANCELADO,
+        },
+        {
+          label: StatusCteEnum[StatusCteEnumDescricao.FINALIZADO],
+          value: StatusCteEnumDescricao.FINALIZADO,
         }
       ],
       datatable: {
         ctes_autorizados: null,
         ctes_cancelados: null,
+        ctes_finalizados: null,
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -674,6 +704,20 @@ export default {
     }
   },
   methods: {
+
+    defineCorDoStatus(status) {
+      const cancelado  = StatusCteEnumDescricao.CANCELADO
+      const autorizado = StatusCteEnumDescricao.AUTORIZADO
+      const finalizado = StatusCteEnumDescricao.FINALIZADO
+
+      const statusColor = {
+        [cancelado]: 'red-darken-3',
+        [autorizado]: 'blue-darken-3',
+        [finalizado]: 'green-darken-3',
+      }
+
+      return statusColor[status] || 'grey'
+    },
 
     async visualizaPdf() {
 
@@ -842,7 +886,7 @@ export default {
       this.datatable.carregando = true;
       if(!this.permissao) {
         const loading = useLoadingStore()
-        loading.show('Carregando Ctes...')
+        loading.show('Carregando CT-es...')
       }
       this.datatable.itensSelecionados = [];
 
@@ -874,6 +918,7 @@ export default {
           this.datatable.totalRegistros = resposta.data.data.total;
           this.datatable.ctes_autorizados = resposta.data.data.ctes_autorizados;
           this.datatable.ctes_cancelados = resposta.data.data.ctes_cancelados;
+          this.datatable.ctes_finalizados = resposta.data.data.ctes_finalizados;
         }
 
       } catch (error) {

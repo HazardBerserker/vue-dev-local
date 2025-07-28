@@ -53,6 +53,7 @@ export const endpoints = {
   },
   mdfe: {
     datatable: `${URL_BASE}/manifestos/datatable`,
-    emite: `${URL_BASE}/manifestos/emite-manifesto-pelo-webmania`,
+    emite: `${URL_BASE}/manifestos/emite`,
+    cancela: `${URL_BASE}/manifestos/cancela`,
   }
 };

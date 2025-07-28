@@ -187,30 +187,10 @@
                   ></v-select>
                 </v-col>
 
-                <v-col cols="12" md="3">
-                  <v-combobox
-                    :loading="comboBoxRemetenteLoading"
-                    @keyup="(event) => {
-                      const tecla = event.key
-                      const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
-                      if (teclaValida) buscarRemetente()
-                    }"
-                    v-model="filtros.rem_xNome"
-                    density="compact"
-                    variant="outlined"
-                    label="Remetente"
-                    placeholder="Comece a digitar..."
-                    :items="listaDeRemetentes"
-                    item-title="razao_social"
-                    item-value="id_cliente"
-                    hide-details
-                  ></v-combobox>
-                </v-col>
-
-                <v-col cols="12" md="3">
+                <v-col cols="12" md="4">
                   <v-text-field
-                    v-model="filtros.dest_xNome"
-                    label="Destinatário"
+                    v-model="filtros.condutor_xNome"
+                    label="Nome do Condutor"
                     variant="outlined"
                     density="compact"
                     clearable
@@ -218,26 +198,13 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" md="2">
-                  <v-text-field
-                    v-model="filtros.dest_xMun"
-                    label="Cidade Destinatário"
-                    variant="outlined"
-                    density="compact"
-                    clearable
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row dense>
                 <v-col cols="12" md="2">
                   <v-select
-                    v-model="filtros.dest_UF"
+                    v-model="filtros.UFIni"
                     variant="outlined"
                     density="compact"
                     :items="estadosBrasileiros"
-                    label="UF Destinatário"
+                    label="UF Início"
                     item-value="value"
                     item-title="text"
                     clearable
@@ -246,34 +213,69 @@
                   </v-select>
                 </v-col>
 
+                 <v-col cols="12" md="2">
+                    <v-select
+                      v-model="filtros.UFFim"
+                      variant="outlined"
+                      density="compact"
+                      :items="estadosBrasileiros"
+                      label="UF Destino"
+                      item-value="value"
+                      item-title="text"
+                      clearable
+                      hide-details
+                    >
+                    </v-select>
+                </v-col>
+              </v-row>
+
+              <v-row dense>
                 <v-col cols="12" md="2">
-                  <InputTextMoeda v-model="filtros.vCarga" prefix="R$" label="Nota:" clearable/>
+                  <InputText
+                    density="compact"
+                    variant="outlined"
+                    bg-color="white"
+                    label="CPF do Condutor"
+                    v-model="filtros.condutor_CPF"
+                    mask="###.###.###-##"
+                    hide-details
+                    counter="14"
+                  />
                 </v-col>
 
                 <v-col cols="12" md="2">
-                   <v-text-field
-                    v-model="filtros.tomador"
-                    label="Tomador"
+                  <InputText
+                    density="compact"
+                    variant="outlined"
+                    bg-color="white"
+                    label="Placa do Veículo"
+                    v-model="filtros.placa_veiculo"
+                    mask="#######"
+                    hide-details
+                    counter="7"
+                  />
+                </v-col>
+
+                <v-col cols="12" md="2">
+                  <InputTextMoeda
+                    v-model="filtros.valor_carga"
+                    label="Valor da Carga"
                     variant="outlined"
                     density="compact"
                     clearable
                     hide-details
-                  ></v-text-field>
+                  />
                 </v-col>
 
                 <v-col cols="12" md="2">
-                  <InputText label="Tom. CNPJ" v-model="filtros.tomador_cnpj" mask="##.###.###/####-##" counter="18" density="compact"/>
-                </v-col>
-
-                <v-col cols="12" md="4">
-                 <v-text-field
-                    v-model="filtros.xObs"
-                    label="Observação"
+                  <InputTextMoeda
+                    v-model="filtros.peso_bruto"
+                    label="Peso Bruto"
                     variant="outlined"
                     density="compact"
                     clearable
                     hide-details
-                  ></v-text-field>
+                  />
                 </v-col>
               </v-row>
 
@@ -299,7 +301,7 @@
 
     <div class="py-3 d-flex justify-space-between mt-6 flex-md-row flex-column ga-2" v-if="permissao">
       <div class="d-flex ga-2 flex-md-row flex-column">
-        <v-btn
+        <!-- <v-btn
           color="red-darken-2"
           prepend-icon="mdi-cancel"
           variant="tonal"
@@ -310,7 +312,16 @@
           @click="cancelaManifesto"
         >
           Cancelar
-        </v-btn>
+        </v-btn> -->
+
+        <BtnCancelaMDFe
+          :mdfes_autorizados="datatable.manifestos_autorizados"
+          :mdfes_cancelados="datatable.manifestos_cancelados"
+          :mdfes_finalizados="datatable.manifestos_finalizados"
+          :itensSelecionados="datatable.itensSelecionados"
+          :mdfe="itemSelecionado"
+          :disabled="datatable.carregando || desativaInputDeCancelar"
+        />
 
         <BtnEmiteMDFe/>
 
@@ -481,12 +492,13 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData, formataCNPJ, formataMoeda } from '@/utils/masks';
+import { formataCEP, formataData, formataCNPJ, formataMoeda, formataNumeroBR } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
 import { endpoints } from '@/utils/apiEndpoints';
 import BtnEmiteMDFe from '@/components/Fiscal/ControleDeManifestos/Embeeded/BtnEmiteMDFe.vue';
+import BtnCancelaMDFe from '@/components/Fiscal/ControleDeManifestos/Embeeded/BtnCancelaMDFe.vue';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { StatusManifestoEnum, StatusManifestoEnumDescricao } from '@/Enums/Fiscal/StatusManifestoEnum';
@@ -494,7 +506,6 @@ import { inject } from 'vue'
 import { format as formatDate } from 'date-fns'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import InputText from '@/components/Form/InputText.vue';
-import { buscaListaDeClientesHelper } from '@/helpers/buscaListaDeClientes';
 import { estadosBrasileiros } from '@/Enums/estadosEnum';
 import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
 
@@ -505,6 +516,7 @@ export default {
     InputTextMoeda,
     InputText,
     BtnEmiteMDFe,
+    BtnCancelaMDFe
   },
   created() {
     this.dialog = inject('dialog')
@@ -577,7 +589,11 @@ export default {
         {
           label: StatusManifestoEnum[StatusManifestoEnumDescricao.CANCELADO],
           value: StatusManifestoEnumDescricao.CANCELADO,
-        }
+        },
+        {
+          label: StatusManifestoEnum[StatusManifestoEnumDescricao.FINALIZADO],
+          value: StatusManifestoEnumDescricao.FINALIZADO,
+        },
       ],
       datatable: {
         colunasDoCteVisiveis: [
@@ -738,12 +754,12 @@ export default {
     async visualizaPdf() {
 
       const item = this.datatable.itens.find(item => {
-        return item.Id_CTe == this.datatable.itensSelecionados
+        return item.Id_MDFE == this.datatable.itensSelecionados
       })
 
       if(!item.pdf_path) {
         const alertStore = useAlertStore()
-        alertStore.addAlert(`CTE <strong>${item.Id_CTe}</strong> não possui PDF vinculado, tente outro`, 'warning');
+        alertStore.addAlert(`MDF-e <strong>${item.Id_MDFE}</strong> não possui PDF vinculado, tente outro`, 'warning');
         return
       }
 
@@ -758,12 +774,12 @@ export default {
 
     async visualizaXml() {
       const item = this.datatable.itens.find(item => {
-        return item.Id_CTe == this.datatable.itensSelecionados
+        return item.Id_MDFE == this.datatable.itensSelecionados
       })
 
       if(!item.xml_path) {
         const alertStore = useAlertStore()
-        alertStore.addAlert(`CTE <strong>${item.Id_CTe}</strong> não possui XML vinculado, tente outro`, 'warning');
+        alertStore.addAlert(`MDF-e <strong>${item.Id_MDFE}</strong> não possui XML vinculado, tente outro`, 'warning');
         return
       }
 
@@ -774,18 +790,6 @@ export default {
       }
 
       window.open(urlFinal, '_blank');
-    },
-
-    async buscarRemetente() {
-      await buscaListaDeClientesHelper(
-        this.filtros.rem_xNome,
-        (clientes) => {
-          this.listaDeRemetentes = clientes;
-        },
-        (loading) => {
-          this.comboBoxRemetenteLoading = loading;
-        }
-      );
     },
 
     quantidadeDeFiltrosAplicados() {
@@ -815,22 +819,16 @@ export default {
         const alertStore = useAlertStore()
 
         const item = this.datatable.itens.find(item => {
-          return item.Id_CTe == this.datatable.itensSelecionados
+          return item.Id_MDFE == this.datatable.itensSelecionados
         })
 
         if(!item) {
-          alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
+          alertStore.addAlert('MDF-e com ID selecionado não encontrado, tente novamente', 'warning');
           return;
         }
 
         if(item.status == StatusManifestoEnumDescricao.CANCELADO) {
           this.desativaInputDeCancelar = true
-          this.desativaInputDeAutorizar = false
-        }
-
-        if(item.status == StatusManifestoEnumDescricao.AUTORIZADO) {
-          this.desativaInputDeAutorizar = true
-          this.desativaInputDeCancelar = false
         }
 
         if(item.possui_pagamento == SimENaoEnumDescricao.SIM) {
@@ -838,12 +836,12 @@ export default {
         }
 
         this.itemSelecionado = item
+        this.desativaInputDeCancelar = false
 
         return
       }
 
       this.itemSelecionado = {}
-      this.desativaInputDeAutorizar = true
       this.desativaInputDeCancelar = true
     },
 
@@ -969,19 +967,19 @@ export default {
       }
 
       if(!this.itemSelecionado) {
-        alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
+        alertStore.addAlert('MDF-e com ID selecionado não encontrado, tente novamente', 'warning');
         return;
       }
 
       if(this.itemSelecionado.possui_pagamento == SimENaoEnumDescricao.SIM) {
-        alertStore.addAlert('O CTE possui um Pagamento associado e não pode ser cancelado', 'warning');
+        alertStore.addAlert('O MDF-e possui um Pagamento associado e não pode ser cancelado', 'warning');
         return
       }
 
-      const mensagem = `Deseja realmente Cancelar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
+      const mensagem = `Deseja realmente Cancelar o MDF-e de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
 
       const confirmado = await this.dialog.value.open({
-        title: `Cancelar CTE`,
+        title: `Cancelar MDF-e`,
         message: mensagem,
         titleColor: 'error'
       })
@@ -990,7 +988,7 @@ export default {
         return
       }
 
-      loading.show('Cancelando CTE...')
+      loading.show('Cancelando MDF-e...')
       const url = `${endpoints.manifesto.cancela}/${this.datatable.itensSelecionados[0]}`;
 
       try {
@@ -1004,92 +1002,25 @@ export default {
           'success'
         );
 
+        if(this.itemSelecionado.status == StatusManifestoEnumDescricao.AUTORIZADO) {
+          this.datatable.manifestos_autorizados -= 1
+        }
+
+        if(this.itemSelecionado.status == StatusManifestoEnumDescricao.FINALIZADO) {
+          this.datatable.manifestos_finalizados -= 1
+        }
+
         this.itemSelecionado.status = StatusManifestoEnumDescricao.CANCELADO
-        this.datatable.manifestos_autorizados -= 1
         this.datatable.manifestos_cancelados += 1
 
         this.datatable.itensSelecionados = [];
         this.itemSelecionado = {};
 
       } catch (error) {
-        alertStore.addAlert(`Erro ao Cancelar CTE: ${error?.response?.data?.message}`, 'error');
+        alertStore.addAlert(`Erro ao Cancelar MDF-e: ${error?.response?.data?.message}`, 'error');
       } finally {
         loading.hide()
       }
-    },
-
-    async autorizaManifesto() {
-      const alertStore = useAlertStore()
-      const loading = useLoadingStore()
-
-      if(this.datatable.itensSelecionados.length != 1) {
-        alertStore.addAlert('Selecione um item por vez para Autorizar', 'warning');
-        return
-      }
-
-      if(!this.itemSelecionado) {
-        alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
-        return;
-      }
-
-      const mensagem = `Deseja realmente Autorizar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
-
-      const confirmado = await this.dialog.value.open({
-        title: `Desativar CTE`,
-        message: mensagem,
-        titleColor: 'success'
-      })
-
-      if(!confirmado) {
-        return
-      }
-
-      loading.show('Autorizando CTE...')
-      const url = `${endpoints.manifesto.autoriza}/${this.itemSelecionado.Id_CTe}`;
-
-      try {
-        const resposta =  await ApiService({
-          method: 'post',
-          url: `${url}`,
-        })
-
-        alertStore.addAlert(
-          `${resposta?.data?.message}`,
-          'success'
-        );
-
-        this.itemSelecionado.status = StatusManifestoEnumDescricao.AUTORIZADO
-        this.datatable.manifestos_autorizados += 1
-        this.datatable.manifestos_cancelados -= 1
-
-        this.datatable.itensSelecionados = [];
-        this.itemSelecionado = {};
-
-      } catch (error) {
-        alertStore.addAlert(`Erro ao Autorizar CTE: ${error?.response?.data?.message}`, 'error');
-      } finally {
-        loading.hide()
-      }
-    },
-
-    onAcrescentaODadoNoArrayLocalmente(itemCriado) {
-      const novoItem = {
-        Id_CTe: itemCriado.Id_CTe,
-        rem_xNome: itemCriado.rem_xNome,
-        dest_xNome: itemCriado.dest_xNome,
-        dest_xMun: itemCriado.dest_xMun,
-        dest_UF: itemCriado.dest_UF,
-        dhEmi: itemCriado.dhEmi,
-        vCarga: itemCriado.vCarga,
-        vTPrest: itemCriado.vTPrest,
-        status: itemCriado.status,
-        possui_pagamento: itemCriado.possui_pagamento,
-        data_criacao: formataData(itemCriado.data_criacao),
-        usuario_criacao: itemCriado.usuario_criacao,
-        usuario_ultima_alteracao: itemCriado.usuario_ultima_alteracao,
-        data_ultima_alteracao: formataData(itemCriado.data_ultima_alteracao)
-      }
-      this.datatable.itens.unshift(novoItem)
     },
 
     async exportarExcel() {
@@ -1100,26 +1031,28 @@ export default {
       const itensFormatados = this.datatable.itens.map(item => ({
         ...item,
         status: StatusManifestoEnum[item.status],
-        vCarga: formataMoeda(item.vCarga),
-        vTPrest: formataMoeda(item.vTPrest),
+        vCarga: formataMoeda(item.valor_carga),
+        vTPrest: formataNumeroBR(item.peso_bruto),
       }));
 
       // Adicionando cabeçalhos
       worksheet.columns = [
-      { header: 'ID', key: 'Id_CTe', width: 15 },
-      { header: 'Status', key: 'status', width: 15 },
-      { header: 'Remetente', key: 'rem_xNome', width: 40 },
-      { header: 'Destinatário', key: 'dest_xNome', width: 40 },
-      { header: 'Cidade Destinatário', key: 'dest_xMun', width: 40 },
-      { header: 'UF Destinatário', key: 'dest_UF', width: 30 },
-      { header: 'Emissão', key: 'dhEmi', width: 25 },
-      { header: 'Nota', key: 'vCarga', width: 30 },
-      { header: 'Frete', key: 'vTPrest', width: 30 },
-      { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
-      { header: 'Data Criação', key: 'data_criacao', width: 25 },
-      { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
-      { header: 'Data Última Alteração', key: 'data_ultima_alteracao', width: 25 }
-    ];
+        { header: 'ID MDF-e', key: 'Id_MDFE', width: 30 },
+        { header: 'Status', key: 'status', width: 20 },
+        { header: 'Emissão', key: 'dhEmi', width: 25 },
+        { header: 'UF Início', key: 'UFIni', width: 15 },
+        { header: 'UF Destino', key: 'UFFim', width: 15 },
+        { header: 'Chave MDF-e', key: 'chaveMDFe', width: 50 },
+        { header: 'Placa do Veículo', key: 'placa_veiculo', width: 25 },
+        { header: 'CPF do Condutor', key: 'condutor_CPF', width: 25 },
+        { header: 'Nome do Condutor', key: 'condutor_xNome', width: 35 },
+        { header: 'Valor da Carga', key: 'valor_carga', width: 25 },
+        { header: 'Peso Bruto', key: 'peso_bruto', width: 20 },
+        { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
+        { header: 'Data Criação', key: 'data_criacao', width: 25 },
+        { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
+        { header: 'Data Última Alteração', key: 'data_ultima_alteracao', width: 25 }
+      ];
 
       // Adicionando os dados
       itensFormatados.forEach(item => worksheet.addRow(item));
