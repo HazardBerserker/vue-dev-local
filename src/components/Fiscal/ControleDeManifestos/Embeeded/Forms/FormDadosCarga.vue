@@ -292,7 +292,7 @@
                       <strong>{{item.nome_municipio}}: </strong>
                     </span>
                     <v-chip label color="redNeveah" variant="flat">
-                      {{item.codigo_municipio}}
+                      <div><strong>Código do Município: </strong>{{item.codigo_municipio}}</div>
                     </v-chip>
                   </div>
 
@@ -577,10 +577,7 @@ export default {
     'dadosFormCarga.descarregamento': {
       handler() {
         this.totalDeCtesVinculadosLocal = this.calculaQuantidadeDeCtesVinculados(),
-
-
         this.dadosFormCargaLocal.valor_carga = this.calculaValorDaCarga()
-        console.log(this.dadosFormCargaLocal.valor_carga);
       },
       deep: true
     },
@@ -588,6 +585,8 @@ export default {
       if(newValue != oldValue) {
         this.municipioDescarregamentoSelecionado = []
         this.dadosFormCargaLocal.descarregamento = []
+        this.municipioDescarregamentoSelecionado = null
+
       }
     },
   },
@@ -710,10 +709,6 @@ export default {
       }
 
       const existeCte = this.verificaSeExisteCteNoArrayDeDocumentos(item.documentos_fiscais)
-
-      console.log(item);
-      console.log(existeCte);
-
 
       if(existeCte) {
         alertStore.addAlert('Este CT-e já foi adicionando para o Município em Questão', 'warning')

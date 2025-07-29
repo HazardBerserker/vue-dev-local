@@ -680,10 +680,7 @@ export default {
         tomador: this.defineDadosTomador(),
       }
 
-
-
       const dadosTratados = limparCamposVazios(dados)
-      console.log(dadosTratados);
 
       return dadosTratados
     },

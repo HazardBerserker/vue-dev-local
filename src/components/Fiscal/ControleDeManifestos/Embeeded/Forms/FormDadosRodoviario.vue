@@ -499,7 +499,7 @@
           variant="outlined"
           label="Forma de Pagamento *"
           density="compact"
-          :rules="rules.campoObrigatorio"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
           :disabled="totalDeCtesVinculados == 1 ? false : true"
           clearable
         />
@@ -557,7 +557,7 @@
           variant="outlined"
           label="Método de Pagamento*"
           density="compact"
-          :rules="rules.campoObrigatorio"
+          :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
           :disabled="totalDeCtesVinculados == 1 ? false : true"
           clearable
         />

@@ -171,11 +171,7 @@ export default {
 
       if(!confirmado) return
 
-
-
       const dadosParaEnvio = this.formataDadosParaEnvio()
-
-      console.log(dadosParaEnvio);
 
       loading.show('Cancelando MDF-e...')
       const url = `${endpoints.mdfe.cancela}`;

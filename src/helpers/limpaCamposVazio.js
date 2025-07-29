@@ -23,11 +23,19 @@ export function limparCamposVazios(objeto) {
 }
 
 function isValorVazio(valor) {
-  return (
+  if (
     valor === null ||
     valor === undefined ||
     valor === '' ||
-    (Array.isArray(valor) && valor.length === 0) ||
-    (typeof valor === 'object' && valor !== null && Object.keys(valor).length === 0)
-  );
+    (Array.isArray(valor) && valor.length === 0)
+  ) {
+    return true;
+  }
+
+  if (typeof valor === 'object' && valor !== null) {
+    const valoresInternos = Object.values(valor).map(v => limparCamposVazios(v));
+    return valoresInternos.every(isValorVazio);
+  }
+
+  return false;
 }

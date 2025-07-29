@@ -113,12 +113,12 @@
               </template>
             </v-fade-transition>
 
-            <v-btn @click="formataDadosParaEnvio">
+            <!-- <v-btn @click="formataDadosParaEnvio">
               teste
-            </v-btn>
+            </v-btn> -->
 
             <div class="d-flex justify-end mt-2">
-              <v-btn @click="stepAtual = 1">
+              <!-- <v-btn @click="stepAtual = 1">
                 step 1
               </v-btn>
               <v-btn @click="stepAtual = 2">
@@ -126,7 +126,7 @@
               </v-btn>
               <v-btn @click="stepAtual = 3">
                 step 3
-              </v-btn>
+              </v-btn> -->
               <v-btn v-if="stepAtual != 3" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
                 Avançar
               </v-btn>
@@ -134,7 +134,7 @@
                 EMITIR
               </v-btn>
             </div>
-            {{ dadosFormCarga }}
+            <!-- {{ limparCamposVazios(dadosFormCarga) }} -->
           </div>
         </div>
       </v-card>
@@ -169,6 +169,7 @@ export default {
   },
   data() {
     return {
+      limparCamposVazios,
 
       stepsValidos: {
         1: false,
@@ -240,11 +241,11 @@ export default {
               cpf: null,
               nome: null,
               valor_contrato: null,
-              forma_pagamento: 0,
+              forma_pagamento: null,
               valor_adiantamento: null,
               componentes_pagamento_frete: [],
               informacoes_bancarias: {
-                tipo_informacao_bancaria: '3',
+                tipo_informacao_bancaria: null,
                 numero_banco: null,
                 numero_agencia:null
               },
@@ -340,7 +341,11 @@ export default {
         documentos_fiscais: this.formataDocumentosFiscaisParaEnvio(item.documentos_fiscais)
       }))
 
-      const dataVencimentoParcela = formataDataISOParaPadraoBanco(this.dadosFormCarga.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela)
+      const dataVencimentoParcela = this.dadosFormCarga.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela
+
+      if(dataVencimentoParcela) {
+        formataDataISOParaPadraoBanco(dataVencimentoParcela)
+      }
 
       const dados = {
         ambiente: 2,
@@ -429,11 +434,11 @@ export default {
               cpf: null,
               nome: null,
               valor_contrato: null,
-              forma_pagamento: 0,
+              forma_pagamento: null,
               valor_adiantamento: null,
               componentes_pagamento_frete: [],
               informacoes_bancarias: {
-                tipo_informacao_bancaria: '3',
+                tipo_informacao_bancaria: null,
                 numero_banco: null,
                 numero_agencia:null
               },

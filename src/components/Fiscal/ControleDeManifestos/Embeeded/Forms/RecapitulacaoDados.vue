@@ -255,6 +255,7 @@
             >
               <strong>Valor do Adiantamento:</strong> {{ formataMoeda(pagamento.valor_adiantamento) }}
             </v-col>
+
             <v-col cols="12" md="4"
               v-if="pagamento.informacoes_pagamento_prazo[0].data_vencimento_parcela"
             >

@@ -450,11 +450,11 @@
                 {{ StatusManifestoEnum[item.status] }}
               </v-chip>
             </template>
-            <template #[`item.vCarga`]="{ item }">
-              {{ formataMoeda(item.vCarga) }}
+            <template #[`item.valor_carga`]="{ item }">
+              {{ formataMoeda(item.valor_carga) }}
             </template>
-            <template #[`item.vTPrest`]="{ item }">
-              {{ formataMoeda(item.vTPrest) }}
+            <template #[`item.peso_bruto`]="{ item }">
+              {{ formataNumeroBR(item.peso_bruto)}} {{ UnidadeMedidaMdfeEnumDescricao[item.peso_tipo] }}
             </template>
             <template #[`item.tomador_cnpj`]="{ item }">
               {{ formataCNPJ(item.tomador_cnpj) }}
@@ -496,6 +496,7 @@ import InputTextMoeda from '@/components/Form/InputTextMoeda.vue';
 import InputText from '@/components/Form/InputText.vue';
 import { estadosBrasileiros } from '@/Enums/estadosEnum';
 import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
+import { UnidadeMedidaMdfeEnumDescricao } from '@/Enums/Fiscal/UnidadeMedidaMdfeEnum';
 
 export default {
   name: 'ControleDeManifestos',
@@ -547,11 +548,14 @@ export default {
       formataCNPJ,
       formataMoeda,
       formataData,
+      formataNumeroBR,
 
+      UnidadeMedidaMdfeEnumDescricao,
       StatusManifestoEnum,
       StatusManifestoEnumDescricao,
       SimENaoEnumDescricao,
       SimENaoEnum,
+
       mostrarFiltros: false,
       desativaInputDeAutorizar: false,
       desativaInputDeCancelar: false,
@@ -639,7 +643,7 @@ export default {
             title: 'Emissão',
             key: 'dhEmi',
             align:'center',
-            width: '170'
+            width: '250'
           },
           {
             title: 'UF Início',
@@ -678,7 +682,7 @@ export default {
             cellProps: {
               class: 'text-start'
             },
-            width: '350'
+            width: '250'
           },
           {
             title: 'Valor da Carga',
@@ -909,9 +913,6 @@ export default {
           method: 'get',
           url: `${url}/${query}`,
         })
-
-        console.log(resposta);
-
 
         this.permissao = true
 
