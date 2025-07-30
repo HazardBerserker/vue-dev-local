@@ -35,6 +35,7 @@ export const endpoints = {
     datatable: `${URL_BASE}/ctes/datatable`,
     listaPorId: `${URL_BASE}/ctes/lista-por-id`,
     listaMunicipios: `${URL_BASE}/ctes/lista-municipios`,
+    buscaListaDeCtesParaOManifesto: `${URL_BASE}/ctes/busca-lista-de-ctes-para-o-manifesto`,
     autoriza: `${URL_BASE}/ctes/autoriza`,
     cancela: `${URL_BASE}/ctes/cancela`,
     novo: `${URL_BASE}/ctes/cria-cte-xml`,

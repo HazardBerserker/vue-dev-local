@@ -24,119 +24,111 @@
 
       </v-toolbar>
 
-        <div class="d-flex justify-center align-center ga-2 my-3 mx-auto px-2">
-          <v-row dense>
-            <v-col>
-              <v-card
-                :class="[
-                  classeBaseDosCards,
-                  stepAtual === 1 ? 'elevation-12' : ''
-                ]"
-                min-width="160"
-                :color="stepsValidos['1'] ? 'green' : 'redNeveah'"
-                :variant="stepAtual == 1 || stepsValidos['1'] ? 'flat' : 'tonal'"
-                @click="avancaOuVoltaStep(1)"
-              >
-                <v-icon>
-                  mdi-tune
-                </v-icon>
-                CARGA
-              </v-card>
-            </v-col>
-
-            <v-col>
-              <v-card
-                :class="[
-                  classeBaseDosCards,
-                  stepAtual === 2 ? 'elevation-12' : ''
-                ]"
-                min-width="160"
-                :color="stepsValidos['2'] ? 'green' : 'redNeveah'"
-                :variant="stepAtual == 2 || stepsValidos['2'] ? 'flat' : 'tonal'"
-                @click="avancaOuVoltaStep(2)"
-              >
-                <v-icon>
-                  mdi-account-multiple
-                </v-icon>
-                RODOVIÁRIO
-              </v-card>
-            </v-col>
-
-            <v-col>
-              <v-card
-                :class="[
-                  classeBaseDosCards,
-                  stepAtual === 5 ? 'elevation-12' : ''
-                ]"
-                min-width="160"
-                :color="stepsValidos['5'] ? 'green' : 'redNeveah'"
-                :variant="stepAtual == 5 || stepsValidos['5'] ? 'flat' : 'tonal'"
-                @click="avancaOuVoltaStep(5)"
-              >
-                <v-icon>
-                  mdi-clipboard-check
-                </v-icon>
-                RECAPITULAÇÃO
-              </v-card>
-            </v-col>
-          </v-row>
-        </div>
-
-        <div class="d-flex">
-
-          <div class="w-100 ma-6">
-
-            <v-fade-transition mode="out-in">
-              <template v-if="stepAtual == 1">
-                <FormDadosCarga
-                  ref="formDadosCarga"
-                  :dadosFormCarga="dadosFormCarga"
-                  v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
-                  :estadosESeusMunicipios="estadosESeusMunicipios"
-                />
-              </template>
-
-              <template v-if="stepAtual == 2">
-                 <FormDadosRodoviario
-                  ref="formDadosRodoviario"
-                  :tipoTransportador="dadosFormCarga.transportador"
-                  :dadosFormRodoviario="dadosFormCarga.rodoviario"
-                  :estadosESeusMunicipios="estadosESeusMunicipios"
-                  v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
-                />
-              </template>
-
-              <template v-if="stepAtual == 3">
-                <RecapitulacaoDados
-                  :dadosFormCarga="dadosFormCarga"
-                />
-              </template>
-            </v-fade-transition>
-
-            <!-- <v-btn @click="formataDadosParaEnvio">
-              teste
-            </v-btn> -->
-
-            <div class="d-flex justify-end mt-2">
-              <!-- <v-btn @click="stepAtual = 1">
-                step 1
-              </v-btn>
-              <v-btn @click="stepAtual = 2">
-                step 2
-              </v-btn>
-              <v-btn @click="stepAtual = 3">
-                step 3
-              </v-btn> -->
-              <v-btn v-if="stepAtual != 3" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
-                Avançar
-              </v-btn>
-              <v-btn v-if="stepAtual == 3" variant="flat" @click="emiteMdfe" color="grey-darken-3" size="large">
-                EMITIR
-              </v-btn>
+            <div class="d-flex justify-center align-center ga-2 my-3 mx-auto px-2">
+              <v-row dense>
+                <v-col>
+                  <v-card
+                    :class="[
+                      classeBaseDosCards,
+                      stepAtual === 1 ? 'elevation-12' : ''
+                    ]"
+                    min-width="160"
+                    :color="stepsValidos['1'] ? 'green' : 'redNeveah'"
+                    :variant="stepAtual == 1 || stepsValidos['1'] ? 'flat' : 'tonal'"
+                    @click="avancaOuVoltaStep(1)"
+                  >
+                    <v-icon>
+                      mdi-tune
+                    </v-icon>
+                    CARGA
+                  </v-card>
+                </v-col>
+                <v-col>
+                  <v-card
+                    :class="[
+                      classeBaseDosCards,
+                      stepAtual === 2 ? 'elevation-12' : ''
+                    ]"
+                    min-width="160"
+                    :color="stepsValidos['2'] ? 'green' : 'redNeveah'"
+                    :variant="stepAtual == 2 || stepsValidos['2'] ? 'flat' : 'tonal'"
+                    @click="avancaOuVoltaStep(2)"
+                  >
+                    <v-icon>
+                      mdi-account-multiple
+                    </v-icon>
+                    RODOVIÁRIO
+                  </v-card>
+                </v-col>
+                <v-col>
+                  <v-card
+                    :class="[
+                      classeBaseDosCards,
+                      stepAtual === 5 ? 'elevation-12' : ''
+                    ]"
+                    min-width="160"
+                    :color="stepsValidos['5'] ? 'green' : 'redNeveah'"
+                    :variant="stepAtual == 5 || stepsValidos['5'] ? 'flat' : 'tonal'"
+                    @click="avancaOuVoltaStep(5)"
+                  >
+                    <v-icon>
+                      mdi-clipboard-check
+                    </v-icon>
+                    RECAPITULAÇÃO
+                  </v-card>
+                </v-col>
+              </v-row>
             </div>
-            <!-- {{ limparCamposVazios(dadosFormCarga) }} -->
-          </div>
-        </div>
+
+            <div class="d-flex">
+              <div class="w-100 my-6 mx-3">
+                <v-fade-transition mode="out-in">
+                  <template v-if="stepAtual == 1">
+                    <FormDadosCarga
+                      ref="formDadosCarga"
+                      :dadosFormCarga="dadosFormCarga"
+                      v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
+                      :estadosESeusMunicipios="estadosESeusMunicipios"
+                    />
+                  </template>
+                  <template v-if="stepAtual == 2">
+                     <FormDadosRodoviario
+                      ref="formDadosRodoviario"
+                      :tipoTransportador="dadosFormCarga.transportador"
+                      :dadosFormRodoviario="dadosFormCarga.rodoviario"
+                      :estadosESeusMunicipios="estadosESeusMunicipios"
+                      v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
+                    />
+                  </template>
+                  <template v-if="stepAtual == 3">
+                    <RecapitulacaoDados
+                      :dadosFormCarga="dadosFormCarga"
+                    />
+                  </template>
+                </v-fade-transition>
+                <!-- <v-btn @click="formataDadosParaEnvio">
+                  teste
+                </v-btn> -->
+                <div class="d-flex justify-end mt-2">
+                  <!-- <v-btn @click="stepAtual = 1">
+                    step 1
+                  </v-btn>
+                  <v-btn @click="stepAtual = 2">
+                    step 2
+                  </v-btn>
+                  <v-btn @click="stepAtual = 3">
+                    step 3
+                  </v-btn> -->
+                  <v-btn v-if="stepAtual != 3" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
+                    Avançar
+                  </v-btn>
+                  <v-btn v-if="stepAtual == 3" variant="flat" @click="emiteMdfe" color="grey-darken-3" size="large">
+                    EMITIR
+                  </v-btn>
+                </div>
+                <!-- {{ limparCamposVazios(dadosFormCarga) }} -->
+              </div>
+            </div>
       </v-card>
     </v-dialog>
   </div>

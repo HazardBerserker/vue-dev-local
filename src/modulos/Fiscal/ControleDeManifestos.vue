@@ -402,7 +402,7 @@
             <template v-slot:expanded-row="{ columns, item }">
               <tr>
                 <td :colspan="columns.length" class="py-2 bg-grey-lighten-3">
-                  <v-sheet rounded="lg" width="1400" class="overflow-x-auto border-m" elevation="1">
+                  <v-sheet rounded="lg" width="1400" class="overflow-x-auto" elevation="1" border>
                     <v-table density="compact" class="text-start ma-1">
                       <thead>
                         <tr>

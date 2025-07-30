@@ -85,8 +85,8 @@ export default {
 }
 
 .hoverable-row tbody tr:hover td{
-  background-color: #b305021a !important; /* Cor de fundo ao passar o mouse */
-  transition: background-color 30ms linear !important
+  background-color: #ffffff !important; /* Cor de fundo ao passar o mouse */
+  transition: background-color 30ms linear !important;
 }
 
 </style>
