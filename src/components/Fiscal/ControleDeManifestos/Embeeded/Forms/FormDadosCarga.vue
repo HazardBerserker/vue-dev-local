@@ -205,129 +205,6 @@
         <div class="px-2 text-redNeveah">
           <div class="d-flex ga-2">
             <v-icon size="large">
-              mdi-truck-minus
-            </v-icon>
-            <span>Descarregamento</span>
-          </div>
-          <v-divider :thickness="2"></v-divider>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <div class="bg-red-lighten-5 mx-1 pa-2 pt-4 text-grey-darken-2 text-body-2" style="border: 1px solid #ffbdb7;">
-          <v-row dense class="bg-red-lighten-4 mt-4 pa-2">
-            <v-col cols="12" md="4" class="d-flex ga-2 align-center">
-              <div>
-                <v-icon color="redNeveah">
-                  mdi-note-plus
-                </v-icon>
-              </div>
-              <v-select
-                v-model="municipioDescarregamentoSelecionado"
-                bg-color="white"
-                :items="estadosESeusMunicipios[dadosFormCargaLocal.uf_descarregamento] ? estadosESeusMunicipios[dadosFormCargaLocal.uf_descarregamento] : []"
-                item-title="description"
-                variant="outlined"
-                label="Município de descarga *"
-                no-data-text="Municípios com base nas UFs de descarregamento selecionadas"
-                density="compact"
-                return-object
-                hide-details
-                clearable
-              />
-            </v-col>
-            <v-col cols="12" md="3" class="d-flex ga-2 align-center">
-               <v-combobox
-                :loading="comboBoxCteLoading"
-                @keyup="(event) => {
-                  const tecla = event.key
-                  const teclaValida = /^[a-zA-Z0-9áéíóúãõâêîôûçÁÉÍÓÚÃÕÂÊÎÔÛÇ]$/.test(tecla)
-                  if (teclaValida) buscaCtes()
-                }"
-                v-model="cteSelecionado"
-                density="compact"
-                variant="outlined"
-                bg-color="white"
-                label="Buscar Cte para Vincular:"
-                placeholder="Comece a digitar..."
-                :items="listaDeCtes"
-                item-title="Id_CTe"
-                class="w-100"
-                hide-selected
-                hide-details
-                clearable
-              />
-            </v-col>
-            <v-col cols="12" md="2" class="d-flex ga-2 align-center">
-              <v-btn variant="flat" color="redNeveah" @click="vincularCte">
-              Adicionar
-              </v-btn>
-            </v-col>
-            <v-col cols="12" md="3">
-              <div class="d-flex ga-2 align-center pt-2 text-redNeveah justify-end text-body-1">
-                <div>
-                  <em>CT-Es vinculados</em>
-                </div>
-                <div>
-                  <v-chip>{{ calculaQuantidadeDeCtesVinculados() }}</v-chip>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col cols="12">
-
-              <div v-if="dadosFormCargaLocal.descarregamento.length == 0" class="d-flex pt-2 text-grey text-body-2">
-                <div class="mt-2">
-                  <em>Nenhum CT-e vinculado</em>
-                </div>
-              </div>
-
-              <v-card class="pa-4 rounded-md bg-red-lighten-5 d-flex flex-column ga-3 overflow-y-auto" variant="flat" max-height="450" v-else>
-
-                <div v-for="item, indexDescarregamento in dadosFormCargaLocal?.descarregamento" :key="`item-descarregamento-${indexDescarregamento}`" class="mt-4 mb-2">
-                  <div class="mb-4 d-flex align-center ga-2">
-                    <span class="text-body-1 text-redNeveah">
-                      <strong>{{item.nome_municipio}}: </strong>
-                    </span>
-                    <v-chip label color="redNeveah" variant="flat">
-                      <div><strong>Código do Município: </strong>{{item.codigo_municipio}}</div>
-                    </v-chip>
-                  </div>
-
-                  <v-row class="mb-4">
-                    <v-col
-                      cols="12"
-                      md="4"
-                      class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
-                      v-for="cte, index in item.documentos_fiscais" :key="`cte-${index}`"
-                    >
-                      <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
-                        <div class="d-flex align-center text-body-2">
-                          <div class="d-flex flex-column w-100 ga-2">
-                            <div class="w-100">ID: <strong>{{ cte.Id_CTe}}</strong></div>
-                            <div class="w-100">Chave: <strong>{{cte.chCTe}}</strong></div>
-                          </div>
-                          <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeCte(item, index, indexDescarregamento)"/>
-                        </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-
-                  <v-divider :thickness="2"></v-divider>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row dense class="mt-8">
-      <v-col cols="12">
-        <div class="px-2 text-redNeveah">
-          <div class="d-flex ga-2">
-            <v-icon size="large">
               mdi-truck-trailer
             </v-icon>
             <span>Produto Predominante</span>
@@ -371,7 +248,7 @@
               >
                 <InputText
                   v-model="dadosFormCargaLocal.produto_predominante.ncm"
-                  :rules="calculaQuantidadeDeCtesVinculados() == 1 ? rules.campoObrigatorio : []"
+                  :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
                   label="NCM"
                   density="compact"
                   variant="outlined"
@@ -391,7 +268,7 @@
               >
                 <InputText
                   v-model="dadosFormCargaLocal.produto_predominante.lotacao.carregamento.cep"
-                  :rules="calculaQuantidadeDeCtesVinculados() == 1 ? rules.campoObrigatorio : []"
+                  :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
                   variant="outlined"
                   bg-color="white"
                   density="compact"
@@ -410,7 +287,7 @@
               >
                 <InputText
                   v-model="dadosFormCargaLocal.produto_predominante.lotacao.descarregamento.cep"
-                  :rules="calculaQuantidadeDeCtesVinculados() == 1 ? rules.campoObrigatorio : []"
+                  :rules="totalDeCtesVinculados == 1 ? rules.campoObrigatorio : []"
                   variant="outlined"
                   bg-color="white"
                   density="compact"
@@ -543,7 +420,6 @@ import { NaturezaOperacaoEnum } from '@/Enums/Fiscal/NaturezaOperacaoEnum'
 import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue'
 import { ClassificacaoTributariaEnum } from '@/Enums/Fiscal/ClassificacaoTributariaEnum'
-import { useAlertStore } from '@/stores/alertStore'
 import { formataMoeda } from '@/utils/masks';
 import { TipoDoEmitenteEnum } from '@/Enums/Fiscal/TipoDoEmitenteEnum'
 import { TipoDoTransportadorEnum } from '@/Enums/Fiscal/TipoDoTransportadorEnum.js.js'
@@ -551,7 +427,6 @@ import { UnidadeMedidaMdfeEnum } from '@/Enums/Fiscal/UnidadeMedidaMdfeEnum'
 import { TipoCargaEnum } from '@/Enums/Fiscal/TipoCargaEnum'
 import { TipoResponsavelEnum, TipoResponsavelEnumValorDescricao } from '@/Enums/Fiscal/TipoResponsavelEnum'
 import InputText from '@/components/Form/InputText.vue'
-import { buscaListaDeCtesHelper } from '@/helpers/buscaListaDeCtes'
 
 export default {
   name: 'FormDadosGeral',
@@ -571,22 +446,6 @@ export default {
     totalDeCtesVinculados: {
       type: Number,
       required: true
-    },
-  },
-  watch: {
-    'dadosFormCarga.descarregamento': {
-      handler() {
-        this.totalDeCtesVinculadosLocal = this.calculaQuantidadeDeCtesVinculados(),
-        this.dadosFormCargaLocal.valor_carga = this.calculaValorDaCarga()
-      },
-      deep: true
-    },
-    'dadosFormCarga.uf_descarregamento'(newValue, oldValue) {
-      if(newValue != oldValue) {
-        this.municipioDescarregamentoSelecionado = []
-        this.dadosFormCargaLocal.descarregamento = []
-        this.municipioDescarregamentoSelecionado = null
-      }
     },
   },
   data() {
@@ -617,12 +476,6 @@ export default {
           (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
         ],
       },
-
-      cteSelecionado: null,
-      municipioDescarregamentoSelecionado: null,
-
-      listaDeCtes: [],
-      comboBoxCteLoading: false
     }
   },
   computed: {
@@ -644,135 +497,8 @@ export default {
     },
   },
   methods: {
-    calculaValorDaCarga() {
-
-      let total = 0
-
-      for(const municipio in this.dadosFormCargaLocal.descarregamento) {
-        const valor = this.calculaValorDaCargaDosDocumentosFiscais(this.dadosFormCargaLocal.descarregamento[municipio]?.documentos_fiscais)
-        total += valor
-      }
-
-      if(total == 0) {
-        return null
-      }
-
-      return total
-    },
-
-    calculaValorDaCargaDosDocumentosFiscais(documentos_fiscais) {
-      let total = 0
-
-      for(const index in documentos_fiscais) {
-        total += parseFloat(documentos_fiscais[index].vCarga)
-      }
-
-      return total
-    },
-
-    calculaQuantidadeDeCtesVinculados() {
-      let total = 0
-
-      for(const municipio in this.dadosFormCargaLocal.descarregamento) {
-        const quantidadeDeDocumentos = this.dadosFormCargaLocal.descarregamento[municipio]?.documentos_fiscais?.length
-        total += quantidadeDeDocumentos
-      }
-
-      return total
-    },
-
-    vincularCte() {
-
-      const alertStore = useAlertStore();
-
-      if(!this.cteSelecionado || typeof this.cteSelecionado != 'object') {
-        alertStore.addAlert('Preencha o Campo do Ct-e corretamente selecionando o CT-e', 'warning')
-        return
-      }
-
-      if(!this.municipioDescarregamentoSelecionado || typeof this.municipioDescarregamentoSelecionado != 'object') {
-        alertStore.addAlert('Preencha o Campo do Município de descarregamento corretamente selecionando o Município', 'warning')
-        return
-      }
-
-      if(this.dadosFormCargaLocal.descarregamento.length == 0) {
-        this.criaNovoItemNoArrayDeDescarregamento()
-        return
-      }
-
-      const item = this.buscaItemPeloMunicipioNoArrayDeDescarregamento()
-
-      if(!item) {
-        this.criaNovoItemNoArrayDeDescarregamento()
-        return
-      }
-
-      const existeCte = this.verificaSeExisteCteNoArrayDeDocumentos(item.documentos_fiscais)
-
-      if(existeCte) {
-        alertStore.addAlert('Este CT-e já foi adicionando para o Município em Questão', 'warning')
-        return
-      }
-
-      item.documentos_fiscais.push(this.cteSelecionado)
-
-    },
-
-    criaNovoItemNoArrayDeDescarregamento() {
-      const item = {
-        codigo_municipio: this.municipioDescarregamentoSelecionado.codigo_municipio,
-        nome_municipio: this.municipioDescarregamentoSelecionado.description,
-        documentos_fiscais: [
-          {
-            ...this.cteSelecionado
-          }
-        ]
-      }
-
-      this.dadosFormCargaLocal.descarregamento.push(item)
-    },
-
-    buscaItemPeloMunicipioNoArrayDeDescarregamento() {
-      const item = this.dadosFormCargaLocal.descarregamento.find(item => {
-        return item.codigo_municipio == this.municipioDescarregamentoSelecionado.codigo_municipio
-      })
-
-      return item
-    },
-
-    verificaSeExisteCteNoArrayDeDocumentos(documentos_fiscais) {
-      for(const cte in documentos_fiscais) {
-        if(documentos_fiscais[cte].chCTe == this.cteSelecionado.chCTe) {
-          return true
-        }
-      }
-
-      return false
-    },
-
-    async buscaCtes() {
-      await buscaListaDeCtesHelper(
-        this.cteSelecionado,
-        (clientes) => {
-          this.listaDeCtes = clientes;
-        },
-        (loading) => {
-          this.comboBoxCteLoading = loading;
-        }
-      );
-    },
-
     validate() {
       return this.$refs?.formDadosCarga.validate()
-    },
-
-    removeCte(item, index, indexDescarregamento) {
-      item.documentos_fiscais.splice(index, 1);
-
-      //remove o item por completo caso nao ajam mais documentos, senao os valores de municipio permanecem preenchidos
-      if(item.documentos_fiscais.length == 0) {
-        this.dadosFormCargaLocal?.descarregamento.splice(indexDescarregamento, 1)
-      }
     },
   }
 }
