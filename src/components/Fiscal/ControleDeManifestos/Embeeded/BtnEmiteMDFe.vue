@@ -24,62 +24,121 @@
 
       </v-toolbar>
 
-            <div class="d-flex justify-center align-center ga-2 my-3 mx-auto px-2">
-              <v-row dense>
-                <v-col>
-                  <v-card
-                    :class="[
-                      classeBaseDosCards,
-                      stepAtual === 1 ? 'elevation-12' : ''
-                    ]"
-                    min-width="160"
-                    :color="stepsValidos['1'] ? 'green' : 'redNeveah'"
-                    :variant="stepAtual == 1 || stepsValidos['1'] ? 'flat' : 'tonal'"
-                    @click="avancaOuVoltaStep(1)"
-                  >
-                    <v-icon>
-                      mdi-tune
-                    </v-icon>
-                    CARGA
-                  </v-card>
-                </v-col>
-                <v-col>
-                  <v-card
-                    :class="[
-                      classeBaseDosCards,
-                      stepAtual === 2 ? 'elevation-12' : ''
-                    ]"
-                    min-width="160"
-                    :color="stepsValidos['2'] ? 'green' : 'redNeveah'"
-                    :variant="stepAtual == 2 || stepsValidos['2'] ? 'flat' : 'tonal'"
-                    @click="avancaOuVoltaStep(2)"
-                  >
-                    <v-icon>
-                      mdi-account-multiple
-                    </v-icon>
-                    RODOVIÁRIO
-                  </v-card>
-                </v-col>
-                <v-col>
-                  <v-card
-                    :class="[
-                      classeBaseDosCards,
-                      stepAtual === 5 ? 'elevation-12' : ''
-                    ]"
-                    min-width="160"
-                    :color="stepsValidos['5'] ? 'green' : 'redNeveah'"
-                    :variant="stepAtual == 5 || stepsValidos['5'] ? 'flat' : 'tonal'"
-                    @click="avancaOuVoltaStep(5)"
-                  >
-                    <v-icon>
-                      mdi-clipboard-check
-                    </v-icon>
-                    RECAPITULAÇÃO
-                  </v-card>
-                </v-col>
-              </v-row>
-            </div>
+        <v-row dense>
+          <v-col md="3" class="ps-4 position-relative mt-2">
+            <div class="position-sticky" style="top: 20px;">
+              <div class="d-flex justify-center align-center ga-2 my-3 mx-auto">
+                <v-row dense>
+                  <v-col>
+                    <v-card
+                      :class="[
+                        classeBaseDosCards,
+                        stepAtual === 1 ? 'elevation-12' : ''
+                      ]"
+                      min-width="160"
+                      :color="stepsValidos['1'] ? 'green' : 'redNeveah'"
+                      :variant="stepAtual == 1 || stepsValidos['1'] ? 'flat' : 'tonal'"
+                      @click="avancaOuVoltaStep(1)"
+                    >
+                      <v-icon>
+                        mdi-tune
+                      </v-icon>
+                      CARGA
+                    </v-card>
+                  </v-col>
+                  <v-col>
+                    <v-card
+                      :class="[
+                        classeBaseDosCards,
+                        stepAtual === 2 ? 'elevation-12' : ''
+                      ]"
+                      min-width="160"
+                      :color="stepsValidos['2'] ? 'green' : 'redNeveah'"
+                      :variant="stepAtual == 2 || stepsValidos['2'] ? 'flat' : 'tonal'"
+                      @click="avancaOuVoltaStep(2)"
+                    >
+                      <v-icon>
+                        mdi-account-multiple
+                      </v-icon>
+                      RODOVIÁRIO
+                    </v-card>
+                  </v-col>
+                  <v-col>
+                    <v-card
+                      :class="[
+                        classeBaseDosCards,
+                        stepAtual === 5 ? 'elevation-12' : ''
+                      ]"
+                      min-width="160"
+                      :color="stepsValidos['5'] ? 'green' : 'redNeveah'"
+                      :variant="stepAtual == 5 || stepsValidos['5'] ? 'flat' : 'tonal'"
+                      @click="avancaOuVoltaStep(5)"
+                    >
+                      <v-icon>
+                        mdi-clipboard-check
+                      </v-icon>
+                      RECAPITULAÇÃO
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </div>
 
+              <v-card
+                class="bg-grey-ligthen-4 elevation-1 border mt-4"
+                title="Vincular CT-e(s)"
+                subtitle="Este(s) Ct-e(s) popularão o Manifesto"
+              >
+                <template #prepend>
+                  <v-icon class="px-4 pe-6">
+                    mdi-more
+                  </v-icon>
+                </template>
+
+                <div class="pe-4 mb-2">
+                  <v-btn block color="redNeveah" class="ma-2 rounded-pill">
+                    Vincular
+                  </v-btn>
+                </div>
+
+                <v-divider inset></v-divider>
+
+                <v-card class="pa-4 rounded-md d-flex flex-column ga-3 overflow-y-auto" variant="flat" max-height="420">
+                  <div v-for="item, indexDescarregamento in dadosFormCarga?.descarregamento" :key="`item-descarregamento-${indexDescarregamento}`" class="mt-4 mb-2">
+                    <div class="mb-4 flex-column md-flex-row align-center ga-2">
+                      <span class="text-body-1 text-redNeveah">
+                        <strong>{{item.nome_municipio}}: </strong>
+                      </span>
+                      <v-chip label color="redNeveah" variant="flat">
+                        <div><strong>Código do Município: </strong>{{item.codigo_municipio}}</div>
+                      </v-chip>
+                    </div>
+
+                    <v-row class="mb-4">
+                      <v-col
+                        cols="12"
+                        class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
+                        v-for="cte, index in item.documentos_fiscais" :key="`cte-${index}`"
+                      >
+                        <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
+                          <div class="d-flex align-center text-body-2 w-100 justify-between">
+                            <div class="d-flex flex-column w-75 ga-2">
+                              <div class="w-100">ID: <strong>{{ cte.Id_CTe}}</strong></div>
+                              <div class="w-100">Chave: <strong>{{cte.chCTe}}</strong></div>
+                            </div>
+                            <v-btn class="ms-auto" icon="mdi-close" size="x-small" variant="tonal" @click="removeCte(item, index, indexDescarregamento)"/>
+                          </div>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+
+                    <v-divider :thickness="2"></v-divider>
+                  </div>
+                </v-card>
+              </v-card>
+            </div>
+          </v-col>
+
+          <v-col>
             <div class="d-flex">
               <div class="w-100 my-6 mx-3">
                 <v-fade-transition mode="out-in">
@@ -119,7 +178,7 @@
                   <v-btn @click="stepAtual = 3">
                     step 3
                   </v-btn> -->
-                  <v-btn v-if="stepAtual != 3" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
+                  <v-btn size="large" v-if="stepAtual != 3" variant="text" append-icon="mdi-chevron-right"  @click="avancaOuVoltaStep(stepAtual + 1)" color="grey-darken-2">
                     Avançar
                   </v-btn>
                   <v-btn v-if="stepAtual == 3" variant="flat" @click="emiteMdfe" color="grey-darken-3" size="large">
@@ -129,6 +188,8 @@
                 <!-- {{ limparCamposVazios(dadosFormCarga) }} -->
               </div>
             </div>
+          </v-col>
+        </v-row>
       </v-card>
     </v-dialog>
   </div>
@@ -263,6 +324,15 @@ export default {
     }
   },
   methods: {
+
+    removeCte(item, index, indexDescarregamento) {
+      item.documentos_fiscais.splice(index, 1);
+
+      //remove o item por completo caso nao ajam mais documentos, senao os valores de municipio permanecem preenchidos
+      if(item.documentos_fiscais.length == 0) {
+        this.dadosFormCarga?.descarregamento.splice(indexDescarregamento, 1)
+      }
+    },
 
     async emiteMdfe() {
       const alertStore = useAlertStore()
