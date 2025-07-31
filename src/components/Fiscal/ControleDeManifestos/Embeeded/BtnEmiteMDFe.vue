@@ -83,9 +83,14 @@
                 </v-row>
               </div>
               <CardVinculaCte
-                :dadosFormCarga="dadosFormCarga"
-                :totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
+                v-model:dadosFormCarga="dadosFormCarga"
+                v-model:totalDeCtesVinculados="dadosFormCargaAuxiliar.totalDeCtesVinculados"
               />
+
+              <div class="mt-4 text-redNeveah">
+                <small> Os campos cinzas não podem ser modificados e serão preenchidos automaticamente ao vincular o(s) CT-e(s)</small>
+              </div>
+
             </div>
           </v-col>
 
@@ -278,16 +283,6 @@ export default {
     }
   },
   methods: {
-
-    removeCte(item, index, indexDescarregamento) {
-      item.documentos_fiscais.splice(index, 1);
-
-      //remove o item por completo caso nao ajam mais documentos, senao os valores de municipio permanecem preenchidos
-      if(item.documentos_fiscais.length == 0) {
-        this.dadosFormCarga?.descarregamento.splice(indexDescarregamento, 1)
-      }
-    },
-
     async emiteMdfe() {
       const alertStore = useAlertStore()
       const loading = useLoadingStore()
@@ -345,12 +340,6 @@ export default {
     },
 
     formataDadosParaEnvio() {
-
-      const carregamentoFormatado = this.dadosFormCarga.carregamento.map(item => ({
-        codigo_municipio: item.codigo_municipio,
-        nome_municipio: item.description
-      }))
-
       const descarregamentoFormatado = this.dadosFormCarga.descarregamento.map(item => ({
         codigo_municipio: item.codigo_municipio,
         nome_municipio: item.nome_municipio,
@@ -373,7 +362,7 @@ export default {
         valor_carga: this.dadosFormCarga.valor_carga,
         unidade: this.dadosFormCarga.unidade,
         peso_bruto: this.dadosFormCarga.peso_bruto,
-        carregamento: carregamentoFormatado,
+        carregamento: this.dadosFormCarga.carregamento,
         descarregamento: descarregamentoFormatado,
         percurso: this.dadosFormCarga.percurso,
         produto_predominante: {...this.dadosFormCarga.produto_predominante},

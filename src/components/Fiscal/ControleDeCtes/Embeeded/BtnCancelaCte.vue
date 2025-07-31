@@ -71,10 +71,6 @@ export default {
       type: Number,
       required: true
     },
-    ctes_finalizados: {
-      type: Number,
-      required: true
-    },
     itensSelecionados: {
       type: Array,
       required: true
@@ -106,14 +102,6 @@ export default {
       },
       set(novoDado) {
         this.$emit('update:ctes_cancelados', novoDado)
-      }
-    },
-    ctes_finalizadosLocal: {
-      get() {
-        return this.ctes_finalizados
-      },
-      set(novoDado) {
-        this.$emit('update:ctes_finalizados', novoDado)
       }
     },
     cteLocal: {
@@ -190,10 +178,6 @@ export default {
 
         if(this.cte.status == StatusManifestoEnumDescricao.AUTORIZADO) {
           this.ctes_autorizadosLocal -= 1
-        }
-
-        if(this.cte.status == StatusManifestoEnumDescricao.FINALIZADO) {
-          this.ctes_finalizadosLocal -= 1
         }
 
         this.cteLocal.status = StatusManifestoEnumDescricao.CANCELADO

@@ -31,6 +31,7 @@
                 bg-color="white"
                 counter="8"
                 mask="########"
+                disabled
                 clearable
               />
             </v-badge>

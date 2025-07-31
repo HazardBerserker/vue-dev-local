@@ -12,7 +12,7 @@
           label="Modalidade *"
           density="compact"
           :rules="rules.campoObrigatorio"
-          clearable
+          readonly
         />
       </v-col>
         <!--  -->
@@ -74,7 +74,6 @@
       <v-col cols="12" md="3" class="py-2">
         <v-select
           v-model="dadosFormCargaLocal.uf_carregamento"
-          bg-color="white"
           :items="estadosBrasileiros"
           item-value="value"
           item-title="text"
@@ -82,13 +81,13 @@
           label="UF de Carregamento *"
           density="compact"
           :rules="rules.campoObrigatorio"
-          clearable
+          bg-color="grey-lighten-3"
+          readonly
         />
       </v-col>
       <v-col cols="12" md="3" class="py-2">
         <v-select
           v-model="dadosFormCargaLocal.uf_descarregamento"
-          bg-color="white"
           :items="estadosBrasileiros"
           item-value="value"
           item-title="text"
@@ -96,22 +95,22 @@
           label="UF de Descarregamento *"
           density="compact"
           :rules="rules.campoObrigatorio"
-          clearable
+          bg-color="grey-lighten-3"
+          readonly
         />
       </v-col>
       <v-col cols="12" md="2" class="py-2">
         <InputTextMoeda
           v-model="dadosFormCargaLocal.peso_bruto"
           label="Peso Bruto *"
-          bg-color="white"
           :rules="rules.campoObrigatorio"
-          clearable
+          bg-color="grey-lighten-3"
+          readonly
         />
       </v-col>
       <v-col cols="12" md="2" class="py-2">
          <v-select
           v-model="dadosFormCargaLocal.unidade"
-          bg-color="white"
           :items="UnidadeMedidaMdfeEnum"
           item-value="value"
           item-title="text"
@@ -119,7 +118,8 @@
           label="Un. Medida *"
           density="compact"
           :rules="rules.campoObrigatorio"
-          clearable
+          bg-color="grey-lighten-3"
+          readonly
         />
       </v-col>
       <v-col cols="12" md="2" class="py-2">
@@ -135,7 +135,6 @@
             bg-color="grey-lighten-3"
             :rules="rules.campoObrigatorio"
             readonly
-            clearable
           />
         </v-badge>
       </v-col>
@@ -183,20 +182,18 @@
         <v-select
           v-model="dadosFormCargaLocal.carregamento"
           placeholder="Selecionar..."
-          bg-color="white"
-          :items="estadosESeusMunicipios[dadosFormCargaLocal.uf_carregamento] ? estadosESeusMunicipios[dadosFormCargaLocal.uf_carregamento] : []"
-          item-title="description"
-          item-value="item"
+          bg-color="grey-lighten-3"
+          readonly
+          item-title="nome_municipio"
+          item-value="codigo_municipio"
           variant="outlined"
           no-data-text="Municípios com base nas UFs de carregamento selecionadas"
           label="Municípios *"
           density="compact"
           :rules="rules.campoObrigatorio"
           color="blue-darken-2"
-          return-object
           multiple
           chips
-          clearable
         />
       </v-col>
     </v-row>
@@ -237,7 +234,6 @@
                 density="compact"
                 variant="outlined"
                 bg-color="white"
-                clearable
               />
             </v-col>
             <v-col cols="12" md="3">
@@ -468,7 +464,7 @@ export default {
 
        mensagemTooltipModalidade: `
         Obs.: Deve ser preenchido com <strong>2</strong>, para emitentes de NF-e e pelas transportadoras quando estiverem fazendo transporte de carga própria.<br>
-        Deve ser preenchido com <strong>3</strong>, para transportador de carga que emitirá à posteriori CT-e Globalizado relacionando as NF-e.
+        Deve ser preenchido com <strong>3</strong>, para transportador de carga que emitirá o posterior CT-e Globalizado relacionando as NF-e.
       `,
 
       rules: {

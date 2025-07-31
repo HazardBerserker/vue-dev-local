@@ -9,31 +9,6 @@
       <v-card
         width="250"
         class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
-        color="green-darken-4"
-      >
-          <v-avatar size="40" class="me-4 bg-white text-green-darken-4">
-              <v-icon>mdi-note-check</v-icon>
-          </v-avatar>
-          <div class="d-flex flex-column">
-              <span class="text-body-2 text-white">CT-Es Finalizados</span>
-              <v-chip variant="flat" size="small" color="white" class="mt-1 text-green-darken-4">
-                  <v-fade-transition mode="out-in">
-                      <span v-if="!datatable.carregando">
-                      <strong :key="'inativos'">
-                        {{ datatable.ctes_finalizados }}
-                      </strong>
-                    </span>
-                      <span v-else>
-                        <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
-                      </span>
-                  </v-fade-transition>
-              </v-chip>
-          </div>
-      </v-card>
-
-      <v-card
-        width="250"
-        class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
         color="blue-darken-4"
       >
           <v-avatar size="40" class="me-4 bg-white text-blue-darken-4">
@@ -328,7 +303,6 @@
         <BtnCancelaCte
           :ctes_autorizados="datatable.ctes_autorizados"
           :ctes_cancelados="datatable.ctes_cancelados"
-          :ctes_finalizados="datatable.ctes_finalizados"
           :itensSelecionados="datatable.itensSelecionados"
           :cte="itemSelecionado"
           :disabled="datatable.carregando || desativaInputDeCancelar"
@@ -561,7 +535,6 @@ export default {
       datatable: {
         ctes_autorizados: null,
         ctes_cancelados: null,
-        ctes_finalizados: null,
         itensSelecionados: [],
         carregando: false,
         mensagemCarregando: 'Buscando, aguarde...',
@@ -912,7 +885,6 @@ export default {
           this.datatable.totalRegistros = resposta.data.data.total;
           this.datatable.ctes_autorizados = resposta.data.data.ctes_autorizados;
           this.datatable.ctes_cancelados = resposta.data.data.ctes_cancelados;
-          this.datatable.ctes_finalizados = resposta.data.data.ctes_finalizados;
         }
 
       } catch (error) {

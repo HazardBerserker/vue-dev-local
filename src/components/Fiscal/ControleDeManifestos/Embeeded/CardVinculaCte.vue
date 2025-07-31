@@ -1,16 +1,16 @@
 <template>
   <v-card
     class="bg-grey-ligthen-4 elevation-1 border mt-4"
-    title="Vincular CT-e(s)"
+    title="CT-es vinculados"
     subtitle="Este(s) Ct-e(s) popularão o Manifesto"
   >
     <template #prepend>
       <v-icon class="px-4 pe-6">
-        mdi-more
+        mdi-note
       </v-icon>
     </template>
 
-    <div class="text-center ps-2 pe-6">
+    <div class="text-center ps-2 pe-6 mb-6">
       <v-btn block color="redNeveah" class="ma-2 rounded-pill" @click="abreDialog">
         Vincular
       </v-btn>
@@ -79,7 +79,7 @@
                     Adicionar
                   </v-btn>
 
-                  <v-card border variant="flat">
+                  <v-card variant="flat">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -107,7 +107,7 @@
                 <v-card flat>
                   <div class="text-caption mb-8">Selecione o CT-e que será carregado <strong>PRIMEIRO</strong></div>
 
-                  <v-card border variant="flat">
+                  <v-card variant="flat">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -154,7 +154,7 @@
                 <v-card flat>
                   <div class="text-caption mb-8">Selecione o CT-e que será entregue por <strong>ÚLTIMO</strong></div>
 
-                  <v-card border variant="flat">
+                  <v-card variant="flat">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -201,7 +201,7 @@
                 <v-card flat>
                   <div class="text-caption mb-8">Estes são os CT-es que popularão automaticamente os campos do Manifesto</div>
 
-                  <v-card border variant="flat">
+                  <v-card variant="flat">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -291,16 +291,16 @@
       </v-dialog>
     </div>
 
-    <v-divider inset></v-divider>
+    <v-divider :thickness="2"></v-divider>
 
     <v-card class="pa-4 rounded-md d-flex flex-column ga-3 overflow-y-auto" variant="flat" max-height="420">
       <div v-for="item, indexDescarregamento in dadosFormCargaLocal?.descarregamento" :key="`item-descarregamento-${indexDescarregamento}`" class="mt-4 mb-2">
         <div class="mb-4 flex-column md-flex-row align-center ga-2">
-          <span class="text-body-1 text-redNeveah">
+          <span class="text-body-1 text-grey-darken-3 w-100">
             <strong>{{item.nome_municipio}}: </strong>
           </span>
-          <v-chip label color="redNeveah" variant="flat">
-            <div><strong>Código do Município: </strong>{{item.codigo_municipio}}</div>
+          <v-chip label color="grey-darken-3" variant="flat" class="w-100">
+            <div>Código do Município: <strong>{{item.codigo_municipio}}</strong></div>
           </v-chip>
         </div>
 
@@ -310,13 +310,12 @@
             class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
             v-for="cte, index in item.documentos_fiscais" :key="`cte-${index}`"
           >
-            <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
+            <v-card class="px-2 bg-grey-darken-2 pa-2 mx-2" style="border: 1px solid rgb(80, 80, 80);">
               <div class="d-flex align-center text-body-2 w-100 justify-between">
-                <div class="d-flex flex-column w-75 ga-2">
+                <div class="d-flex flex-column w-100 ga-2">
                   <div class="w-100">ID: <strong>{{ cte.Id_CTe}}</strong></div>
                   <div class="w-100">Chave: <strong>{{cte.chCTe}}</strong></div>
                 </div>
-                <v-btn class="ms-auto" icon="mdi-close" size="x-small" variant="tonal" @click="removeCte(item, index, indexDescarregamento)"/>
               </div>
             </v-card>
           </v-col>
@@ -349,7 +348,6 @@ export default {
       required: true
     },
   },
-
   computed: {
     dadosFormCargaLocal: {
       get() {
@@ -382,7 +380,6 @@ export default {
         'Passo 4',
       ],
 
-      ctesVinculados: [],
       primeiroCteASerCarregado: null,
       ultimoCteQueSeraEntregue: null,
       idDoUltimoCteASerEntregue: null,
@@ -394,6 +391,96 @@ export default {
     }
   },
   methods: {
+
+    limpaCamposDoDialog() {
+      this.primeiroCteASerCarregado = null
+      this.ultimoCteQueSeraEntregue = null
+      this.idDoUltimoCteASerEntregue = null
+      this.idDoPrimeiroCteASerCarregado = null
+      this.listaDeCtesAdicionados = []
+      this.cteSelecionadoNoInput = null
+      this.listaDeCtesDoCombobox = []
+      this.stepAtual = 1
+    },
+
+    limpaCamposDoFormulario() {
+      this.dadosFormCargaLocal = {
+        emitente: 1,
+        modalidade: '1',
+        transportador: 2,
+        uf_carregamento: null,
+        uf_descarregamento: null,
+        percurso: [],
+        valor_carga: null,
+        unidade: '01',
+        peso_bruto: null,
+        carregamento: [],
+        descarregamento: [],
+        produto_predominante: {
+          tipo_carga: '05',
+          nome: null,
+          ncm: null,
+          lotacao: {
+            carregamento: {},
+            descarregamento: {}
+          },
+        },
+        seguro: [
+          {
+            responsavel: {
+              tipo_responsavel: 1,
+              cnpj: null
+            },
+            seguradora: {
+              nome_seguradora: 'Porto Seguro',
+              cnpj: 61198164000160
+            },
+            numero_apolice: '4250126501',
+            numero_averbacao: ['0']
+          },
+        ],
+        rodoviario: {
+          rntrc: '57174199',
+          veiculo_tracao: {
+            placa: null,
+            tara: null,
+            uf_licenciamento: null,
+            tipo_rodado: null,
+            tipo_carroceria: null,
+            proprietario: {}
+          },
+          condutor: [],
+          contratante: [
+            {
+              cnpj: "55963693000100"
+            }
+          ],
+          pagamento_frete: [
+            {
+              cpf: null,
+              nome: null,
+              valor_contrato: null,
+              forma_pagamento: null,
+              valor_adiantamento: null,
+              componentes_pagamento_frete: [],
+              informacoes_bancarias: {
+                tipo_informacao_bancaria: null,
+                numero_banco: null,
+                numero_agencia:null
+              },
+              informacoes_pagamento_prazo: [
+                {
+                  data_vencimento_parcela: null,
+                  valor_parcela: null
+                }
+              ]
+            }
+          ]
+        }
+      }
+      this.totalDeCtesVinculadosLocal = 0
+    },
+
     preencheCamposDoManifesto(ctesVinculados) {
 
       this.totalDeCtesVinculadosLocal = ctesVinculados.length
@@ -409,16 +496,42 @@ export default {
           this.ultimoCteQueSeraEntregue = cte;
         }
 
-        this.dadosFormCargaLocal.peso_bruto  += cte.infQ_qCarga
+        this.dadosFormCargaLocal.peso_bruto  += parseFloat(cte.infQ_qCarga)
+        this.dadosFormCargaLocal.valor_carga  += parseFloat(cte.vCarga)
+      }
 
+
+      for(const index in ctesVinculados) {
+        const cte = ctesVinculados[index];
+        if(cte.Id_CTe == this.ultimoCteQueSeraEntregue.Id_CTe) {
+          continue
+        }
         this.adicionaComponenteCte(cte);
       }
+       // O ultimo cte deve ser o ultimo a ser adicionado no array
+      this.adicionaComponenteCte(this.ultimoCteQueSeraEntregue)
 
       this.dadosFormCargaLocal.uf_carregamento    = this.primeiroCteASerCarregado.UFIni
       this.dadosFormCargaLocal.uf_descarregamento = this.ultimoCteQueSeraEntregue.UFFim
 
-      console.log(this.dadosFormCargaLocal.descarregamento);
+      const objetoCarregamento = {
+        codigo_municipio: this.primeiroCteASerCarregado.rem_cMun,
+        nome_municipio: this.primeiroCteASerCarregado.rem_xMun,
+      }
 
+      this.dadosFormCargaLocal.carregamento[0] = objetoCarregamento
+
+      if(ctesVinculados.length == 1) {
+        this.dadosFormCargaLocal.produto_predominante.nome = this.primeiroCteASerCarregado.proPred
+        this.dadosFormCargaLocal.produto_predominante.lotacao.descarregamento.cep = this.primeiroCteASerCarregado.frete.cep_destinatario
+      }
+
+      const objetoCondutor = {
+        cpf:  this.ultimoCteQueSeraEntregue.frete.motorista.cpf,
+        nome:  this.ultimoCteQueSeraEntregue.frete.motorista.nome_completo,
+      }
+
+      this.dadosFormCargaLocal.rodoviario.condutor[0] = objetoCondutor
     },
 
     adicionaComponenteCte(cte) {
@@ -462,7 +575,7 @@ export default {
 
     descobreSeJaHaOMunicipioDoCteNoArray(cte) {
       const componenteCte = this.dadosFormCargaLocal.descarregamento.find(item => {
-        return item.codigo_municipio == cte.dest_xMun
+        return item.codigo_municipio == cte.dest_cMun
       })
 
       return componenteCte
@@ -482,10 +595,10 @@ export default {
       const alertStore = useAlertStore()
       const loading = useLoadingStore()
 
-
       loading.show('Vinculando CT-e(s)...')
-      const endpoint = `${endpoints.cte.buscaListaDeCtesParaOManifesto}`;
+      this.limpaCamposDoFormulario()
 
+      const endpoint = `${endpoints.cte.buscaListaDeCtesParaOManifesto}`;
       try {
         const resposta = await ApiService({
           method: 'get',
@@ -498,11 +611,10 @@ export default {
           }
         })
 
-        this.ctesVinculados = resposta?.data?.data;
-        this.preencheCamposDoManifesto(this.ctesVinculados)
+        const ctesVinculados = resposta?.data?.data;
 
-        console.log(this.ctesVinculados);
-
+        this.preencheCamposDoManifesto(ctesVinculados)
+        this.fechaDialog(false)
 
         alertStore.addAlert(
           'CT-es vinculados com sucesso!',
@@ -528,18 +640,22 @@ export default {
       this.dialogVinculaCte = true
     },
 
-    async fechaDialog() {
+    async fechaDialog(exibirMensagemDeConfirmacao = true) {
 
-      const mensagem = 'Você realmente deseja sair ? Seus dados serão perdidos.'
+      let confirmado = true
+      const mensagem = 'Você realmente deseja sair? Seus dados serão perdidos.'
 
-      const confirmado = await this.dialog.value.open({
-        title: `Sair`,
-        message: mensagem,
-        titleColor: 'error'
-      })
+      if(exibirMensagemDeConfirmacao) {
+        confirmado = await this.dialog.value.open({
+          title: `Sair`,
+          message: mensagem,
+          titleColor: 'error'
+        })
+      }
 
       if(!confirmado) return
 
+      this.limpaCamposDoDialog()
       this.dialogVinculaCte = false
     },
 
@@ -654,6 +770,6 @@ export default {
 <style>
 .cor {
 
-  color: rgb(0, 150, 0);
+  color: rgb(80, 80, 80);
 }
 </style>
