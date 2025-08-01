@@ -52,7 +52,18 @@
                 :value="1"
               >
                 <v-card flat>
-                  <div class="text-caption mb-8">Escolha os CT-es que serão vinculados</div>
+                  <div class="d-flex justify-space-between align-center text-caption mb-8">
+                    <div>Escolha os CT-es que serão vinculados</div>
+                    <div class="text-end text-grey-lighten" v-if="listaDeCtesAdicionados.length == 0"><em>Nenhum vinculado</em></div>
+                    <div class="d-flex ga-1 text-end text-grey-lighten" v-else>
+                      <small>
+                        <v-chip size="x-small" color="redNeveah">
+                          {{listaDeCtesAdicionados.length}}
+                        </v-chip>
+                      </small>
+                      <div>CT-e(s) adicionados</div>
+                    </div>
+                  </div>
 
                   <v-combobox
                     :loading="comboBoxCteLoading"
@@ -79,7 +90,7 @@
                     Adicionar
                   </v-btn>
 
-                  <v-card variant="flat">
+                  <v-card variant="flat" max-height="110" class="overflow-y-auto">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -107,7 +118,7 @@
                 <v-card flat>
                   <div class="text-caption mb-8">Selecione o CT-e que será carregado <strong>PRIMEIRO</strong></div>
 
-                  <v-card variant="flat">
+                  <v-card variant="flat" max-height="200" class="overflow-y-auto">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -119,6 +130,7 @@
                             cte.Id_CTe == idDoPrimeiroCteASerCarregado
                             ? 'px-2 bg-green-lighten-4 text-green-darken-3 pa-2'
                             : 'px-2 bg-red-lighten-4 text-redNeveah pa-2'
+
                           "
                           :style="
                             cte.Id_CTe == idDoPrimeiroCteASerCarregado
@@ -154,7 +166,7 @@
                 <v-card flat>
                   <div class="text-caption mb-8">Selecione o CT-e que será entregue por <strong>ÚLTIMO</strong></div>
 
-                  <v-card variant="flat">
+                  <v-card variant="flat" max-height="200" class="overflow-y-auto">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -162,9 +174,10 @@
                         v-for="cte, index in listaDeCtesAdicionados" :key="`cte-${index}`"
                       >
                         <v-card
+
                           :class="
                             cte.Id_CTe == idDoUltimoCteASerEntregue
-                            ? 'px-2 bg-green-lighten-4 text-green-darken-3 pa-2'
+                            ? 'px-2 bg-green-lighten-4 text-green-darken-3 pa-2 '
                             : 'px-2 bg-red-lighten-4 text-redNeveah pa-2'
                           "
                           :style="
@@ -201,7 +214,7 @@
                 <v-card flat>
                   <div class="text-caption mb-8">Estes são os CT-es que popularão automaticamente os campos do Manifesto</div>
 
-                  <v-card variant="flat">
+                  <v-card variant="flat" max-height="200" class="overflow-y-auto">
                     <v-row dense>
                       <v-col
                         cols="12"
@@ -233,7 +246,7 @@
                                   <v-chip color="blue-darken-3" variant="flat">Primeiro a ser carregado</v-chip>
                                 </small>
                                 <small class="mt-2" v-if="cte.Id_CTe == idDoUltimoCteASerEntregue">
-                                  <v-chip color="blue-darken-3" variant="flat">Ultimo que será entregue</v-chip>
+                                  <v-chip color="blue-darken-3" variant="flat">Último a ser entregue</v-chip>
                                 </small>
                               </div>
                             </div>

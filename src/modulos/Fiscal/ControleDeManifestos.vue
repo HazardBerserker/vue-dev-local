@@ -308,7 +308,7 @@
           :mdfes_finalizados="datatable.manifestos_finalizados"
           :itensSelecionados="datatable.itensSelecionados"
           :mdfe="itemSelecionado"
-          :disabled="datatable.carregando || desativaInputDeCancelar"
+          :disabled="datatable.carregando || desativaInputDeCancelar || estaBloqueado(itemSelecionado)"
         />
 
         <BtnEmiteMDFe/>
@@ -459,17 +459,37 @@
             <template #[`item.tomador_cnpj`]="{ item }">
               {{ formataCNPJ(item.tomador_cnpj) }}
             </template>
-            <!-- <template #[`footer.prepend`]>
-              <div class="d-flex w-100 align-center my-auto ps-4">
-                <div
-                  class="rounded-circle"
-                  style="width: 12px; height: 12px; background-color: #a7d6ff;"
-                ></div>
-                <div class="ms-4 d-flex align-center text-caption">
-                  <span>CTEs que possuem um pagamento associado e não podem ser cancelados</span>
+            <template #[`item.tempo_para_cancelamento`]="{ item }">
+              <v-chip
+                v-if="item.status == StatusManifestoEnumDescricao.AUTORIZADO && !estaBloqueado(item)"
+                variant="text"
+                prepend-icon="mdi-timer"
+                color="grey-darken-2"
+              >
+                {{ tempoRestante(item.dhEmi) }}
+              </v-chip>
+              <v-chip
+                v-else-if="item.status == StatusManifestoEnumDescricao.AUTORIZADO && estaBloqueado(item)"
+                variant="text"
+                prepend-icon="mdi-timer-cancel"
+                color="grey-darken-2"
+              >
+                {{ tempoRestante(item.dhEmi) }}
+              </v-chip>
+              <div v-else>
+                --
+              </div>
+            </template>
+            <template #[`footer.prepend`]>
+              <div class="d-flex w-100 align-center my-auto ps-6 justify-start text-grey-darken-2 bg-grey-lighten-3 rounded-lg">
+                <v-icon variant="text">
+                  mdi-timer
+                </v-icon>
+                <div class="ms-2 d-flex align-center text-caption text-grey-darken-2">
+                  <span>Um manifesto tem 24 Horas para ser cancelado após sua emissão</span>
                 </div>
               </div>
-            </template> -->
+            </template>
           </v-data-table-server>
         </v-card>
       </v-col>
@@ -480,7 +500,7 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData, formataCNPJ, formataMoeda, formataNumeroBR } from '@/utils/masks';
+import { formataCEP, formataData, formataCNPJ, formataMoeda, formataNumeroBR, formataDataBRParaDate } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
@@ -497,6 +517,12 @@ import InputText from '@/components/Form/InputText.vue';
 import { estadosBrasileiros } from '@/Enums/estadosEnum';
 import { geraUrlTemporariaParaImagemS3, urlEDaS3 } from '@/helpers/funcoesParaS3';
 import { UnidadeMedidaMdfeEnumDescricao } from '@/Enums/Fiscal/UnidadeMedidaMdfeEnum';
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default {
   name: 'ControleDeManifestos',
@@ -510,6 +536,14 @@ export default {
   created() {
     this.dialog = inject('dialog')
     this.quantidadeDeFiltrosAplicados()
+  },
+  mounted() {
+    this.intervalo = setInterval(() => {
+      this.agora = new Date()
+    }, 1000)
+  },
+  beforeUnmount() {
+    clearInterval(this.intervalo)
   },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
@@ -532,6 +566,8 @@ export default {
   },
   data () {
 
+    // tenho que usar aqui essas variveis pois dessa forma consigo atribuir seus valores a uma variavel no return do data
+    // isso é importante pois a tabela ao ser montada ja busca os dados com base nas variaveis abaixo
     const hoje = new Date();
     const noventaDiasAtras = new Date();
     noventaDiasAtras.setDate(hoje.getDate() - 90);
@@ -540,6 +576,9 @@ export default {
     diaAtualMaisUm.setDate(hoje.getDate() + 1);
 
     return {
+      agora: new Date,
+      intervalo: null,
+
       estadosBrasileiros,
       noventaDiasAtras,
       diaAtualMaisUm,
@@ -640,6 +679,12 @@ export default {
             width: '170',
           },
           {
+            title: 'Bloqueio do Cancelamento',
+            key: 'tempo_para_cancelamento',
+            align:'center',
+            width: '350'
+          },
+          {
             title: 'Emissão',
             key: 'dhEmi',
             align:'center',
@@ -728,6 +773,40 @@ export default {
     }
   },
   methods: {
+
+    estaBloqueado(item) {
+      const dataInicial = formataDataBRParaDate(item.dhEmi);
+      if (!dataInicial) return 'Data Inválida';
+
+      // 7 dias = 168 horas em ms
+      const dataExpiracao = new Date(dataInicial.getTime() + 24 * 60 * 60 * 1000);
+
+      const diffEmMs = dataExpiracao - this.agora;
+
+      if (diffEmMs <= 0) return true;
+      return false;
+    },
+
+    tempoRestante(dataAlvo) {
+      // dataAlvo já convertido para Date (objeto)
+      const dataInicial = formataDataBRParaDate(dataAlvo);
+
+      if (!dataInicial) return 'Data Inválida';
+
+      // Adiciona 24 horas em milissegundos (24 * 60 * 60 * 1000)
+      const dataExpiracao = new Date(dataInicial.getTime() + 24 * 60 * 60 * 1000);
+
+      const diffEmMs = dataExpiracao - this.agora;
+
+      if (diffEmMs <= 0) return 'Bloqueado';
+
+      const totalSegundos = Math.floor(diffEmMs / 1000);
+      const horas = Math.floor(totalSegundos / 3600);
+      const minutos = Math.floor((totalSegundos % 3600) / 60);
+      const segundos = totalSegundos % 60;
+
+      return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+    },
 
     defineCorDoStatus(status) {
       const cancelado = StatusManifestoEnumDescricao.CANCELADO

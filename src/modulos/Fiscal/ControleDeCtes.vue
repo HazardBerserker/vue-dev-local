@@ -305,7 +305,7 @@
           :ctes_cancelados="datatable.ctes_cancelados"
           :itensSelecionados="datatable.itensSelecionados"
           :cte="itemSelecionado"
-          :disabled="datatable.carregando || desativaInputDeCancelar"
+          :disabled="datatable.carregando || desativaInputDeCancelar || estaBloqueado(itemSelecionado)"
         />
 
         <BtnEmiteCte/>
@@ -406,14 +406,41 @@
               {{ formataCNPJ(item.tomador_cnpj) }}
             </template>
             <template #[`footer.prepend`]>
-              <div class="d-flex w-100 align-center my-auto ps-4">
+              <div class="d-flex w-100 align-center my-auto ps-6 justify-start bg-grey-lighten-3 rounded-lg">
+                <v-icon variant="text" class="text-grey-darken-2">
+                  mdi-timer
+                </v-icon>
+                <div class="ms-2 d-flex align-center text-start text-caption text-grey-darken-2">
+                  <span>Um CT-e tem 7 dias para ser cancelado após sua emissão <br>desde que não esteja em Trânsito nem vinculado a uma MDF-e ativa</span>
+                </div>
                 <div
-                  class="rounded-circle"
+                  class="rounded-circle ms-6"
                   style="width: 12px; height: 12px; background-color: #a7d6ff;"
                 ></div>
-                <div class="ms-4 d-flex align-center text-caption">
-                  <span>CTEs que possuem um pagamento associado e não podem ser cancelados</span>
+                <div class="ms-2 d-flex align-center text-start text-caption text-grey-darken-2">
+                  <span>CTEs que possuem um pagamento associado <br>e não podem ser cancelados</span>
                 </div>
+              </div>
+            </template>
+            <template #[`item.tempo_para_cancelamento`]="{ item }">
+              <v-chip
+                v-if="item.status == StatusCteEnumDescricao.AUTORIZADO && !estaBloqueado(item)"
+                variant="text"
+                prepend-icon="mdi-timer"
+                color="grey-darken-2"
+              >
+                {{ tempoRestante(item.dhEmi) }}
+              </v-chip>
+              <v-chip
+                v-else-if="item.status == StatusCteEnumDescricao.AUTORIZADO && estaBloqueado(item)"
+                variant="text"
+                prepend-icon="mdi-timer-cancel"
+                color="grey-darken-2"
+              >
+                {{ tempoRestante(item.dhEmi) }}
+              </v-chip>
+              <div v-else>
+                --
               </div>
             </template>
           </v-data-table-server>
@@ -426,7 +453,7 @@
 <script>
 import ApiService from '@/services/ApiService';
 import { SimENaoEnum, SimENaoEnumDescricao } from '@/Enums/SimENaoEnum';
-import { formataCEP, formataData, formataCNPJ, formataMoeda } from '@/utils/masks';
+import { formataCEP, formataData, formataCNPJ, formataMoeda, formataDataBRParaDate } from '@/utils/masks';
 import { useAlertStore } from '@/stores/alertStore'
 import GlobalAlertFixed from '@/components/GlobalComponents/GlobalAlertFixed.vue';
 import { useLoadingStore } from '@/stores/loading';
@@ -461,6 +488,14 @@ export default {
     this.dialog = inject('dialog')
     this.quantidadeDeFiltrosAplicados()
   },
+  mounted() {
+    this.intervalo = setInterval(() => {
+      this.agora = new Date()
+    }, 1000)
+  },
+  beforeUnmount() {
+    clearInterval(this.intervalo)
+  },
   unmounted() {
     this.propriedadesDoAlertaFixo = null
   },
@@ -490,6 +525,9 @@ export default {
     diaAtualMaisUm.setDate(hoje.getDate() + 1);
 
     return {
+      agora: new Date,
+      intervalo: null,
+
       estadosBrasileiros,
       noventaDiasAtras,
       diaAtualMaisUm,
@@ -576,6 +614,12 @@ export default {
             key: 'status',
             align: 'center',
             width: '170',
+          },
+          {
+            title: 'Bloqueio do Cancelamento',
+            key: 'tempo_para_cancelamento',
+            align:'center',
+            width: '350'
           },
           {
             title: 'Remetente',
@@ -675,6 +719,40 @@ export default {
     }
   },
   methods: {
+      estaBloqueado(item) {
+        const dataInicial = formataDataBRParaDate(item.dhEmi);
+        if (!dataInicial) return 'Data Inválida';
+
+        // 7 dias = 168 horas em ms
+        const dataExpiracao = new Date(dataInicial.getTime() + 168 * 60 * 60 * 1000);
+
+        const diffEmMs = dataExpiracao - this.agora;
+
+        if (diffEmMs <= 0) return true;
+        return false;
+      },
+
+      tempoRestante(dataAlvo) {
+        const dataInicial = formataDataBRParaDate(dataAlvo);
+        if (!dataInicial) return 'Data Inválida';
+
+        // 7 dias = 168 horas em ms
+        const dataExpiracao = new Date(dataInicial.getTime() + 168 * 60 * 60 * 1000);
+
+        const diffEmMs = dataExpiracao - this.agora;
+        if (diffEmMs <= 0) return 'Bloqueado';
+
+        const totalSegundos = Math.floor(diffEmMs / 1000);
+
+        const dias = Math.floor(totalSegundos / 86400);
+        const horas = Math.floor((totalSegundos % 86400) / 3600);
+        const minutos = Math.floor((totalSegundos % 3600) / 60);
+        const segundos = totalSegundos % 60;
+
+        const diasTexto = dias > 0 ? `${dias}d ` : '';
+
+        return `${diasTexto}${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+      },
 
     defineCorDoStatus(status) {
       const cancelado  = StatusCteEnumDescricao.CANCELADO

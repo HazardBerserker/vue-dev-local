@@ -157,21 +157,36 @@
       </v-col>
     </v-row>
     <v-row class="my-3">
-      <v-col cols="12" md="3" class="py-2">
+      <v-col cols="12" md="2" class="py-2">
         <InputTextMoeda
           prefix="R$"
           v-model="dadosFormGeralLocal.servico.componentes.FRETE_PESO"
           label="Frete Peso *"
           bg-color="white"
+          :rules="rules.campoObrigatorio"
+          @update:modelValue="verificaSeLimpouCampo()"
           clearable
         />
       </v-col>
-      <v-col cols="12" md="3" class="pt-2">
+      <v-col cols="12" md="2" class="py-2">
+        <InputTextMoeda
+          prefix="R$"
+          v-model="dadosFormGeralLocal.servico.componentes.PESO_CUBADO"
+          label="Peso Bruto *"
+          bg-color="white"
+          :rules="rules.campoObrigatorio"
+          @update:modelValue="verificaSeLimpouCampo()"
+          clearable
+        />
+      </v-col>
+      <v-col cols="12" md="2" class="pt-2">
         <InputTextMoeda
           prefix="R$"
           v-model="dadosFormGeralLocal.servico.componentes.advalorem"
           label="Advalorem *"
           bg-color="white"
+          :rules="rules.campoObrigatorio"
+          @update:modelValue="verificaSeLimpouCampo()"
           clearable
         />
       </v-col>
@@ -246,11 +261,11 @@
         </v-col>
      </v-row>
 
-     <v-row class="mx-1 bg-red-lighten-5 mb-6" v-if="Object.keys(dadosFormGeralLocal.servico.componentes).length !== 0">
+     <v-row class="mx-1 bg-white mb-6" v-if="Object.keys(dadosFormGeralLocal.servico.componentes).length !== 0">
         <v-col>
-          <v-row>
-            <v-col cols="3" v-for="valorServico, campo in dadosFormGeralLocal.servico.componentes" :key="campo">
-              <v-card class="pa-2 pe-4 d-flex rounded-pill align-center ga-2 justify-space-between" color="grey-darken-1">
+          <div class="d-flex flex-wrap ga-2">
+            <div v-for="valorServico, campo in dadosFormGeralLocal.servico.componentes" :key="campo">
+              <v-card class="pa-2 pe-4 d-flex rounded-pill align-center ga-2 justify-space-between" color="grey-darken-3">
                 <div class="d-flex ga-2">
                   <v-btn icon="mdi-close" size="x-small" color="grey-darken-4" @click="removeServico(campo)">
                   </v-btn>
@@ -262,8 +277,8 @@
                   {{formataMoeda(valorServico)}}
                 </div>
               </v-card>
-            </v-col>
-          </v-row>
+            </div>
+          </div>
         </v-col>
      </v-row>
 
@@ -358,6 +373,15 @@ export default {
     },
   },
   methods: {
+
+    // remove o item do array de componentes
+    verificaSeLimpouCampo() {
+      const novoObjeto = Object.fromEntries(
+        Object.entries(this.dadosFormGeralLocal.servico.componentes).filter(([, valor]) => valor != null)
+      )
+      this.dadosFormGeralLocal.servico.componentes = novoObjeto
+    },
+
     municipiosDoEstadoSelecionado(uf) {
       if(!uf) {
         return []

@@ -229,7 +229,7 @@ export default {
               cnpj: 61198164000160
             },
             numero_apolice: '4250126501',
-            numero_averbacao: ['0']
+            numero_averbacao: []
           },
         ],
         rodoviario: {

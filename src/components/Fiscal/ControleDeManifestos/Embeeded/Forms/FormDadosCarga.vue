@@ -359,6 +359,7 @@
                 density="compact"
                 label="Nº da(s) Averbação(es)"
                 placeholder="Adicione as averbações"
+                :rules="rules.campoObrigatorio"
                 chips
                 hide-selected
                 multiple
@@ -374,27 +375,10 @@
                 item-title="text"
                 variant="outlined"
                 label="Responsável *"
+                :rules="rules.campoObrigatorio"
                 density="compact"
                 clearable
                 />
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-badge
-                class="w-100"
-                v-tooltip:bottom="'Não é necessário informar caso o responsável seja o emitente do MDF-e'"
-                content="?"
-              >
-                <v-text-field
-                  v-model="dadosFormCargaLocal.seguro[0].responsavel.cnpj"
-                  label="CPF/CNPJ Responsável *"
-                  density="compact"
-                  variant="outlined"
-                  bg-color="white"
-                  :disabled="dadosFormCargaLocal.seguro[0].responsavel.tipo_responsavel == TipoResponsavelEnumValorDescricao.EMITENTE"
-                  clearable
-                >
-                </v-text-field>
-              </v-badge>
             </v-col>
           </v-row>
         </div>
@@ -444,6 +428,15 @@ export default {
       required: true
     },
   },
+  watch: {
+    tipoDoResponsavelComputado(newValue, oldValue) {
+      if(newValue == oldValue) return
+
+      if(oldValue == TipoResponsavelEnumValorDescricao.RESPONSAVEL_PELA_CONTRATACAO && this.dadosFormCargaLocal.seguro[0].responsavel.cnpj != null) {
+        this.dadosFormCargaLocal.seguro[0].responsavel.cnpj = null
+      }
+    }
+  },
   data() {
     return {
       formataMoeda,
@@ -469,7 +462,7 @@ export default {
 
       rules: {
         campoObrigatorio: [
-          (v) => v !== null && v !== undefined && v !== '' || 'Este campo é obrigatório'
+          (v) => v != null && v !== undefined && v != '' || 'Este campo é obrigatório'
         ],
       },
     }
@@ -491,6 +484,9 @@ export default {
         this.$emit('update:totalDeCtesVinculados', novosDados)
       }
     },
+    tipoDoResponsavelComputado() {
+      return this.dadosFormCargaLocal.seguro[0].responsavel.tipo_responsavel
+    }
   },
   methods: {
     validate() {

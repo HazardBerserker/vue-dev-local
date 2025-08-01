@@ -55,6 +55,15 @@ export function formataDataISOParaPadraoBanco(data) {
   return formatDate(new Date(data), 'yyyy-MM-dd');
 }
 
+export function formataDataBRParaDate(dataBr) {
+  if (!dataBr) return null;
+
+  const [dataParte, horaParte = '00:00:00'] = dataBr.split(' ');
+  const [dia, mes, ano] = dataParte.split('/');
+
+  const isoString = `${ano}-${mes.padStart(2,'0')}-${dia.padStart(2,'0')}T${horaParte}`;
+  return new Date(isoString);
+}
 export function formataMoeda(valor) {
   if (valor == null || isNaN(valor)) return '';
   return new Intl.NumberFormat('pt-BR', {
