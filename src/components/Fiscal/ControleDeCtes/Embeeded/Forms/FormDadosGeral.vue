@@ -170,9 +170,8 @@
       </v-col>
       <v-col cols="12" md="2" class="py-2">
         <InputTextMoeda
-          prefix="R$"
           v-model="dadosFormGeralLocal.servico.componentes.PESO_CUBADO"
-          label="Peso Bruto *"
+          label="Peso Cubado *"
           bg-color="white"
           :rules="rules.campoObrigatorio"
           @update:modelValue="verificaSeLimpouCampo()"
@@ -261,26 +260,27 @@
         </v-col>
      </v-row>
 
-     <v-row class="mx-1 bg-white mb-6" v-if="Object.keys(dadosFormGeralLocal.servico.componentes).length !== 0">
-        <v-col>
-          <div class="d-flex flex-wrap ga-2">
-            <div v-for="valorServico, campo in dadosFormGeralLocal.servico.componentes" :key="campo">
-              <v-card class="pa-2 pe-4 d-flex rounded-pill align-center ga-2 justify-space-between" color="grey-darken-3">
-                <div class="d-flex ga-2">
-                  <v-btn icon="mdi-close" size="x-small" color="grey-darken-4" @click="removeServico(campo)">
-                  </v-btn>
-                  <v-chip variant="flat" color="grey-darken-4">
-                    {{campo}}
-                  </v-chip>
-                </div>
-                <div>
-                  {{formataMoeda(valorServico)}}
-                </div>
-              </v-card>
-            </div>
-          </div>
-        </v-col>
-     </v-row>
+
+       <v-row class="mx-1 bg-white mb-6" v-if="Object.keys(dadosFormGeralLocal.servico.componentes).length !== 0">
+          <v-col>
+            <TransitionGroup class="d-flex flex-wrap ga-2" name="list" tag="div">
+              <div v-for="valorServico, campo in dadosFormGeralLocal.servico.componentes" :key="campo">
+                <v-card class="pa-2 pe-4 d-flex rounded-pill align-center ga-2 justify-space-between" color="grey-darken-3" v-if="campo">
+                  <div class="d-flex ga-2">
+                    <v-btn icon="mdi-close" size="x-small" color="grey-darken-4" @click="removeServico(campo)">
+                    </v-btn>
+                    <v-chip variant="flat" color="grey-darken-4">
+                      {{campo}}
+                    </v-chip>
+                  </div>
+                  <div class="d-flex ga-1">
+                   <div v-if="campo != 'PESO_CUBADO'">R$</div>{{formataNumeroBR(valorServico)}}
+                  </div>
+                </v-card>
+              </div>
+            </TransitionGroup>
+          </v-col>
+       </v-row>
 
     <v-row>
         <v-col md="12" class="py-2">
@@ -312,7 +312,7 @@ import { TipoDeEmissaoCteEnum } from '@/Enums/Fiscal/TipoDeEmissaoCteEnum'
 import InputTextMoeda from '@/components/Form/InputTextMoeda.vue'
 import { ClassificacaoTributariaEnum } from '@/Enums/Fiscal/ClassificacaoTributariaEnum'
 import { useAlertStore } from '@/stores/alertStore'
-import { formataMoeda } from '@/utils/masks';
+import { formataNumeroBR } from '@/utils/masks';
 
 export default {
   name: 'FormDadosGeral',
@@ -334,7 +334,7 @@ export default {
   },
   data() {
     return {
-      formataMoeda,
+      formataNumeroBR,
 
       estadosBrasileiros,
       FinalidadeCteEnum,
@@ -420,3 +420,18 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.25s ease;
+  }
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  .list-move {
+    transition: transform 0.25s ease; /* For animating reordering */
+  }
+</style>

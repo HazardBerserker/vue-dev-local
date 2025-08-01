@@ -91,23 +91,25 @@
                   </v-btn>
 
                   <v-card variant="flat" max-height="110" class="overflow-y-auto">
-                    <v-row dense>
-                      <v-col
-                        cols="12"
-                        class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
-                        v-for="cte, index in listaDeCtesAdicionados" :key="`cte-${index}`"
-                      >
-                        <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
-                          <div class="d-flex align-center text-body-2">
-                            <div class="d-flex flex-column w-100 ga-2">
-                              <small class="w-100 text-body-2">ID: <strong>{{ cte.Id_CTe}}</strong></small>
-                              <small class="w-100">Chave: <strong>{{cte.chCTe}}</strong></small>
+                    <TransitionGroup name="list" tag="div">
+                      <v-row dense>
+                        <v-col
+                          cols="12"
+                          class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
+                          v-for="cte, index in listaDeCtesAdicionados" :key="`cte-${index}`"
+                        >
+                          <v-card class="px-2 bg-red-lighten-4 text-redNeveah pa-2" style="border: 1px solid #ba1614;">
+                            <div class="d-flex align-center text-body-2">
+                              <div class="d-flex flex-column w-100 ga-2">
+                                <small class="w-100 text-body-2">ID: <strong>{{ cte.Id_CTe}}</strong></small>
+                                <small class="w-100">Chave: <strong>{{cte.chCTe}}</strong></small>
+                              </div>
+                              <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeCteDaLista(index)"/>
                             </div>
-                            <v-btn icon="mdi-close" size="x-small" variant="tonal" @click="removeCteDaLista(index)"/>
-                          </div>
-                        </v-card>
-                      </v-col>
-                    </v-row>
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                    </TransitionGroup>
                   </v-card>
                 </v-card>
               </v-stepper-window-item>
@@ -780,9 +782,17 @@ export default {
 }
 </script>
 
-<style>
-.cor {
-
-  color: rgb(80, 80, 80);
-}
+<style scoped>
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.25s ease;
+  }
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  .list-move {
+    transition: transform 0.25s ease; /* For animating reordering */
+  }
 </style>
