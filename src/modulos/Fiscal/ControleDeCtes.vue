@@ -1042,60 +1042,6 @@ export default {
       }
     },
 
-    // async autorizaCte() {
-    //   const alertStore = useAlertStore()
-    //   const loading = useLoadingStore()
-
-    //   if(this.datatable.itensSelecionados.length != 1) {
-    //     alertStore.addAlert('Selecione um item por vez para Autorizar', 'warning');
-    //     return
-    //   }
-
-    //   if(!this.itemSelecionado) {
-    //     alertStore.addAlert('CTE com ID selecionado não encontrado, tente novamente', 'warning');
-    //     return;
-    //   }
-
-    //   const mensagem = `Deseja realmente Autorizar o CTE de ID <strong>${this.datatable.itensSelecionados[0]}</strong> ?`
-
-    //   const confirmado = await this.dialog.value.open({
-    //     title: `Desativar CTE`,
-    //     message: mensagem,
-    //     titleColor: 'success'
-    //   })
-
-    //   if(!confirmado) {
-    //     return
-    //   }
-
-    //   loading.show('Autorizando CTE...')
-    //   const url = `${endpoints.cte.autoriza}/${this.itemSelecionado.Id_CTe}`;
-
-    //   try {
-    //     const resposta =  await ApiService({
-    //       method: 'post',
-    //       url: `${url}`,
-    //     })
-
-    //     alertStore.addAlert(
-    //       `${resposta?.data?.message}`,
-    //       'success'
-    //     );
-
-    //     this.itemSelecionado.status = StatusCteEnumDescricao.AUTORIZADO
-    //     this.datatable.ctes_autorizados += 1
-    //     this.datatable.ctes_cancelados -= 1
-
-    //     this.datatable.itensSelecionados = [];
-    //     this.itemSelecionado = {};
-
-    //   } catch (error) {
-    //     alertStore.addAlert(`Erro ao Autorizar CTE: ${error?.response?.data?.message}`, 'error');
-    //   } finally {
-    //     loading.hide()
-    //   }
-    // },
-
     onAcrescentaODadoNoArrayLocalmente(itemCriado) {
       const novoItem = {
         Id_CTe: itemCriado.Id_CTe,
@@ -1103,7 +1049,7 @@ export default {
         dest_xNome: itemCriado.dest_xNome,
         dest_xMun: itemCriado.dest_xMun,
         dest_UF: itemCriado.dest_UF,
-        dhEmi: itemCriado.dhEmi,
+        dhEmi: formataData(itemCriado.dhEmi),
         vCarga: itemCriado.vCarga,
         vTPrest: itemCriado.vTPrest,
         status: itemCriado.status,
