@@ -811,14 +811,6 @@ export default {
       deep: true
     },
   },
-  mounted() {
-    if(this.tipoTransportador == TipoDoTransportadorEnumValorDescricao.TAC) {
-      this.valorDoRadio = 2
-      return
-    }
-
-    this.valorDoRadio = 1
-  },
   data() {
     return {
       formataMoeda,
@@ -852,8 +844,8 @@ export default {
         Se o Tipo do Transportador não estiver preenchido esses campos serão opcionais
       `,
 
-      valorDoRadio: null,
-      valorDoRadioPagamento: 2,
+      valorDoRadio: 2,
+      valorDoRadioPagamento: 1,
 
       rules: {
         campoObrigatorio: [

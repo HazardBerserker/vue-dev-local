@@ -4,6 +4,12 @@ export const TipoProprietarioEnum = [
   { value: '2', text: '2 – Outros' },
 ];
 
+export const TipoProprietarioEnumValorDescricao = Object.freeze({
+  AGREGADO: '0',
+  INDEPENDENTE: '1',
+  OUTROS: '2',
+})
+
 export const TipoProprietarioEnumDescricao = Object.freeze({
   '0': 'TAC Agregado',
   '1': 'TAC Independente',

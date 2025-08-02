@@ -45,7 +45,7 @@
 
 <script>
 
-import { StatusManifestoEnumDescricao } from '@/Enums/Fiscal/StatusManifestoEnum';
+import { StatusCteEnumDescricao } from '@/Enums/Fiscal/StatusCteEnum';
 import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
 import { useLoadingStore } from '@/stores/loading';
@@ -63,6 +63,10 @@ export default {
       type: Object,
       required: true
     },
+    ctes_finalizados: {
+      type: Number,
+      required: true
+    },
     ctes_autorizados: {
       type: Number,
       required: true
@@ -78,8 +82,6 @@ export default {
   },
   data() {
     return {
-      StatusManifestoEnumDescricao,
-
       dialogIsOpen: false,
       justificativa: null
     }
@@ -88,6 +90,14 @@ export default {
     this.dialog = inject('dialog')
   },
   computed: {
+    ctes_finalizadosLocal: {
+      get() {
+        return this.ctes_finalizados
+      },
+      set(novoDado) {
+        this.$emit('update:ctes_finalizados', novoDado)
+      }
+    },
     ctes_autorizadosLocal: {
       get() {
         return this.ctes_autorizados
@@ -176,11 +186,15 @@ export default {
           'success'
         );
 
-        if(this.cte.status == StatusManifestoEnumDescricao.AUTORIZADO) {
+        if(this.mdfe.status == StatusCteEnumDescricao.AUTORIZADO) {
           this.ctes_autorizadosLocal -= 1
         }
 
-        this.cteLocal.status = StatusManifestoEnumDescricao.CANCELADO
+        if(this.mdfe.status == StatusCteEnumDescricao.FINALIZADO) {
+          this.ctes_finalizadosLocal -= 1
+        }
+
+        this.mdfeLocal.status = StatusCteEnumDescricao.CANCELADO
         this.ctes_canceladosLocal += 1
 
         this.itensSelecionadosLocal = [];

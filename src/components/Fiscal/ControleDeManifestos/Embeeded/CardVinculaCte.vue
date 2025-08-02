@@ -92,7 +92,7 @@
 
                   <v-card variant="flat" max-height="110" class="overflow-y-auto">
                     <TransitionGroup name="list" tag="div">
-                      <v-row dense>
+                      <v-row dense key="animacao">
                         <v-col
                           cols="12"
                           class="pa-1 rounded-lg text-body-2 d-flex flex-column ga-3"
@@ -343,7 +343,9 @@
 </template>
 
 <script>
-
+import { FormaPagamentoMdfeEnumValorDescricao } from '@/Enums/Fiscal/FormaPagamentoMdfeEnum';
+import { TipoInformacaoBancariaEnumValorDescricao } from '@/Enums/Fiscal/TipoInformacaoBancariaEnum';
+import { TipoProprietarioEnumValorDescricao } from '@/Enums/Fiscal/TipoProprietarioEnum';
 import { buscaListaDeCtesHelper } from '@/helpers/buscaListaDeCtes';
 import ApiService from '@/services/ApiService';
 import { useAlertStore } from '@/stores/alertStore';
@@ -451,7 +453,7 @@ export default {
               cnpj: 61198164000160
             },
             numero_apolice: '4250126501',
-            numero_averbacao: ['0']
+            numero_averbacao: []
           },
         ],
         rodoviario: {
@@ -472,10 +474,10 @@ export default {
           ],
           pagamento_frete: [
             {
-              cpf: null,
-              nome: null,
+              cnpj: '55963693000100',
+              razao_social: 'NEVEAH OPERACOES INTEGRADAS LTDA',
               valor_contrato: null,
-              forma_pagamento: null,
+              forma_pagamento: FormaPagamentoMdfeEnumValorDescricao.A_VISTA,
               valor_adiantamento: null,
               componentes_pagamento_frete: [],
               informacoes_bancarias: {
@@ -545,6 +547,20 @@ export default {
         cpf:  this.ultimoCteQueSeraEntregue.frete.motorista.cpf,
         nome:  this.ultimoCteQueSeraEntregue.frete.motorista.nome_completo,
       }
+
+      this.dadosFormCargaLocal.rodoviario.condutor[0] = objetoCondutor
+
+      this.dadosFormCargaLocal.rodoviario.veiculo_tracao.proprietario.cpf = this.ultimoCteQueSeraEntregue.frete.motorista.cpf
+      this.dadosFormCargaLocal.rodoviario.veiculo_tracao.proprietario.nome = this.ultimoCteQueSeraEntregue.frete.motorista.nome_completo
+      this.dadosFormCargaLocal.rodoviario.veiculo_tracao.proprietario.uf = this.ultimoCteQueSeraEntregue.frete.motorista.uf_residencia
+      this.dadosFormCargaLocal.rodoviario.veiculo_tracao.proprietario.tipo_proprietario = TipoProprietarioEnumValorDescricao.INDEPENDENTE
+
+
+      this.dadosFormCargaLocal.rodoviario.pagamento_frete[0].informacoes_bancarias.tipo_informacao_bancaria = TipoInformacaoBancariaEnumValorDescricao.PIX
+      this.dadosFormCargaLocal.rodoviario.pagamento_frete[0].informacoes_bancarias.pix = this.ultimoCteQueSeraEntregue.frete.motorista.pix
+
+
+
 
       this.dadosFormCargaLocal.rodoviario.condutor[0] = objetoCondutor
     },

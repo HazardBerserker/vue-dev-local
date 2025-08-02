@@ -5,6 +5,32 @@
     <GlobalAlertFixed :propriedadesDoAlerta="propriedadesDoAlertaFixo" v-show="propriedadesDoAlertaFixo"/>
 
     <div class="d-flex ga-2 my-auto justify-end mb-4" v-if="permissao">
+
+      <v-card
+        width="250"
+        class="pa-3 rounded-xl elevation-2 d-flex align-center justify-start"
+        color="green-darken-4"
+      >
+          <v-avatar size="40" class="me-4 bg-white text-green-darken-4">
+              <v-icon>mdi-note-check</v-icon>
+          </v-avatar>
+          <div class="d-flex flex-column">
+              <span class="text-body-2 text-white">CT-Es Finalizados</span>
+              <v-chip variant="flat" size="small" color="white" class="mt-1 text-green-darken-4">
+                  <v-fade-transition mode="out-in">
+                      <span v-if="!datatable.carregando">
+                      <strong :key="'inativos'">
+                        {{ datatable.ctes_finalizados }}
+                      </strong>
+                    </span>
+                      <span v-else>
+                        <v-progress-circular indeterminate color="green-darken-2" size="15"></v-progress-circular>
+                      </span>
+                  </v-fade-transition>
+              </v-chip>
+          </div>
+      </v-card>
+
       <!-- Ctes Autorizados -->
       <v-card
         width="250"
@@ -301,6 +327,7 @@
         </v-btn> -->
 
         <BtnCancelaCte
+          :ctes_finalizados="datatable.ctes_finalizados"
           :ctes_autorizados="datatable.ctes_autorizados"
           :ctes_cancelados="datatable.ctes_cancelados"
           :itensSelecionados="datatable.itensSelecionados"
@@ -572,6 +599,7 @@ export default {
       ],
       datatable: {
         ctes_autorizados: null,
+        ctes_finalizados: null,
         ctes_cancelados: null,
         itensSelecionados: [],
         carregando: false,
@@ -963,6 +991,7 @@ export default {
           this.datatable.totalRegistros = resposta.data.data.total;
           this.datatable.ctes_autorizados = resposta.data.data.ctes_autorizados;
           this.datatable.ctes_cancelados = resposta.data.data.ctes_cancelados;
+          this.datatable.ctes_finalizados = resposta.data.data.ctes_finalizados;
         }
 
       } catch (error) {
@@ -1028,8 +1057,15 @@ export default {
           'success'
         );
 
+        if(this.itemSelecionado.status == StatusCteEnumDescricao.AUTORIZADO) {
+          this.datatable.ctes_autorizados -= 1
+        }
+
+        if(this.itemSelecionado.status == StatusCteEnumDescricao.FINALIZADO) {
+          this.datatable.ctes_finalizados -= 1
+        }
+
         this.itemSelecionado.status = StatusCteEnumDescricao.CANCELADO
-        this.datatable.ctes_autorizados -= 1
         this.datatable.ctes_cancelados += 1
 
         this.datatable.itensSelecionados = [];
