@@ -1085,6 +1085,7 @@ export default {
       { header: 'Emissão', key: 'dhEmi', width: 25 },
       { header: 'Nota', key: 'vCarga', width: 30 },
       { header: 'Frete', key: 'vTPrest', width: 30 },
+      { header: 'Observação', key: 'xObs', width: 30 },
       { header: 'Usuário Criação', key: 'usuario_criacao', width: 30 },
       { header: 'Data Criação', key: 'data_criacao', width: 25 },
       { header: 'Usuário Última Alteração', key: 'usuario_ultima_alteracao', width: 30 },
