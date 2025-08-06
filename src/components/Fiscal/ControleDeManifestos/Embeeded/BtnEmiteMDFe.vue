@@ -250,10 +250,10 @@ export default {
           ],
           pagamento_frete: [
             {
-              cpf: null,
-              nome: null,
+              cnpj: '55963693000100',
+              razao_social: 'NEVEAH OPERACOES INTEGRADAS LTDA',
               valor_contrato: null,
-              forma_pagamento: null,
+              forma_pagamento: FormaPagamentoMdfeEnumValorDescricao.A_VISTA,
               valor_adiantamento: null,
               componentes_pagamento_frete: [],
               informacoes_bancarias: {
@@ -346,10 +346,10 @@ export default {
         documentos_fiscais: this.formataDocumentosFiscaisParaEnvio(item.documentos_fiscais)
       }))
 
-      const dataVencimentoParcela = this.dadosFormCarga.rodoviario.pagamento_frete[0].informacoes_pagamento_prazo[0].data_vencimento_parcela
+      let dataVencimentoParcela = this.dadosFormCarga?.rodoviario?.pagamento_frete[0]?.informacoes_pagamento_prazo[0]?.data_vencimento_parcela
 
       if(dataVencimentoParcela) {
-        formataDataISOParaPadraoBanco(dataVencimentoParcela)
+        dataVencimentoParcela = formataDataISOParaPadraoBanco(dataVencimentoParcela)
       }
 
       const dados = {
@@ -415,7 +415,7 @@ export default {
               cnpj: 61198164000160
             },
             numero_apolice: '4250126501',
-            numero_averbacao: ['0']
+            numero_averbacao: []
           },
         ],
         rodoviario: {
@@ -436,10 +436,10 @@ export default {
           ],
           pagamento_frete: [
             {
-              cpf: null,
-              nome: null,
+              cnpj: '55963693000100',
+              razao_social: 'NEVEAH OPERACOES INTEGRADAS LTDA',
               valor_contrato: null,
-              forma_pagamento: null,
+              forma_pagamento: FormaPagamentoMdfeEnumValorDescricao.A_VISTA,
               valor_adiantamento: null,
               componentes_pagamento_frete: [],
               informacoes_bancarias: {

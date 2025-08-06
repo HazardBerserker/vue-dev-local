@@ -195,6 +195,7 @@
         </v-card>
       </v-col>
 
+      {{ dadosFormCarga.rodoviario.pagamento_frete }}
       <!-- 7. PAGAMENTO DE FRETE -->
       <v-col cols="12" v-for="(pagamento, index) in dadosFormCarga.rodoviario.pagamento_frete" :key="index">
         <v-card class="pa-4 bg-grey-lighten-4" elevation="2">

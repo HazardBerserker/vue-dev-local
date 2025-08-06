@@ -97,6 +97,7 @@
                     placeholder="Comece a digitar..."
                     :items="listaDeCtes"
                     item-title="Id_CTe"
+                    :rules="campoObrigatorio"
                     class="w-100"
                     clearable
                     :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
@@ -124,6 +125,7 @@
                     class="w-100"
                     clearable
                     :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento()"
+                    :rules="campoObrigatorio"
                   >
                   </v-combobox>
                   <v-select density="compact" class="w-100" variant="outlined" label="Status da Cotação:" :items="opcoesStatus" :rules="campoObrigatorio" v-model="status" itemTitle="descricao" itemValue="valor" :disabled="!modoEdicao || desabilitaCampoSeHouverPagamento() || !this.cte || !this.motorista"></v-select>
@@ -651,6 +653,9 @@ export default {
         appendIfValid(formData, 'obs_financeiro', this.obs_financeiro);
         appendIfValid(formData, 'cpf_motorista', this.motorista?.cpf);
         appendIfValid(formData, 'cte_vinculado', typeof this.cte === 'object' && this.cte?.Id_CTe ? this.cte.Id_CTe : this.cte);
+
+        console.log(this.cte);
+
 
         if (this.arquivos_comprovante?.length > 0) {
           this.arquivos_comprovante.forEach((arquivo) => {
