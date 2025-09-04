@@ -186,15 +186,15 @@ export default {
           'success'
         );
 
-        if(this.mdfe.status == StatusCteEnumDescricao.AUTORIZADO) {
+        if(this.cte.status == StatusCteEnumDescricao.AUTORIZADO) {
           this.ctes_autorizadosLocal -= 1
         }
 
-        if(this.mdfe.status == StatusCteEnumDescricao.FINALIZADO) {
+        if(this.cte.status == StatusCteEnumDescricao.FINALIZADO) {
           this.ctes_finalizadosLocal -= 1
         }
 
-        this.mdfeLocal.status = StatusCteEnumDescricao.CANCELADO
+        this.cteLocal.status = StatusCteEnumDescricao.CANCELADO
         this.ctes_canceladosLocal += 1
 
         this.itensSelecionadosLocal = [];
